@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Paiement · Espace prestataire</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F3EFE6;
+    --paper-2:#EAE4D6;
+    --ink:#1B2A4A;
+    --ink-soft:#4A5670;
+    --mustard:#D9A441;
+    --mustard-dark:#9C731E;
+    --line:#D8D0BE;
+    --success-bg:#E4EDE2;
+    --success-text:#2E5233;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+  }
+  .screen{
+    width:100%;
+    max-width:440px;
+    min-height:100vh;
+    padding:2rem 1.25rem 3rem;
+  }
+  .back-link{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-size:13px;
+    font-weight:500;
+    color:var(--ink-soft);
+    text-decoration:none;
+    margin-bottom:1.25rem;
+  }
+  .back-link svg{width:15px;height:15px;stroke:var(--ink-soft);}
+  .eyebrow{
+    font-size:11px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--mustard-dark);
+    font-weight:600;
+    margin:0 0 6px;
+  }
+  h1{
+    font-family:'Fraunces',serif;
+    font-size:22px;
+    font-weight:500;
+    line-height:1.3;
+    margin:0 0 1.25rem;
+  }
+  .summary{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:1.1rem 1.25rem;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:1.25rem;
+  }
+  .summary-plan{
+    font-family:'Fraunces',serif;
+    font-size:17px;
+    font-weight:500;
+    margin:0 0 2px;
+  }
+  .summary-desc{
+    font-size:12px;
+    color:var(--ink-soft);
+    margin:0;
+  }
+  .summary-price{
+    font-family:'Fraunces',serif;
+    font-size:19px;
+    font-weight:500;
+    white-space:nowrap;
+  }
+  .summary-price span{
+    font-family:'Inter',sans-serif;
+    font-size:11.5px;
+    font-weight:500;
+    color:var(--ink-soft);
+  }
+  .panel{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:1.25rem 1.35rem;
+  }
+  label{
+    display:block;
+    font-size:12px;
+    font-weight:600;
+    color:var(--ink-soft);
+    margin:0 0 6px;
+  }
+  .field{margin-bottom:1.1rem;}
+  .row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;}
+  input{
+    width:100%;
+    font-family:'Inter',sans-serif;
+    font-size:16px;
+    padding:11px 12px;
+    border-radius:8px;
+    border:1px solid var(--line);
+    background:var(--paper);
+    color:var(--ink);
+  }
+  input:focus-visible,button:focus-visible,a:focus-visible{
+    outline:2px solid var(--ink);
+    outline-offset:2px;
+  }
+  .field-error{
+    font-size:11.5px;
+    color:#B3441E;
+    margin:6px 0 0;
+    display:none;
+  }
+  .btn-primary{
+    width:100%;
+    font-family:'Inter',sans-serif;
+    font-size:15px;
+    font-weight:600;
+    padding:14px;
+    border-radius:10px;
+    border:none;
+    background:var(--ink);
+    color:var(--paper);
+    cursor:pointer;
+    margin-top:.25rem;
+  }
+  .btn-primary:active{transform:scale(.98);}
+  .fine-print{
+    text-align:center;
+    font-size:11.5px;
+    color:var(--ink-soft);
+    margin:14px 0 0;
+    line-height:1.5;
+  }
+  .free-note{
+    font-size:13px;
+    color:var(--ink-soft);
+    line-height:1.55;
+    margin:0 0 1.1rem;
+  }
+  .confirm-screen{display:none;text-align:center;padding:1rem 0;}
+  .confirm-badge{
+    width:52px;height:52px;
+    border-radius:50%;
+    background:var(--success-bg);
+    display:flex;align-items:center;justify-content:center;
+    margin:0 auto 1.1rem;
+  }
+  .confirm-badge svg{width:24px;height:24px;stroke:var(--success-text);}
+  .confirm-title{
+    font-family:'Fraunces',serif;
+    font-size:20px;
+    font-weight:500;
+    margin:0 0 8px;
+  }
+  .confirm-text{
+    font-size:13.5px;
+    color:var(--ink-soft);
+    line-height:1.6;
+    margin:0 0 1.5rem;
+  }
+</style>
+</head>
+<body>
+
+<div class="screen">
+
+  <a href="abonnement.html" class="back-link" id="back-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+    Retour aux formules
+  </a>
+
+  <p class="eyebrow">Paiement</p>
+  <h1>Confirmez votre formule</h1>
+
+  <div class="summary">
+    <div>
+      <p class="summary-plan" id="summary-plan-name">Solo</p>
+      <p class="summary-desc">Facturé chaque mois, résiliable à tout moment</p>
+    </div>
+    <p class="summary-price" id="summary-plan-price">19,99&nbsp;€<span> /mois</span></p>
+  </div>
+
+  <div class="panel" id="form-screen">
+    <p class="free-note" id="free-note" style="display:none;">L'offre Free ne nécessite aucun moyen de paiement. Confirmez pour l'activer sur votre compte.</p>
+    <p class="free-note" id="stripe-note" style="display:none;">Vous allez être redirigé·e vers Stripe pour saisir votre carte, en paiement sécurisé.</p>
+    <p class="field-error" id="stripe-error"></p>
+
+    <button class="btn-primary" id="btn-pay">Confirmer et payer</button>
+    <p class="fine-print" id="fine-print">Vous pouvez changer de formule ou résilier à tout moment depuis votre profil.</p>
+  </div>
+
+  <div class="panel confirm-screen" id="verify-screen">
+    <div class="confirm-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>
+    </div>
+    <p class="confirm-title">Vérification du paiement…</p>
+    <p class="confirm-text">Un instant, on confirme votre paiement auprès de Stripe.</p>
+  </div>
+
+  <div class="panel confirm-screen" id="confirm-screen">
+    <div class="confirm-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>
+    </div>
+    <p class="confirm-title">Abonnement activé</p>
+    <p class="confirm-text" id="confirm-text">Votre formule est maintenant active sur votre compte.</p>
+    <a href="profil-prestataire.html" class="btn-primary" id="confirm-cta" style="display:inline-block;width:auto;text-decoration:none;box-sizing:border-box;font-size:13.5px;padding:10px 20px;margin:0 auto;">Retour à mon profil</a>
+  </div>
+
+</div>
+
+<script>
+  if (!window.supabase) {
+    document.write('<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"><\/script>');
+  }
+</script>
+<script>
+  const SUPABASE_URL = 'https://thxbpjumbntiqwexsqut.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoeGJwanVtYm50aXF3ZXhzcXV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ1NzgyNzksImV4cCI6MjEwMDE1NDI3OX0.tpxE9V5oksnZM16-3xuch3hMqXSJSbmQTuP7NVlj_bY';
+  window.__sb = window.__sb || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const sb = window.__sb;
+  const SUPABASE_FUNCTIONS_URL = SUPABASE_URL + '/functions/v1';
+
+  const params = new URLSearchParams(window.location.search);
+  const sessionId = params.get('session_id');
+
+  // Le retour depuis Stripe Checkout ne renvoie que ?session_id=... : le plan
+  // et l'état "onboarding" d'origine sont perdus dans l'URL. On les sauvegarde
+  // dans sessionStorage juste avant la redirection vers Stripe, et on les
+  // restaure ici au retour (sessionStorage survit à la navigation externe).
+  const CHECKOUT_CONTEXT_KEY = 'creneau-checkout-context';
+  let onboarding = params.get('onboarding') === '1';
+
+  const PLANS = {
+    free:  { name: 'Free',  price: '0 €',      priceLabel: '0 € /mois' },
+    solo:  { name: 'Solo',  price: '19,99 €',  priceLabel: '19,99 € /mois' },
+    salon: { name: 'Salon', price: '39,99 €',  priceLabel: '39,99 € /mois' }
+  };
+
+  let planId = PLANS[params.get('plan')] ? params.get('plan') : 'solo';
+
+  if(sessionId){
+    try{
+      const saved = JSON.parse(sessionStorage.getItem(CHECKOUT_CONTEXT_KEY) || 'null');
+      if(saved && PLANS[saved.planId]){
+        planId = saved.planId;
+        onboarding = Boolean(saved.onboarding);
+      }
+    } catch(e){ /* contexte absent ou corrompu, on garde les valeurs par défaut */ }
+  }
+
+  const plan = PLANS[planId];
+
+  document.getElementById('summary-plan-name').textContent = plan.name;
+  document.getElementById('summary-plan-price').innerHTML = plan.price + '<span> /mois</span>';
+  document.title = 'Paiement · ' + plan.name;
+
+  const isFree = planId === 'free';
+  if(isFree){
+    document.getElementById('free-note').style.display = 'block';
+    document.getElementById('btn-pay').textContent = 'Activer l\u2019offre Free';
+  } else {
+    document.getElementById('stripe-note').style.display = 'block';
+    document.getElementById('btn-pay').textContent = 'Continuer vers le paiement Stripe';
+  }
+
+  // Limites réelles par formule (mêmes valeurs que profil-prestataire.html et
+  // espace-prestataire.html). "collaborators" inclut le titulaire du compte.
+  const PLAN_LIMITS = {
+    free:  { prestations: 1,        collaborators: 1 },
+    solo:  { prestations: 3,        collaborators: 1 },
+    salon: { prestations: Infinity, collaborators: 5 }
+  };
+
+  let currentUser = null;
+
+  // Applique les limites de la nouvelle formule directement en base : si le
+  // compte dépasse les nouvelles limites (ex. rétrogradation Solo -> Free),
+  // le surplus de prestations/collaborateurs est supprimé (on garde les plus
+  // anciens), et le message SMS personnalisé (réservé à Salon) est vidé.
+  async function applyPlanLimits(newPlanId){
+    const limits = PLAN_LIMITS[newPlanId];
+    let trimmed = false;
+
+    const { data: presta } = await sb
+      .from('prestations').select('id').eq('account_id', currentUser.id).order('created_at');
+    if(presta && limits.prestations !== Infinity && presta.length > limits.prestations){
+      const toRemove = presta.slice(limits.prestations).map(p => p.id);
+      await sb.from('prestations').delete().in('id', toRemove);
+      trimmed = true;
+    }
+
+    const { data: collabs } = await sb
+      .from('collaborators').select('id').eq('account_id', currentUser.id).order('created_at');
+    if(collabs && collabs.length > limits.collaborators){
+      const toRemove = collabs.slice(limits.collaborators).map(c => c.id);
+      await sb.from('collaborators').delete().in('id', toRemove);
+      trimmed = true;
+    }
+
+    if(newPlanId !== 'salon'){
+      const { data: profile } = await sb
+        .from('profiles').select('sms_template').eq('id', currentUser.id).single();
+      if(profile && profile.sms_template){
+        await sb.from('profiles').update({ sms_template: null }).eq('id', currentUser.id);
+        trimmed = true;
+      }
+    }
+
+    return trimmed;
+  }
+
+  async function activatePlan(){
+    sessionStorage.removeItem(CHECKOUT_CONTEXT_KEY);
+    await sb.from('subscriptions').upsert({ account_id: currentUser.id, plan: planId });
+    const trimmed = await applyPlanLimits(planId);
+
+    const cta = document.getElementById('confirm-cta');
+    if(onboarding){
+      document.getElementById('confirm-text').textContent =
+        'La formule ' + plan.name + ' est activée. Passons maintenant à vos prestations.';
+      cta.href = 'inscription-prestataire.html?resume=prestations';
+      cta.textContent = 'Continuer vers mes prestations';
+    } else {
+      document.getElementById('confirm-text').textContent = trimmed
+        ? 'La formule ' + plan.name + ' est maintenant active sur votre compte. Le nombre de prestations et/ou de collaborateurs dépassait cette formule : le surplus a été retiré.'
+        : 'La formule ' + plan.name + ' est maintenant active sur votre compte.';
+      cta.href = 'profil-prestataire.html';
+      cta.textContent = 'Retour à mon profil';
+    }
+
+    document.getElementById('form-screen').style.display = 'none';
+    document.getElementById('confirm-screen').style.display = 'block';
+    document.getElementById('back-link').style.display = 'none';
+  }
+
+  document.getElementById('btn-pay').addEventListener('click', async () => {
+    if(isFree){
+      await activatePlan();
+      return;
+    }
+
+    const btn = document.getElementById('btn-pay');
+    const errorEl = document.getElementById('stripe-error');
+    errorEl.style.display = 'none';
+    btn.disabled = true;
+    btn.textContent = 'Redirection en cours…';
+
+    sessionStorage.setItem(CHECKOUT_CONTEXT_KEY, JSON.stringify({ planId, onboarding }));
+
+    try{
+      const res = await fetch(SUPABASE_FUNCTIONS_URL + '/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ accountId: currentUser.id, plan: planId, email: currentUser.email || '' })
+      });
+      const data = await res.json();
+      if(!res.ok || !data.url){
+        throw new Error(data.error || 'Impossible de démarrer le paiement Stripe.');
+      }
+      window.location.href = data.url;
+    } catch(err){
+      errorEl.textContent = 'Erreur : ' + err.message + ' Vérifiez la configuration Stripe (secrets Supabase) et réessayez.';
+      errorEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Continuer vers le paiement Stripe';
+    }
+  });
+
+  // Retour depuis Stripe Checkout (success_url avec ?session_id=...) : on
+  // vérifie côté serveur que la session est bien payée avant d'activer quoi
+  // que ce soit.
+  async function verifyStripeReturn(){
+    document.getElementById('form-screen').style.display = 'none';
+    document.getElementById('verify-screen').style.display = 'block';
+    document.getElementById('back-link').style.display = 'none';
+
+    try{
+      const res = await fetch(SUPABASE_FUNCTIONS_URL + '/confirm-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId })
+      });
+      const data = await res.json();
+      if(!res.ok || !data.paid){
+        throw new Error(data.error || "Le paiement n'a pas pu être confirmé.");
+      }
+      await activatePlan();
+    } catch(err){
+      document.getElementById('verify-screen').style.display = 'none';
+      document.getElementById('form-screen').style.display = 'block';
+      document.getElementById('back-link').style.display = 'inline-flex';
+      const errorEl = document.getElementById('stripe-error');
+      errorEl.textContent = 'Erreur : ' + err.message;
+      errorEl.style.display = 'block';
+    }
+  }
+
+  async function init(){
+    const { data: { session } } = await sb.auth.getSession();
+    if(!session){
+      window.location.href = 'connexion-prestataire.html';
+      return;
+    }
+    currentUser = session.user;
+
+    if(sessionId){
+      verifyStripeReturn();
+    }
+  }
+  init();
+</script>
+
+</body>
+</html>

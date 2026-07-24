@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Abonnement mensuel · Espace prestataire</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F3EFE6;
+    --paper-2:#EAE4D6;
+    --ink:#1B2A4A;
+    --ink-soft:#4A5670;
+    --mustard:#D9A441;
+    --mustard-dark:#9C731E;
+    --line:#D8D0BE;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+  }
+  .screen{
+    width:100%;
+    max-width:460px;
+    min-height:100vh;
+    padding:2rem 1.25rem 3rem;
+  }
+  .back-link{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-size:13px;
+    font-weight:500;
+    color:var(--ink-soft);
+    text-decoration:none;
+    margin-bottom:1.25rem;
+  }
+  .back-link svg{width:15px;height:15px;stroke:var(--ink-soft);}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--ink);outline-offset:2px;}
+  header{margin-bottom:1.75rem;}
+  .eyebrow{
+    font-size:11px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--mustard-dark);
+    font-weight:600;
+    margin:0 0 6px;
+  }
+  h1{
+    font-family:'Fraunces',serif;
+    font-size:24px;
+    font-weight:500;
+    line-height:1.3;
+    margin:0 0 8px;
+  }
+  .subtitle{
+    font-size:13.5px;
+    color:var(--ink-soft);
+    line-height:1.5;
+    margin:0;
+  }
+  .plans{display:flex;flex-direction:column;gap:12px;}
+  .plan{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:1.25rem 1.35rem;
+    position:relative;
+  }
+  .plan.featured{
+    border-color:var(--ink);
+    box-shadow:0 0 0 1px var(--ink);
+  }
+  .plan-badge{
+    position:absolute;
+    top:-11px;
+    right:1.1rem;
+    background:var(--ink);
+    color:var(--paper);
+    font-size:10.5px;
+    font-weight:600;
+    letter-spacing:.03em;
+    text-transform:uppercase;
+    padding:4px 10px;
+    border-radius:20px;
+  }
+  .plan-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:4px;
+  }
+  .plan-name{
+    font-family:'Fraunces',serif;
+    font-size:17px;
+    font-weight:500;
+    margin:0;
+  }
+  .plan-price{
+    font-family:'Fraunces',serif;
+    font-size:20px;
+    font-weight:500;
+    white-space:nowrap;
+  }
+  .plan-price span{
+    font-family:'Inter',sans-serif;
+    font-size:12px;
+    font-weight:500;
+    color:var(--ink-soft);
+  }
+  .plan-desc{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    margin:0 0 1rem;
+    line-height:1.45;
+  }
+  .plan-features{
+    list-style:none;
+    margin:0 0 1.1rem;
+    padding:0;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .plan-features li{
+    display:flex;
+    align-items:flex-start;
+    gap:8px;
+    font-size:13px;
+    color:var(--ink);
+  }
+  .plan-features svg{
+    width:15px;height:15px;
+    stroke:var(--mustard-dark);
+    flex-shrink:0;
+    margin-top:2px;
+  }
+  .btn-plan{
+    display:block;
+    width:100%;
+    box-sizing:border-box;
+    text-align:center;
+    text-decoration:none;
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    font-weight:600;
+    padding:12px;
+    border-radius:9px;
+    border:1px solid var(--ink);
+    background:transparent;
+    color:var(--ink);
+    cursor:pointer;
+  }
+  .plan.featured .btn-plan{
+    background:var(--ink);
+    color:var(--paper);
+  }
+  .fine-print{
+    text-align:center;
+    font-size:12px;
+    color:var(--ink-soft);
+    margin:1.5rem 0 0;
+    line-height:1.5;
+  }
+</style>
+</head>
+<body>
+
+<div class="screen">
+
+  <a href="espace-prestataire.html" class="back-link" id="back-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+    <span id="back-link-label">Retour à mon espace</span>
+  </a>
+
+  <header>
+    <p class="eyebrow">Abonnement mensuel</p>
+    <h1>Une formule pour chaque taille d'activité</h1>
+    <p class="subtitle">Sans engagement, résiliable à tout moment. Le tarif affiché est facturé chaque mois.</p>
+  </header>
+
+  <div class="plans">
+
+    <div class="plan">
+      <div class="plan-top">
+        <p class="plan-name">Free</p>
+        <p class="plan-price">0&nbsp;€<span> /mois</span></p>
+      </div>
+      <p class="plan-desc">Pour découvrir la liste d'attente intelligente.</p>
+      <ul class="plan-features">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>1 collaborateur</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>20 SMS inclus par mois</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>1 prestation</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>Liste d'attente limitée à 20 personnes / mois</li>
+      </ul>
+      <a class="btn-plan" href="paiement.html?plan=free">Choisir Free</a>
+    </div>
+
+    <div class="plan featured">
+      <span class="plan-badge">Populaire</span>
+      <div class="plan-top">
+        <p class="plan-name">Solo</p>
+        <p class="plan-price">19,99&nbsp;€<span> /mois</span></p>
+      </div>
+      <p class="plan-desc">Pour un prestataire seul qui veut passer à l'échelle.</p>
+      <ul class="plan-features">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>Liste d'attente illimitée</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>200 SMS inclus, puis facturés à l'unité</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>3 prestations</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>1 collaborateur</li>
+      </ul>
+      <a class="btn-plan" href="paiement.html?plan=solo">Choisir Solo</a>
+    </div>
+
+    <div class="plan">
+      <div class="plan-top">
+        <p class="plan-name">Salon</p>
+        <p class="plan-price">39,99&nbsp;€<span> /mois</span></p>
+      </div>
+      <p class="plan-desc">Pour une équipe complète, plusieurs collaborateurs.</p>
+      <ul class="plan-features">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>Tout Solo, plus :</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>5 collaborateurs</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>Personnalisation du message SMS</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>SMS illimités</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>Statistiques globales et par collaborateur</li>
+      </ul>
+      <a class="btn-plan" href="paiement.html?plan=salon">Choisir Salon</a>
+    </div>
+
+  </div>
+
+  <p class="fine-print">Vous pouvez changer de formule ou résilier à tout moment depuis votre espace prestataire.</p>
+
+</div>
+
+<script>
+  // L'état "onboarding" est maintenant porté par l'URL (le compte réel existe
+  // déjà côté Supabase dès l'étape 1 de l'inscription) plutôt que par un
+  // brouillon en localStorage.
+  const params = new URLSearchParams(window.location.search);
+  const onboarding = params.get('onboarding') === '1';
+  const backLink = document.getElementById('back-link');
+  const backLabel = document.getElementById('back-link-label');
+  if(onboarding){
+    backLink.href = 'inscription-prestataire.html?resume=prestations';
+    backLabel.textContent = 'Retour à mes prestations';
+    // Fait suivre l'état onboarding jusqu'à paiement.html.
+    document.querySelectorAll('.btn-plan').forEach(a => {
+      a.href = a.getAttribute('href') + '&onboarding=1';
+    });
+  }
+  // Sinon : reste sur espace-prestataire.html (valeur par défaut du lien),
+  // pour un accès venu du profil ("Gérer mon abonnement").
+</script>
+
+</body>
+</html>

@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Créer mon compte prestataire</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F3EFE6;
+    --paper-2:#EAE4D6;
+    --ink:#1B2A4A;
+    --ink-soft:#4A5670;
+    --mustard:#D9A441;
+    --mustard-dark:#9C731E;
+    --line:#D8D0BE;
+    --success-bg:#E4EDE2;
+    --success-text:#2E5233;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+  }
+  .screen{
+    width:100%;
+    max-width:420px;
+    min-height:100vh;
+    padding:2rem 1.25rem 3rem;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:1.75rem;
+  }
+  .brand-mark{
+    width:38px;height:38px;border-radius:50%;
+    background:var(--ink);
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  .brand-mark svg{width:18px;height:18px;stroke:var(--paper);}
+  .brand-name{
+    font-family:'Fraunces',serif;
+    font-size:17px;
+    font-weight:500;
+    margin:0;
+  }
+
+  /* Progression */
+  .progress{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    margin-bottom:1.5rem;
+  }
+  .progress-step{
+    flex:1;
+    height:4px;
+    border-radius:2px;
+    background:var(--line);
+  }
+  .progress-step.done{background:var(--ink);}
+  .progress-label{
+    font-size:12px;
+    color:var(--ink-soft);
+    margin:0 0 1.25rem;
+  }
+
+  .ticket{
+    background:#fff;
+    border-radius:var(--radius);
+    border:1px solid var(--line);
+    box-shadow:0 1px 0 var(--line);
+    overflow:hidden;
+  }
+  .ticket-head{padding:1.5rem 1.5rem 1.1rem;}
+  .eyebrow{
+    font-size:11px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--mustard-dark);
+    font-weight:600;
+    margin:0 0 6px;
+  }
+  h1{
+    font-family:'Fraunces',serif;
+    font-size:22px;
+    font-weight:500;
+    line-height:1.25;
+    margin:0 0 6px;
+  }
+  .subtitle{
+    font-size:13px;
+    color:var(--ink-soft);
+    line-height:1.5;
+    margin:0;
+  }
+  .perforation{
+    position:relative;
+    height:0;
+    border-top:1.5px dashed var(--line);
+  }
+  .perforation::before,.perforation::after{
+    content:"";
+    position:absolute;
+    top:-9px;
+    width:18px;height:18px;
+    border-radius:50%;
+    background:var(--paper);
+  }
+  .perforation::before{left:-9px;}
+  .perforation::after{right:-9px;}
+  .ticket-body{padding:1.5rem;}
+
+  label{
+    display:block;
+    font-size:12px;
+    font-weight:600;
+    color:var(--ink-soft);
+    margin:0 0 6px;
+  }
+  .field{margin-bottom:1.05rem;}
+  .row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;}
+  input,select{
+    width:100%;
+    font-family:'Inter',sans-serif;
+    font-size:16px;
+    padding:11px 12px;
+    border-radius:8px;
+    border:1px solid var(--line);
+    background:var(--paper);
+    color:var(--ink);
+    appearance:none;
+    -webkit-appearance:none;
+  }
+  select{
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%234A5670' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;
+    background-position:right 12px center;
+    padding-right:34px;
+  }
+  input:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible{
+    outline:2px solid var(--ink);
+    outline-offset:2px;
+  }
+  .hint{
+    font-size:11.5px;
+    color:var(--ink-soft);
+    margin:6px 0 0;
+  }
+  .error{
+    font-size:11.5px;
+    color:#B3441E;
+    margin:6px 0 0;
+    display:none;
+  }
+
+  .btn-primary{
+    width:100%;
+    font-family:'Inter',sans-serif;
+    font-size:15px;
+    font-weight:600;
+    padding:14px;
+    border-radius:10px;
+    border:none;
+    background:var(--ink);
+    color:var(--paper);
+    cursor:pointer;
+    margin-top:.25rem;
+  }
+  .btn-primary:active{transform:scale(.98);}
+  .btn-secondary{
+    width:100%;
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    font-weight:600;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid var(--line);
+    background:#fff;
+    color:var(--ink);
+    cursor:pointer;
+    margin-top:8px;
+  }
+  .fine-print{
+    text-align:center;
+    font-size:11.5px;
+    color:var(--ink-soft);
+    margin:14px 0 0;
+    line-height:1.5;
+  }
+  .fine-print a{color:var(--ink);}
+
+  /* Étape prestations */
+  .presta-list{display:flex;flex-direction:column;gap:8px;margin-bottom:1rem;}
+  .presta-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:9px 12px;
+  }
+  .presta-row-main{flex:1;min-width:0;}
+  .presta-row-name{font-size:13.5px;margin:0;}
+  .presta-dur{font-size:12.5px;color:var(--ink-soft);white-space:nowrap;}
+  .presta-row-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+  .presta-edit-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    align-items:end;
+    width:100%;
+  }
+  .presta-edit-row .field{margin-bottom:0;}
+  .presta-edit-row .field:first-child{flex:1 1 100%;}
+  .presta-edit-row .field:not(:first-child){flex:1 1 90px;min-width:80px;}
+  .presta-edit-row .btn-icon{flex:0 0 44px;}
+  .presta-edit-row input[type=number]{width:100%;}
+  .presta-add-block{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:12px;
+    margin-bottom:1.1rem;
+  }
+  .presta-add-block > label{
+    font-size:11px;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    margin-bottom:8px;
+  }
+  .presta-add-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    align-items:end;
+  }
+  .presta-add-row .field{margin-bottom:0;}
+  .presta-add-row .field:first-child{flex:1 1 100%;}
+  .presta-add-row .field:not(:first-child){flex:1 1 90px;min-width:80px;}
+  .presta-add-row .btn-icon{flex:0 0 44px;}
+  .presta-add-row label{font-size:11px;margin-bottom:4px;}
+  .presta-add-row input[type=number]{width:100%;}
+  .btn-icon{
+    width:44px;height:44px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    border-radius:8px;
+    border:1px solid var(--line);
+    background:#fff;
+    color:var(--ink);
+    cursor:pointer;
+    padding:0;
+  }
+  .btn-icon svg{display:block;stroke:var(--ink);}
+  .icon-btn{background:none;border:none;padding:4px;cursor:pointer;line-height:0;border-radius:6px;}
+  .icon-btn svg{width:14px;height:14px;stroke:var(--ink-soft);}
+  .icon-btn:hover svg{stroke:var(--ink);}
+  .rm-btn{background:none;border:none;padding:2px;cursor:pointer;line-height:0;}
+  .rm-btn svg{width:14px;height:14px;stroke:var(--ink-soft);}
+  .presta-empty{
+    font-size:13px;
+    color:var(--ink-soft);
+    text-align:center;
+    padding:14px 10px;
+    border:1px dashed var(--line);
+    border-radius:10px;
+    margin-bottom:1rem;
+  }
+
+  /* Étape confirmation */
+  .confirm-badge{
+    width:52px;height:52px;
+    border-radius:50%;
+    background:var(--success-bg);
+    display:flex;align-items:center;justify-content:center;
+    margin:0 auto 1.1rem;
+  }
+  .confirm-badge svg{width:24px;height:24px;stroke:var(--success-text);}
+  .confirm-title{
+    font-family:'Fraunces',serif;
+    font-size:21px;
+    font-weight:500;
+    text-align:center;
+    margin:0 0 8px;
+  }
+  .confirm-text{
+    font-size:14px;
+    color:var(--ink-soft);
+    text-align:center;
+    line-height:1.6;
+    margin:0 0 1.5rem;
+  }
+  .step{display:none;}
+  .step.active{display:block;}
+</style>
+</head>
+<body>
+
+<div class="screen">
+
+  <div class="brand">
+    <p class="brand-name">Espace prestataire</p>
+  </div>
+
+  <div class="progress" id="progress">
+    <div class="progress-step done" data-step="1"></div>
+    <div class="progress-step" data-step="2"></div>
+    <div class="progress-step" data-step="3"></div>
+  </div>
+  <p class="progress-label" id="progress-label">Étape 1/3 · Votre compte</p>
+
+  <!-- Étape 1 : infos du compte -->
+  <div class="step active" id="step-1">
+    <div class="ticket">
+      <div class="ticket-head">
+        <p class="eyebrow">Bienvenue</p>
+        <h1>Créez votre compte prestataire</h1>
+        <p class="subtitle">Quelques informations pour configurer votre page de liste d'attente.</p>
+      </div>
+      <div class="perforation"></div>
+      <div class="ticket-body">
+        <div class="field">
+          <label for="salon-name">Nom de l'établissement</label>
+          <input id="salon-name" type="text" placeholder="Salon Léa">
+          <p class="error" id="err-name">Merci de renseigner le nom de l'établissement.</p>
+        </div>
+        <div class="field">
+          <label for="salon-type">Type d'activité</label>
+          <select id="salon-type">
+            <option>Coiffure</option>
+            <option>Institut de beauté</option>
+            <option>Ostéopathe</option>
+            <option>Kinésithérapeute</option>
+            <option>Coach sportif</option>
+            <option>Autre</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="salon-address">Adresse</label>
+          <input id="salon-address" type="text" placeholder="12 rue des Lilas, Besançon">
+          <p class="error" id="err-address">Merci de renseigner l'adresse.</p>
+        </div>
+        <div class="field">
+          <label for="salon-email">Adresse e-mail</label>
+          <input id="salon-email" type="email" placeholder="contact@salon-lea.fr">
+          <p class="error" id="err-email">Merci d'indiquer une adresse e-mail valide.</p>
+        </div>
+        <div class="field">
+          <label for="salon-password">Mot de passe</label>
+          <input id="salon-password" type="password" placeholder="8 caractères minimum">
+          <p class="error" id="err-password">Le mot de passe doit contenir au moins 8 caractères.</p>
+        </div>
+        <div class="field">
+          <label for="salon-phone">Téléphone (optionnel)</label>
+          <input id="salon-phone" type="tel" placeholder="06 00 00 00 00">
+        </div>
+        <button class="btn-primary" id="btn-step1-next">Continuer vers l'abonnement</button>
+        <p class="fine-print">Déjà un compte ? <a href="connexion-prestataire.html">Se connecter</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Étape 2 : prestations et équipe -->
+  <div class="step" id="step-2">
+    <div class="ticket">
+      <div class="ticket-head">
+        <p class="eyebrow">Configuration</p>
+        <h1>Vos prestations</h1>
+        <p class="subtitle">La durée sert à ne proposer un créneau libéré qu'aux clients dont la prestation peut y tenir.</p>
+        <p class="subtitle" id="presta-plan-hint" style="margin-top:4px;"></p>
+      </div>
+      <div class="perforation"></div>
+      <div class="ticket-body">
+        <div class="presta-list" id="presta-list"></div>
+        <p class="error" id="presta-limit-error" style="display:none;"></p>
+        <div class="presta-add-block" id="presta-add-block">
+          <label>Ajouter une prestation</label>
+          <div class="presta-add-row">
+            <div class="field">
+              <label for="new-presta-name">Nom</label>
+              <input id="new-presta-name" type="text" placeholder="Ex. Balayage">
+            </div>
+            <div class="field">
+              <label for="new-presta-dur">Durée</label>
+              <input id="new-presta-dur" type="number" min="5" step="5" placeholder="45 min">
+            </div>
+            <div class="field">
+              <label for="new-presta-price">Prix (€)</label>
+              <input id="new-presta-price" type="number" min="0" step="0.01" placeholder="80">
+            </div>
+            <button class="btn-icon" id="btn-add-presta" type="button" aria-label="Ajouter la prestation">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </button>
+          </div>
+        </div>
+        <p class="error" id="err-prestations" style="display:none;">Ajoutez au moins une prestation avant de continuer.</p>
+      </div>
+
+      <div class="perforation"></div>
+
+      <div class="ticket-body">
+        <p class="eyebrow">Équipe</p>
+        <h1 style="font-size:19px;">Votre équipe</h1>
+        <p class="subtitle" id="collab-plan-hint" style="margin-bottom:1rem;"></p>
+
+        <div class="field">
+          <label for="owner-name">Votre nom (titulaire du compte)</label>
+          <input id="owner-name" type="text" placeholder="Ex. Léa">
+          <p class="error" id="err-owner-name" style="display:none;">Merci d'indiquer votre nom.</p>
+        </div>
+
+        <div class="presta-list" id="collab-list"></div>
+        <p class="error" id="collab-limit-error" style="display:none;"></p>
+        <div class="presta-add-block" id="collab-add-block">
+          <label>Ajouter un collaborateur</label>
+          <div class="presta-add-row">
+            <div class="field">
+              <label for="new-collab-name">Nom</label>
+              <input id="new-collab-name" type="text" placeholder="Ex. Julie">
+            </div>
+            <div class="field">
+              <label for="new-collab-email">E-mail</label>
+              <input id="new-collab-email" type="email" placeholder="julie@exemple.fr">
+            </div>
+            <button class="btn-icon" id="btn-add-collab" type="button" aria-label="Ajouter le collaborateur">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </button>
+          </div>
+        </div>
+
+        <button class="btn-primary" id="btn-step2-next">Continuer</button>
+        <button class="btn-secondary" id="btn-step2-back">Retour</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Étape 3 : confirmation -->
+  <div class="step" id="step-3">
+    <div class="ticket">
+      <div class="ticket-body" style="padding-top:2rem;">
+        <div class="confirm-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 6L9 17l-5-5"></path>
+          </svg>
+        </div>
+        <p class="confirm-title">Votre compte est prêt</p>
+        <p class="confirm-text" id="confirm-text">Votre page de liste d'attente est configurée. Vous pouvez la partager à vos clients dès maintenant.</p>
+        <button class="btn-primary" id="btn-go-dashboard">Accéder à mon espace</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  if (!window.supabase) {
+    document.write('<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"><\/script>');
+  }
+</script>
+<script>
+(async function(){
+  const SUPABASE_URL = 'https://thxbpjumbntiqwexsqut.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoeGJwanVtYm50aXF3ZXhzcXV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ1NzgyNzksImV4cCI6MjEwMDE1NDI3OX0.tpxE9V5oksnZM16-3xuch3hMqXSJSbmQTuP7NVlj_bY';
+  window.__sb = window.__sb || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const sb = window.__sb;
+
+  let prestations = [];
+  let collaborators = [];
+  let editingIndex = null;
+  let currentUser = null;
+  let planId = 'free';
+
+  const PLAN_LABELS = { free: 'Free', solo: 'Solo', salon: 'Salon' };
+  const PLAN_LIMITS = { free: 1, solo: 3, salon: Infinity };
+  const PLAN_COLLAB_LIMITS = { free: 1, solo: 1, salon: 5 };
+
+  function formatPrice(value){
+    const price = Number(value || 0);
+    return price.toFixed(2).replace(/\.00$/, '') + ' €';
+  }
+
+  function escapeHtml(str){
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  const steps = [1, 2, 3];
+  let current = 1;
+
+  function goToStep(n){
+    current = n;
+    steps.forEach(s => {
+      document.getElementById('step-' + s).classList.toggle('active', s === n);
+    });
+    document.querySelectorAll('.progress-step').forEach(el => {
+      el.classList.toggle('done', Number(el.getAttribute('data-step')) <= n);
+    });
+    const labels = {
+      1: "Étape 1/3 · Votre compte",
+      2: "Étape 2/3 · Vos prestations",
+      3: "Étape 3/3 · C'est prêt"
+    };
+    document.getElementById('progress-label').textContent = labels[n];
+    window.scrollTo(0, 0);
+  }
+
+  function isValidEmail(v){
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  }
+
+  const errPrestations = document.getElementById('err-prestations');
+
+  function showPrestationsError(show){
+    errPrestations.style.display = show ? 'block' : 'none';
+  }
+
+  function renderPrestaLimit(){
+    const errorEl = document.getElementById('presta-limit-error');
+    const addBlock = document.getElementById('presta-add-block');
+    const prestaLimit = PLAN_LIMITS[planId];
+    const reached = prestations.length >= prestaLimit;
+    if(reached){
+      errorEl.innerHTML = 'Limite de prestations atteinte pour la formule ' + PLAN_LABELS[planId] + '.';
+      errorEl.style.display = 'block';
+      addBlock.style.opacity = '.5';
+      addBlock.style.pointerEvents = 'none';
+    } else {
+      errorEl.style.display = 'none';
+      addBlock.style.opacity = '1';
+      addBlock.style.pointerEvents = 'auto';
+    }
+  }
+
+  function renderPrestations(){
+    const list = document.getElementById('presta-list');
+    renderPrestaLimit();
+
+    if(!prestations.length){
+      list.innerHTML = '<p class="presta-empty">Aucune prestation pour l\u2019instant. Ajoutez-en une ci-dessous.</p>';
+      return;
+    }
+
+    list.innerHTML = prestations.map((p, i) => {
+      if(editingIndex === i){
+        return (
+          '<div class="presta-row">' +
+            '<div class="presta-edit-row">' +
+              '<div class="field">' +
+                '<label for="edit-presta-name-' + i + '">Nom</label>' +
+                '<input id="edit-presta-name-' + i + '" type="text" value="' + escapeHtml(p.name) + '">' +
+              '</div>' +
+              '<div class="field">' +
+                '<label for="edit-presta-dur-' + i + '">Durée</label>' +
+                '<input id="edit-presta-dur-' + i + '" type="number" min="5" step="5" value="' + p.dur + '">' +
+              '</div>' +
+              '<div class="field">' +
+                '<label for="edit-presta-price-' + i + '">Prix (€)</label>' +
+                '<input id="edit-presta-price-' + i + '" type="number" min="0" step="0.01" value="' + (p.price ?? 0) + '">' +
+              '</div>' +
+              '<button class="btn-icon edit-save-btn" data-i="' + i + '" type="button" aria-label="Enregistrer ' + escapeHtml(p.name) + '">' +
+                '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M20 6L9 17l-5-5"></path></svg>' +
+              '</button>' +
+            '</div>' +
+          '</div>'
+        );
+      }
+
+      return (
+        '<div class="presta-row">' +
+          '<div class="presta-row-main">' +
+            '<p class="presta-row-name">' + escapeHtml(p.name) + '</p>' +
+          '</div>' +
+          '<div class="presta-row-actions">' +
+            '<span class="presta-dur">' + p.dur + ' min · ' + formatPrice(p.price) + '</span>' +
+            '<button class="icon-btn edit-btn" data-i="' + i + '" type="button" aria-label="Modifier ' + escapeHtml(p.name) + '">' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z"></path></svg>' +
+            '</button>' +
+            '<button class="rm-btn" data-i="' + i + '" type="button" aria-label="Retirer ' + escapeHtml(p.name) + '">' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>' +
+            '</button>' +
+          '</div>' +
+        '</div>'
+      );
+    }).join('');
+
+    list.querySelectorAll('.rm-btn').forEach(b => {
+      b.addEventListener('click', () => {
+        prestations.splice(Number(b.getAttribute('data-i')), 1);
+        if(editingIndex !== null) editingIndex = null;
+        renderPrestations();
+      });
+    });
+
+    list.querySelectorAll('.edit-btn').forEach(b => {
+      b.addEventListener('click', () => {
+        editingIndex = Number(b.getAttribute('data-i'));
+        renderPrestations();
+        const input = document.getElementById('edit-presta-name-' + editingIndex);
+        if(input) input.focus();
+      });
+    });
+
+    list.querySelectorAll('.edit-save-btn').forEach(b => {
+      b.addEventListener('click', () => saveEdit(Number(b.getAttribute('data-i'))));
+    });
+
+    list.querySelectorAll('[id^="edit-presta-name-"], [id^="edit-presta-dur-"]').forEach(input => {
+      input.addEventListener('keydown', e => {
+        if(e.key === 'Enter'){
+          e.preventDefault();
+          const i = Number(input.id.split('-').pop());
+          saveEdit(i);
+        }
+        if(e.key === 'Escape'){
+          editingIndex = null;
+          renderPrestations();
+        }
+      });
+    });
+  }
+
+  function saveEdit(i){
+    const nameEl = document.getElementById('edit-presta-name-' + i);
+    const durEl = document.getElementById('edit-presta-dur-' + i);
+    const priceEl = document.getElementById('edit-presta-price-' + i);
+    if(!nameEl || !durEl || !priceEl) return;
+    const name = nameEl.value.trim();
+    const dur = Number(durEl.value);
+    const price = Number(priceEl.value || 0);
+    if(!name || !dur || dur < 5) return;
+    prestations[i] = { ...prestations[i], name, dur, price };
+    editingIndex = null;
+    renderPrestations();
+  }
+
+  function addPrestation(){
+    const prestaLimit = PLAN_LIMITS[planId];
+    if(prestations.length >= prestaLimit){
+      renderPrestaLimit();
+      return;
+    }
+    const nameEl = document.getElementById('new-presta-name');
+    const durEl = document.getElementById('new-presta-dur');
+    const priceEl = document.getElementById('new-presta-price');
+    if(!nameEl.value.trim() || !durEl.value) return;
+    prestations.push({ name: nameEl.value.trim(), dur: Number(durEl.value), price: Number(priceEl.value || 0) });
+    nameEl.value = '';
+    durEl.value = '';
+    priceEl.value = '';
+    showPrestationsError(false);
+    renderPrestations();
+    nameEl.focus();
+  }
+
+  document.getElementById('btn-add-presta').addEventListener('click', addPrestation);
+  ['new-presta-name', 'new-presta-dur', 'new-presta-price'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', e => {
+      if(e.key === 'Enter'){
+        e.preventDefault();
+        addPrestation();
+      }
+    });
+  });
+
+  function renderCollaborators(){
+    const list = document.getElementById('collab-list');
+    const errorEl = document.getElementById('collab-limit-error');
+    const addBlock = document.getElementById('collab-add-block');
+    const collabLimit = PLAN_COLLAB_LIMITS[planId];
+    const ownerName = document.getElementById('owner-name').value.trim();
+    const total = 1 + collaborators.length; // +1 pour le titulaire du compte
+    const reached = total >= collabLimit;
+
+    const ownerRow =
+      '<div class="presta-row">' +
+        '<div style="min-width:0;">' +
+          '<p class="presta-row-name">' + escapeHtml(ownerName || 'Vous') + '</p>' +
+        '</div>' +
+        '<div class="presta-row-actions">' +
+          '<span class="badge" style="background:var(--paper-2);color:var(--ink-soft);font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;">Vous</span>' +
+        '</div>' +
+      '</div>';
+
+    list.innerHTML = ownerRow + collaborators.map((c, i) => (
+      '<div class="presta-row">' +
+        '<div style="min-width:0;">' +
+          '<p class="presta-row-name">' + escapeHtml(c.name) + '</p>' +
+        '</div>' +
+        '<div class="presta-row-actions">' +
+          (c.email ? '<span class="presta-dur">' + escapeHtml(c.email) + '</span>' : '') +
+          '<button class="rm-btn" data-i="' + i + '" type="button" aria-label="Retirer ' + escapeHtml(c.name) + '">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>' +
+          '</button>' +
+        '</div>' +
+      '</div>'
+    )).join('');
+
+    list.querySelectorAll('.rm-btn').forEach(b => {
+      b.addEventListener('click', () => {
+        collaborators.splice(Number(b.getAttribute('data-i')), 1);
+        renderCollaborators();
+      });
+    });
+
+    if(reached){
+      errorEl.innerHTML = collaborators.length === 0 && collabLimit === 1
+        ? 'Votre formule ' + PLAN_LABELS[planId] + ' ne permet pas d\u2019ajouter de collaborateur.'
+        : 'Limite de collaborateurs atteinte pour la formule ' + PLAN_LABELS[planId] + '.';
+      errorEl.style.display = 'block';
+      addBlock.style.opacity = '.5';
+      addBlock.style.pointerEvents = 'none';
+    } else {
+      errorEl.style.display = 'none';
+      addBlock.style.opacity = '1';
+      addBlock.style.pointerEvents = 'auto';
+    }
+  }
+
+  function addCollaborator(){
+    const collabLimit = PLAN_COLLAB_LIMITS[planId];
+    if(1 + collaborators.length >= collabLimit){
+      renderCollaborators();
+      return;
+    }
+    const nameEl = document.getElementById('new-collab-name');
+    const emailEl = document.getElementById('new-collab-email');
+    if(!nameEl.value.trim()) return;
+    const genCollabId = () => (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : 'collab-' + Date.now() + '-' + Math.random().toString(36).slice(2,8);
+    collaborators.push({ id: genCollabId(), name: nameEl.value.trim(), email: emailEl.value.trim() });
+    nameEl.value = '';
+    emailEl.value = '';
+    renderCollaborators();
+    nameEl.focus();
+  }
+
+  document.getElementById('btn-add-collab').addEventListener('click', addCollaborator);
+  document.getElementById('owner-name').addEventListener('input', () => {
+    renderCollaborators();
+    document.getElementById('err-owner-name').style.display = 'none';
+  });
+  ['new-collab-name', 'new-collab-email'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', e => {
+      if(e.key === 'Enter'){
+        e.preventDefault();
+        addCollaborator();
+      }
+    });
+  });
+
+  document.getElementById('btn-step2-back').addEventListener('click', () => goToStep(1));
+
+  // Écrit le profil, les prestations et l'équipe en base (remplace tout,
+  // même logique que profil-prestataire.html : plus simple et plus sûr
+  // qu'un diff ligne à ligne pour ce formulaire).
+  async function persistStep2(){
+    const ownerName = document.getElementById('owner-name').value.trim();
+
+    await sb.from('prestations').delete().eq('account_id', currentUser.id);
+    if(prestations.length){
+      await sb.from('prestations').insert(
+        prestations.map(p => ({ account_id: currentUser.id, name: p.name, duration_minutes: p.dur, price: p.price || 0 }))
+      );
+    }
+
+    await sb.from('collaborators').delete().eq('account_id', currentUser.id);
+    await sb.from('collaborators').insert([
+      { account_id: currentUser.id, name: ownerName || 'Titulaire' },
+      ...collaborators.map(c => ({ account_id: currentUser.id, name: c.name, email: c.email || null }))
+    ]);
+  }
+
+  document.getElementById('btn-step2-next').addEventListener('click', async () => {
+    const ownerNameOk = document.getElementById('owner-name').value.trim().length > 0;
+    document.getElementById('err-owner-name').style.display = ownerNameOk ? 'none' : 'block';
+
+    if(!prestations.length){
+      showPrestationsError(true);
+      return;
+    }
+    showPrestationsError(false);
+
+    if(!ownerNameOk) return;
+
+    const btn = document.getElementById('btn-step2-next');
+    btn.disabled = true;
+    btn.textContent = 'Enregistrement…';
+    try{
+      await persistStep2();
+      const name = document.getElementById('salon-name').value.trim() || 'votre établissement';
+      document.getElementById('confirm-text').textContent =
+        name + ' est configuré avec ' + prestations.length + ' prestation(s). Vous pouvez partager votre page de liste d\u2019attente dès maintenant.';
+      goToStep(3);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Continuer';
+    }
+  });
+
+  document.getElementById('btn-go-dashboard').addEventListener('click', () => {
+    window.location.href = 'espace-prestataire.html';
+  });
+
+  // ---- Étape 1 : création du compte (Supabase Auth) ----
+
+  function setStep1Error(message){
+    const el = document.getElementById('err-email');
+    el.textContent = message;
+    el.style.display = message ? 'block' : 'none';
+  }
+
+  document.getElementById('btn-step1-next').addEventListener('click', async () => {
+    const name = document.getElementById('salon-name').value.trim();
+    const type = document.getElementById('salon-type').value;
+    const address = document.getElementById('salon-address').value.trim();
+    const phone = document.getElementById('salon-phone').value.trim();
+    const email = document.getElementById('salon-email').value.trim();
+    const password = document.getElementById('salon-password').value;
+    const emailOk = isValidEmail(email);
+    const passwordOk = password.length >= 8;
+    const nameOk = Boolean(name);
+    const addressOk = Boolean(address);
+
+    document.getElementById('err-name').style.display = nameOk ? 'none' : 'block';
+    document.getElementById('err-address').style.display = addressOk ? 'none' : 'block';
+    setStep1Error(emailOk ? '' : "Merci d'indiquer une adresse e-mail valide.");
+    document.getElementById('err-password').style.display = passwordOk ? 'none' : 'block';
+
+    if(!nameOk || !addressOk || !emailOk || !passwordOk) return;
+
+    const btn = document.getElementById('btn-step1-next');
+    btn.disabled = true;
+    btn.textContent = 'Création du compte…';
+
+    const { data, error } = await sb.auth.signUp({ email, password });
+
+    if(error){
+      btn.disabled = false;
+      btn.textContent = "Continuer vers l'abonnement";
+      setStep1Error(
+        /already registered|already exists/i.test(error.message)
+          ? 'Un compte existe déjà avec cette adresse e-mail.'
+          : 'Erreur : ' + error.message
+      );
+      return;
+    }
+
+    // Anti-énumération Supabase : si l'e-mail existe déjà et que la
+    // confirmation par e-mail est activée, signUp() ne renvoie pas d'erreur
+    // mais data.user.identities est vide et aucune session n'est créée.
+    if(data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0){
+      btn.disabled = false;
+      btn.textContent = "Continuer vers l'abonnement";
+      setStep1Error('Un compte existe déjà avec cette adresse e-mail.');
+      return;
+    }
+
+    await sb.from('profiles').upsert({ id: data.user.id, name, type, address, phone });
+
+    if(!data.session){
+      // La confirmation par e-mail est activée sur ce projet Supabase : pas
+      // de session tant que le lien reçu par e-mail n'a pas été cliqué.
+      btn.disabled = false;
+      btn.textContent = "Continuer vers l'abonnement";
+      setStep1Error('Un e-mail de confirmation vous a été envoyé à ' + email + '. Cliquez sur le lien reçu, puis connectez-vous pour choisir votre formule.');
+      return;
+    }
+
+    window.location.href = 'abonnement.html?onboarding=1';
+  });
+
+  // ---- Reprise après paiement : ?resume=prestations ----
+
+  async function init(){
+    const params = new URLSearchParams(window.location.search);
+    const resuming = params.get('resume') === 'prestations';
+
+    if(!resuming) return; // affichage normal de l'étape 1
+
+    const { data: { session } } = await sb.auth.getSession();
+    if(!session){
+      window.location.href = 'connexion-prestataire.html';
+      return;
+    }
+    currentUser = session.user;
+
+    const [{ data: profileRow }, { data: prestaRows }, { data: collabRows }, { data: subRow }] = await Promise.all([
+      sb.from('profiles').select('*').eq('id', currentUser.id).single(),
+      sb.from('prestations').select('*').eq('account_id', currentUser.id).order('created_at'),
+      sb.from('collaborators').select('*').eq('account_id', currentUser.id).order('created_at'),
+      sb.from('subscriptions').select('plan').eq('account_id', currentUser.id).maybeSingle()
+    ]);
+
+    planId = PLAN_LIMITS[subRow && subRow.plan] ? subRow.plan : 'free';
+
+    if(profileRow){
+      document.getElementById('salon-name').value = profileRow.name || '';
+      document.getElementById('salon-type').value = profileRow.type || 'Coiffure';
+      document.getElementById('salon-address').value = profileRow.address || '';
+      document.getElementById('salon-phone').value = profileRow.phone || '';
+    }
+    document.getElementById('salon-email').value = currentUser.email || '';
+
+    if(prestaRows && prestaRows.length){
+      prestations = prestaRows.map(p => ({ name: p.name, dur: p.duration_minutes, price: p.price }));
+    }
+
+    const [ownerRow, ...restCollabRows] = collabRows || [];
+    if(ownerRow) document.getElementById('owner-name').value = ownerRow.name || '';
+    collaborators = restCollabRows.map(c => ({ id: c.id, name: c.name, email: c.email || '' }));
+
+    const prestaLimit = PLAN_LIMITS[planId];
+    document.getElementById('presta-plan-hint').textContent = prestaLimit === Infinity
+      ? 'Formule ' + PLAN_LABELS[planId] + ' choisie : prestations illimitées.'
+      : 'Formule ' + PLAN_LABELS[planId] + ' choisie : ' + prestaLimit + ' prestation' + (prestaLimit > 1 ? 's' : '') + ' maximum.';
+    const collabLimit = PLAN_COLLAB_LIMITS[planId];
+    document.getElementById('collab-plan-hint').textContent =
+      'Formule ' + PLAN_LABELS[planId] + ' : ' + collabLimit + ' collaborateur' + (collabLimit > 1 ? 's' : '') + ' maximum, vous inclus.';
+
+    renderPrestations();
+    renderCollaborators();
+    goToStep(2);
+  }
+
+  renderPrestations();
+  renderCollaborators();
+  init();
+})();
+</script>
+
+</body>
+</html>

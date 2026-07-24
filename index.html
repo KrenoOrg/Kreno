@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Trouver un créneau plus tôt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F3EFE6;
+    --paper-2:#EAE4D6;
+    --ink:#1B2A4A;
+    --ink-soft:#4A5670;
+    --mustard:#D9A441;
+    --mustard-dark:#9C731E;
+    --line:#D8D0BE;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+  }
+  .screen{
+    width:100%;
+    max-width:420px;
+    min-height:100vh;
+    padding:2rem 1.25rem 3rem;
+  }
+  header{
+    background:var(--paper-2);
+    border-radius:var(--radius);
+    padding:1.1rem 1.2rem;
+    margin-bottom:1.1rem;
+  }
+  .eyebrow{
+    font-size:11px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--mustard-dark);
+    font-weight:600;
+    margin:0 0 6px;
+  }
+  h1{
+    font-family:'Fraunces',serif;
+    font-size:22px;
+    font-weight:600;
+    line-height:1.25;
+    margin:0 0 6px;
+  }
+  .subtitle{
+    font-size:13px;
+    color:var(--ink-soft);
+    line-height:1.5;
+    margin:0;
+  }
+  .search{
+    position:relative;
+    margin:0 0 1.1rem;
+  }
+  .search svg{
+    position:absolute;
+    left:13px;top:50%;
+    transform:translateY(-50%);
+    width:16px;height:16px;
+    stroke:var(--ink-soft);
+  }
+  .search input{
+    width:100%;
+    font-family:'Inter',sans-serif;
+    font-size:16px;
+    padding:12px 14px 12px 38px;
+    border-radius:10px;
+    border:1px solid var(--line);
+    background:#fff;
+    color:var(--ink);
+  }
+  .search input:focus-visible{outline:2px solid var(--ink);outline-offset:2px;}
+  button:focus-visible,a:focus-visible{outline:2px solid var(--ink);outline-offset:2px;}
+  .filters{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    padding-bottom:4px;
+    margin-bottom:1.1rem;
+  }
+  .filter{
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:12.5px;
+    font-weight:500;
+    padding:9px 14px;
+    min-height:38px;
+    border-radius:20px;
+    border:1px solid var(--line);
+    background:#fff;
+    color:var(--ink-soft);
+    cursor:pointer;
+  }
+  .filter svg{width:15px;height:15px;stroke:currentColor;flex-shrink:0;}
+  .filter.on{background:var(--ink);border-color:var(--ink);color:var(--paper);}
+  .list{display:flex;flex-direction:column;gap:12px;}
+  .card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:1.1rem 1.2rem;
+    display:flex;
+    gap:12px;
+    text-decoration:none;
+    color:inherit;
+  }
+  .avatar{
+    width:44px;height:44px;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  .avatar svg{width:20px;height:20px;}
+  .card-body{flex:1;min-width:0;}
+  .card-name{
+    font-family:'Fraunces',serif;
+    font-size:16px;
+    font-weight:600;
+    margin:0;
+  }
+  .card-type{
+    font-size:12px;
+    color:var(--ink-soft);
+    margin:2px 0 8px;
+  }
+  .badge{
+    font-size:11px;
+    font-weight:600;
+    padding:3px 9px;
+    border-radius:20px;
+    background:var(--paper-2);
+    color:var(--ink-soft);
+    white-space:nowrap;
+  }
+  .badge.wait{
+    background:#FBEFDA;
+    color:var(--mustard-dark);
+  }
+  .arrow{
+    align-self:center;
+    width:16px;height:16px;
+    stroke:var(--ink-soft);
+    flex-shrink:0;
+  }
+  .idle,.empty{
+    background:#fff;
+    border:1px dashed var(--line);
+    border-radius:var(--radius);
+    padding:2rem 1.25rem;
+    text-align:center;
+  }
+  .idle svg,.empty svg{width:26px;height:26px;stroke:var(--mustard-dark);}
+  .idle p,.empty p{
+    font-size:13px;
+    color:var(--ink-soft);
+    line-height:1.5;
+    margin:10px 0 0;
+  }
+  .cta-card{
+    background:#fff;
+    border:1px dashed var(--line);
+    border-radius:var(--radius);
+    padding:1.25rem 1.1rem;
+    text-align:center;
+    margin-top:1.1rem;
+  }
+  .cta-card svg{width:24px;height:24px;stroke:var(--mustard-dark);}
+  .cta-card p.title{
+    font-family:'Fraunces',serif;
+    font-size:14.5px;
+    font-weight:600;
+    margin:8px 0 4px;
+  }
+  .cta-card p.desc{
+    font-size:12px;
+    color:var(--ink-soft);
+    line-height:1.5;
+    margin:0 0 12px;
+  }
+  .btn-dark{
+    display:inline-block;
+    font-family:'Inter',sans-serif;
+    font-size:12.5px;
+    font-weight:600;
+    padding:10px 18px;
+    border-radius:9px;
+    border:none;
+    background:var(--ink);
+    color:var(--paper);
+    text-decoration:none;
+  }
+  .btn-outline{
+    display:block;
+    width:100%;
+    box-sizing:border-box;
+    text-align:center;
+    font-family:'Inter',sans-serif;
+    font-size:13px;
+    font-weight:600;
+    padding:12px;
+    border-radius:9px;
+    border:1px solid var(--ink);
+    background:transparent;
+    color:var(--ink);
+    text-decoration:none;
+    margin-top:1rem;
+  }
+</style>
+</head>
+<body>
+
+<div class="screen">
+  <header>
+    <p class="eyebrow">Trouver un créneau</p>
+    <h1>Choisissez un prestataire</h1>
+    <p class="subtitle">Rejoignez sa liste d'attente et soyez prévenu·e par SMS dès qu'une place se libère.</p>
+  </header>
+
+  <div class="search">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+    <input type="text" id="search-input" placeholder="Nom, quartier..." autocomplete="off">
+  </div>
+
+  <div class="filters" id="filters"></div>
+
+  <div class="idle" id="idle">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+    <p>Tapez un nom ou un quartier, ou choisissez une catégorie pour voir les prestataires disponibles.</p>
+  </div>
+
+  <div class="list" id="list"></div>
+  <p class="empty" id="empty" style="display:none;">Aucun prestataire ne correspond à votre recherche.</p>
+
+  <div class="cta-card">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1-5h16l1 5"></path><path d="M4 9v10a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9"></path><path d="M9 21V13h6v8"></path></svg>
+    <p class="title">Vous êtes prestataire ?</p>
+    <p class="desc">Apparaissez ici et laissez vos clients rejoindre votre liste d'attente.</p>
+    <a class="btn-dark" href="inscription-prestataire.html">Créer mon compte</a>
+  </div>
+
+  <a class="btn-outline" href="connexion-prestataire.html">Se connecter</a>
+</div>
+
+<script>
+  if (!window.supabase) {
+    document.write('<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"><\/script>');
+  }
+</script>
+<script>
+(async function(){
+  const SUPABASE_URL = 'https://thxbpjumbntiqwexsqut.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoeGJwanVtYm50aXF3ZXhzcXV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ1NzgyNzksImV4cCI6MjEwMDE1NDI3OX0.tpxE9V5oksnZM16-3xuch3hMqXSJSbmQTuP7NVlj_bY';
+  window.__sb = window.__sb || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const sb = window.__sb;
+
+  const ICONS = {
+    scissors: '<circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" y1="4" x2="8.12" y2="15.88"></line><line x1="14.47" y1="14.48" x2="20" y2="20"></line><line x1="8.12" y1="8.12" x2="12" y2="12"></line>',
+    sparkles: '<path d="M12 3v4"></path><path d="M12 17v4"></path><path d="M3 12h4"></path><path d="M17 12h4"></path><path d="M5.6 5.6l2.8 2.8"></path><path d="M15.6 15.6l2.8 2.8"></path><path d="M18.4 5.6l-2.8 2.8"></path><path d="M8.4 15.6l-2.8 2.8"></path>',
+    heart: '<path d="M19.5 12.6L12 20l-7.5-7.4a5 5 0 1 1 7.5-6.5 5 5 0 1 1 7.5 6.5z"></path>',
+    store: '<path d="M3 9l1-5h16l1 5"></path><path d="M4 9v10a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9"></path><path d="M9 21V13h6v8"></path>'
+  };
+
+  function iconFor(type){
+    const t = (type || '').toLowerCase();
+    if(t.includes('coiff') || t.includes('barb')) return ICONS.scissors;
+    if(t.includes('esthé') || t.includes('esthe') || t.includes('ongle') || t.includes('beaut')) return ICONS.sparkles;
+    if(t.includes('bien') || t.includes('spa') || t.includes('massage')) return ICONS.heart;
+    return ICONS.store;
+  }
+
+  function colorsFor(type){
+    const t = (type || '').toLowerCase();
+    if(t.includes('coiff') || t.includes('barb')) return { bg:'#FBEFDA', fg:'#9C731E' };
+    if(t.includes('esthé') || t.includes('esthe') || t.includes('ongle') || t.includes('beaut')) return { bg:'#EAE4D6', fg:'#4A5670' };
+    if(t.includes('bien') || t.includes('spa') || t.includes('massage')) return { bg:'#FBEFDA', fg:'#9C731E' };
+    return { bg:'#EAE4D6', fg:'#4A5670' };
+  }
+
+  async function loadProviders(){
+    const { data, error } = await sb
+      .from('provider_directory')
+      .select('*')
+      .order('name');
+    if(error || !data) return [];
+    return data.map(p => ({
+      slug: p.id,        // uuid Supabase, utilisé tel quel dans liste-attente.html?salon=
+      name: p.name,
+      type: p.type || 'Autre',
+      zone: p.address || '',
+      wait: p.waiting_count
+    }));
+  }
+
+  const providers = await loadProviders();
+  const categories = [...new Set(providers.map(p => p.type))];
+  let activeFilter = 'Tous';
+
+  const filtersEl = document.getElementById('filters');
+  function renderFilters(){
+    filtersEl.innerHTML = '';
+    ['Tous', ...categories].forEach(c => {
+      const b = document.createElement('button');
+      b.className = 'filter' + (c === activeFilter ? ' on' : '');
+      b.innerHTML = (c !== 'Tous' ? '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + iconFor(c) + '</svg>' : '') + c;
+      b.addEventListener('click', () => {
+        activeFilter = c;
+        renderFilters();
+        render();
+      });
+      filtersEl.appendChild(b);
+    });
+  }
+  renderFilters();
+
+  const listEl = document.getElementById('list');
+  const emptyEl = document.getElementById('empty');
+  const idleEl = document.getElementById('idle');
+  const searchInput = document.getElementById('search-input');
+
+  function card(p){
+    const c = colorsFor(p.type);
+    return '<a class="card" href="liste-attente.html?salon=' + p.slug + '">' +
+      '<div class="avatar" style="background:' + c.bg + ';color:' + c.fg + ';"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + iconFor(p.type) + '</svg></div>' +
+      '<div class="card-body">' +
+        '<p class="card-name">' + p.name + '</p>' +
+        '<p class="card-type">' + p.type + (p.zone ? ' · ' + p.zone : '') + '</p>' +
+        (p.wait > 0
+          ? '<span class="badge wait">' + p.wait + ' en liste</span>'
+          : '<span class="badge">Liste vide</span>') +
+      '</div>' +
+      '<svg class="arrow" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>' +
+    '</a>';
+  }
+
+  function render(){
+    const q = searchInput.value.trim().toLowerCase();
+    const searching = q !== '' || activeFilter !== 'Tous';
+
+    if(!searching){
+      idleEl.style.display = 'block';
+      emptyEl.style.display = 'none';
+      listEl.innerHTML = '';
+      return;
+    }
+    idleEl.style.display = 'none';
+
+    const filtered = providers.filter(p => {
+      const matchesCat = activeFilter === 'Tous' || p.type === activeFilter;
+      const matchesQ = !q || p.name.toLowerCase().includes(q) || p.zone.toLowerCase().includes(q);
+      return matchesCat && matchesQ;
+    });
+
+    listEl.innerHTML = filtered.map(card).join('');
+    emptyEl.style.display = filtered.length ? 'none' : 'block';
+    emptyEl.textContent = providers.length
+      ? 'Aucun prestataire ne correspond à votre recherche.'
+      : "Aucun prestataire n'est encore inscrit. Revenez bientôt !";
+  }
+
+  searchInput.addEventListener('input', render);
+  render();
+})();
+</script>
+
+</body>
+</html>

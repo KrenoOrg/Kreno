@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Se connecter · Espace prestataire</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F3EFE6;
+    --paper-2:#EAE4D6;
+    --ink:#1B2A4A;
+    --ink-soft:#4A5670;
+    --mustard:#D9A441;
+    --mustard-dark:#9C731E;
+    --line:#D8D0BE;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+  }
+  .screen{
+    width:100%;
+    max-width:420px;
+    min-height:100vh;
+    padding:2rem 1.25rem 3rem;
+  }
+  .back-link{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-size:13px;
+    font-weight:500;
+    color:var(--ink-soft);
+    text-decoration:none;
+    margin-bottom:1.25rem;
+  }
+  .back-link svg{width:15px;height:15px;stroke:var(--ink-soft);}
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:1.75rem;
+  }
+  .brand-mark{
+    width:38px;height:38px;border-radius:50%;
+    background:var(--ink);
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  .brand-mark svg{width:18px;height:18px;stroke:var(--paper);}
+  .brand-name{
+    font-family:'Fraunces',serif;
+    font-size:19px;
+    font-weight:500;
+    margin:0;
+  }
+  .brand-sub{
+    font-size:12px;
+    color:var(--ink-soft);
+    margin:1px 0 0;
+  }
+  .ticket{
+    background:#fff;
+    border-radius:var(--radius);
+    border:1px solid var(--line);
+    box-shadow:0 1px 0 var(--line);
+    overflow:hidden;
+  }
+  .ticket-head{padding:1.5rem 1.5rem 1.25rem;}
+  .eyebrow{
+    font-size:11px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--mustard-dark);
+    font-weight:600;
+    margin:0 0 6px;
+  }
+  h1{
+    font-family:'Fraunces',serif;
+    font-size:24px;
+    font-weight:500;
+    line-height:1.25;
+    margin:0 0 .5rem;
+  }
+  .subtitle{
+    font-size:13px;
+    color:var(--ink-soft);
+    line-height:1.5;
+    margin:0;
+  }
+  .perforation{
+    position:relative;
+    height:0;
+    border-top:1.5px dashed var(--line);
+  }
+  .perforation::before,.perforation::after{
+    content:"";
+    position:absolute;
+    top:-9px;
+    width:18px;height:18px;
+    border-radius:50%;
+    background:var(--paper);
+  }
+  .perforation::before{left:-9px;}
+  .perforation::after{right:-9px;}
+  .ticket-body{padding:1.5rem;}
+  label{
+    display:block;
+    font-size:12px;
+    font-weight:600;
+    color:var(--ink-soft);
+    margin:0 0 6px;
+  }
+  .field{margin-bottom:1.1rem;}
+  input{
+    width:100%;
+    font-family:'Inter',sans-serif;
+    font-size:16px;
+    padding:11px 12px;
+    border-radius:8px;
+    border:1px solid var(--line);
+    background:var(--paper);
+    color:var(--ink);
+  }
+  input:focus-visible,button:focus-visible,a:focus-visible{
+    outline:2px solid var(--ink);
+    outline-offset:2px;
+  }
+  .field-error{
+    font-size:11.5px;
+    color:#B3441E;
+    margin:6px 0 0;
+    display:none;
+  }
+  .form-error{
+    font-size:12.5px;
+    color:#B3441E;
+    background:#FBEAE2;
+    border-radius:8px;
+    padding:10px 12px;
+    margin:0 0 1.1rem;
+    display:none;
+  }
+  .btn-primary{
+    width:100%;
+    font-family:'Inter',sans-serif;
+    font-size:15px;
+    font-weight:600;
+    padding:14px;
+    border-radius:10px;
+    border:none;
+    background:var(--ink);
+    color:var(--paper);
+    cursor:pointer;
+  }
+  .btn-primary:active{transform:scale(.98);}
+  .fine-print{
+    text-align:center;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    margin:1.25rem 0 0;
+    line-height:1.5;
+  }
+  .fine-print a{color:var(--ink);font-weight:600;text-decoration:none;}
+</style>
+</head>
+<body>
+
+<div class="screen">
+
+  <a href="index.html" class="back-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+    Retour à l'annuaire
+  </a>
+
+  <div class="brand">
+    <div class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="6" cy="6" r="3"></circle>
+        <circle cx="6" cy="18" r="3"></circle>
+        <line x1="20" y1="4" x2="8.12" y2="15.88"></line>
+        <line x1="14.47" y1="14.48" x2="20" y2="20"></line>
+        <line x1="8.12" y1="8.12" x2="12" y2="12"></line>
+      </svg>
+    </div>
+    <div>
+      <p class="brand-name">Espace prestataire</p>
+    </div>
+  </div>
+
+  <div class="ticket">
+    <div class="ticket-head">
+      <p class="eyebrow">Bon retour</p>
+      <h1>Connectez-vous</h1>
+      <p class="subtitle">Accédez à votre espace pour signaler un créneau libre et gérer votre liste d'attente.</p>
+    </div>
+
+    <div class="perforation"></div>
+
+    <div class="ticket-body">
+      <p class="form-error" id="form-error">E-mail ou mot de passe incorrect.</p>
+
+      <div class="field">
+        <label for="login-email">Adresse e-mail</label>
+        <input id="login-email" type="email" placeholder="vous@exemple.fr" autocomplete="email">
+        <p class="field-error" id="err-email">Merci d'indiquer une adresse e-mail valide.</p>
+      </div>
+
+      <div class="field">
+        <label for="login-password">Mot de passe</label>
+        <input id="login-password" type="password" placeholder="••••••••" autocomplete="current-password">
+        <p class="field-error" id="err-password">Merci de renseigner votre mot de passe.</p>
+      </div>
+
+      <button class="btn-primary" id="btn-login">Se connecter</button>
+
+      <p class="fine-print">Pas encore de compte ? <a href="inscription-prestataire.html">Créer votre compte</a></p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  if (!window.supabase) {
+    document.write('<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"><\/script>');
+  }
+</script>
+<script>
+  const SUPABASE_URL = 'https://thxbpjumbntiqwexsqut.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoeGJwanVtYm50aXF3ZXhzcXV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ1NzgyNzksImV4cCI6MjEwMDE1NDI3OX0.tpxE9V5oksnZM16-3xuch3hMqXSJSbmQTuP7NVlj_bY';
+  window.__sb = window.__sb || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const sb = window.__sb;
+
+  document.getElementById('btn-login').addEventListener('click', async () => {
+    const emailInput = document.getElementById('login-email');
+    const passwordInput = document.getElementById('login-password');
+    const email = emailInput.value.trim().toLowerCase();
+    const password = passwordInput.value;
+
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const passwordOk = password.length > 0;
+
+    document.getElementById('err-email').style.display = emailOk ? 'none' : 'block';
+    document.getElementById('err-password').style.display = passwordOk ? 'none' : 'block';
+    document.getElementById('form-error').style.display = 'none';
+
+    if(!emailOk || !passwordOk) return;
+
+    const btn = document.getElementById('btn-login');
+    btn.disabled = true;
+    btn.textContent = 'Connexion…';
+
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+
+    if(error){
+      btn.disabled = false;
+      btn.textContent = 'Se connecter';
+      document.getElementById('form-error').style.display = 'block';
+      return;
+    }
+
+    window.location.href = 'espace-prestataire.html';
+  });
+
+  ['login-email','login-password'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', e => {
+      if(e.key === 'Enter') document.getElementById('btn-login').click();
+    });
+  });
+</script>
+
+</body>
+</html>

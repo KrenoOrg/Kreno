@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mon profil · Espace prestataire</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F3EFE6;
+    --paper-2:#EAE4D6;
+    --ink:#1B2A4A;
+    --ink-soft:#4A5670;
+    --mustard:#D9A441;
+    --mustard-dark:#9C731E;
+    --line:#D8D0BE;
+    --success-bg:#E4EDE2;
+    --success-text:#2E5233;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+  }
+  .screen{
+    width:100%;
+    max-width:440px;
+    min-height:100vh;
+    padding:2rem 1.25rem 3rem;
+  }
+  .top-bar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:1.5rem;
+    gap:12px;
+  }
+  .back-link{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-size:13px;
+    font-weight:600;
+    color:var(--ink-soft);
+    text-decoration:none;
+  }
+  .back-link svg{width:16px;height:16px;stroke:var(--ink-soft);}
+  .back-link:hover{color:var(--ink);}
+  .page-title{
+    font-family:'Fraunces',serif;
+    font-size:20px;
+    font-weight:500;
+    margin:0;
+  }
+  .panel{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:1.15rem 1.25rem;
+    margin-bottom:1.25rem;
+  }
+  .panel-head{margin-bottom:1rem;}
+  .eyebrow{
+    font-size:11px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--mustard-dark);
+    font-weight:600;
+    margin:0 0 4px;
+  }
+  h2{
+    font-family:'Fraunces',serif;
+    font-size:18px;
+    font-weight:500;
+    margin:0 0 4px;
+  }
+  .panel-desc{
+    font-size:13px;
+    color:var(--ink-soft);
+    line-height:1.5;
+    margin:0;
+  }
+  .plan-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-top:.9rem;
+  }
+  .plan-current{
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .plan-badge{
+    font-family:'Fraunces',serif;
+    font-size:16px;
+    font-weight:500;
+    margin:0;
+  }
+  .plan-price-tag{
+    font-size:12px;
+    color:var(--ink-soft);
+  }
+  .btn-secondary-link{
+    font-family:'Inter',sans-serif;
+    font-size:13px;
+    font-weight:600;
+    padding:10px 16px;
+    border-radius:9px;
+    border:1px solid var(--ink);
+    background:transparent;
+    color:var(--ink);
+    text-decoration:none;
+    white-space:nowrap;
+  }
+  .btn-danger-link{
+    font-family:'Inter',sans-serif;
+    font-size:12.5px;
+    font-weight:600;
+    padding:0;
+    border:none;
+    background:none;
+    color:#B3441E;
+    text-decoration:underline;
+    cursor:pointer;
+    margin-top:.85rem;
+  }
+  label{
+    display:block;
+    font-size:11.5px;
+    font-weight:600;
+    color:var(--ink-soft);
+    margin:0 0 5px;
+  }
+  .field{margin-bottom:1rem;}
+  .field:last-child{margin-bottom:0;}
+  .row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;}
+  input,select{
+    width:100%;
+    font-family:'Inter',sans-serif;
+    font-size:16px;
+    padding:10px 12px;
+    border-radius:8px;
+    border:1px solid var(--line);
+    background:var(--paper);
+    color:var(--ink);
+    appearance:none;
+    -webkit-appearance:none;
+  }
+  select{
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%234A5670' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;
+    background-position:right 12px center;
+    padding-right:34px;
+  }
+  input:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible{
+    outline:2px solid var(--ink);
+    outline-offset:2px;
+  }
+  .hint{
+    font-size:11.5px;
+    color:var(--ink-soft);
+    margin:6px 0 0;
+  }
+  .presta-list{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
+  .presta-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:9px 12px;
+  }
+  .presta-row-name{font-size:13.5px;font-weight:600;margin:0;}
+  .presta-dur{font-size:12.5px;color:var(--ink-soft);white-space:nowrap;}
+  .presta-row-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+  .presta-edit-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    align-items:end;
+    width:100%;
+  }
+  .presta-edit-row .field{margin-bottom:0;}
+  .presta-edit-row .field:first-child{flex:1 1 100%;}
+  .presta-edit-row .field:not(:first-child){flex:1 1 90px;min-width:80px;}
+  .presta-edit-row .btn-icon{flex:0 0 44px;}
+  .presta-add-block{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:12px;
+  }
+  .presta-add-block > label{
+    font-size:11px;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    margin-bottom:8px;
+  }
+  .presta-add-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    align-items:end;
+  }
+  .presta-add-row .field{margin-bottom:0;}
+  .presta-add-row .field:first-child{flex:1 1 100%;}
+  .presta-add-row .field:not(:first-child){flex:1 1 90px;min-width:80px;}
+  .presta-add-row .btn-icon{flex:0 0 44px;}
+  .presta-add-row label{font-size:11px;margin-bottom:4px;}
+  .btn-icon{
+    width:44px;height:44px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:8px;
+    border:1px solid var(--line);
+    background:#fff;
+    cursor:pointer;
+    padding:0;
+  }
+  .btn-icon svg{display:block;stroke:var(--ink);}
+  .icon-btn{background:none;border:none;padding:4px;cursor:pointer;line-height:0;border-radius:6px;}
+  .icon-btn svg{width:14px;height:14px;stroke:var(--ink-soft);}
+  .rm-btn{background:none;border:none;padding:4px;cursor:pointer;line-height:0;}
+  .rm-btn svg{width:14px;height:14px;stroke:var(--ink-soft);}
+  .presta-empty{
+    font-size:13px;
+    color:var(--ink-soft);
+    text-align:center;
+    padding:14px 10px;
+    border:1px dashed var(--line);
+    border-radius:10px;
+    margin-bottom:12px;
+  }
+  .btn-primary{
+    width:100%;
+    font-family:'Inter',sans-serif;
+    font-size:15px;
+    font-weight:600;
+    padding:14px;
+    border-radius:10px;
+    border:none;
+    background:var(--ink);
+    color:var(--paper);
+    cursor:pointer;
+    margin-top:.25rem;
+  }
+  .btn-primary:active{transform:scale(.98);}
+  .toast{
+    display:none;
+    background:var(--success-bg);
+    color:var(--success-text);
+    font-size:13px;
+    font-weight:600;
+    text-align:center;
+    padding:10px 12px;
+    border-radius:10px;
+    margin-bottom:1rem;
+  }
+  .toast.visible{display:block;}
+</style>
+</head>
+<body>
+
+<div class="screen">
+
+  <div class="top-bar">
+    <a class="back-link" href="espace-prestataire.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+      Retour à l’espace
+    </a>
+    <p class="page-title">Mon profil</p>
+    <span style="width:52px;"></span>
+  </div>
+
+  <p class="toast" id="toast">Modifications enregistrées</p>
+
+  <div class="panel">
+    <div class="panel-head">
+      <p class="eyebrow">Établissement</p>
+      <h2>Informations générales</h2>
+      <p class="panel-desc">Ces informations apparaissent sur votre page de liste d'attente et dans les SMS envoyés à vos clients.</p>
+    </div>
+    <div class="field">
+      <label for="salon-name">Nom de l'établissement</label>
+      <input id="salon-name" type="text" placeholder="Salon Léa">
+    </div>
+    <div class="field">
+      <label for="salon-type">Type d'activité</label>
+      <select id="salon-type">
+        <option>Coiffure</option>
+        <option>Institut de beauté</option>
+        <option>Ostéopathe</option>
+        <option>Kinésithérapeute</option>
+        <option>Coach sportif</option>
+        <option>Autre</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="salon-address">Adresse</label>
+      <input id="salon-address" type="text" placeholder="12 rue des Lilas, Besançon">
+    </div>
+    <div class="field">
+      <label for="salon-email">Adresse e-mail</label>
+      <input id="salon-email" type="email" placeholder="contact@salon-lea.fr">
+      <p class="hint" id="err-salon-email" style="display:none;color:#B3441E;margin-top:6px;">Un compte existe déjà avec cette adresse e-mail.</p>
+    </div>
+    <div class="field">
+      <label for="salon-phone">Téléphone (optionnel)</label>
+      <input id="salon-phone" type="tel" placeholder="06 00 00 00 00">
+      <p class="hint">Affiché sur votre page publique pour que les clients puissent vous joindre.</p>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <p class="eyebrow">Catalogue</p>
+      <h2>Vos prestations</h2>
+      <p class="panel-desc">Utilisées pour le signalement de créneaux libres et l'inscription en liste d'attente. La durée détermine quels clients sont compatibles.</p>
+      <p class="hint" id="presta-usage" style="margin-top:8px;"></p>
+    </div>
+    <div class="presta-list" id="presta-list"></div>
+    <p class="hint" id="presta-limit-error" style="display:none;color:#B3441E;margin:0 0 12px;"></p>
+    <div class="presta-add-block" id="presta-add-block">
+      <label>Ajouter une prestation</label>
+      <div class="presta-add-row">
+        <div class="field">
+          <label for="new-presta-name">Nom</label>
+          <input id="new-presta-name" type="text" placeholder="Ex. Balayage">
+        </div>
+        <div class="field">
+          <label for="new-presta-dur">Durée</label>
+          <input id="new-presta-dur" type="number" min="5" step="5" placeholder="45">
+        </div>
+        <div class="field">
+          <label for="new-presta-price">Prix (€)</label>
+          <input id="new-presta-price" type="number" min="0" step="0.01" placeholder="80">
+        </div>
+        <button class="btn-icon" id="btn-add-presta" type="button" aria-label="Ajouter la prestation">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <p class="eyebrow">Équipe</p>
+      <h2>Collaborateurs</h2>
+      <p class="panel-desc">Les collaborateurs peuvent recevoir la même page de gestion pour signaler des créneaux libres. Vous (le titulaire du compte) comptez pour 1.</p>
+      <p class="hint" id="collab-usage" style="margin-top:8px;"></p>
+    </div>
+    <div class="field">
+      <label for="owner-name">Votre nom (titulaire du compte)</label>
+      <input id="owner-name" type="text" placeholder="Ex. Léa">
+    </div>
+    <div class="presta-list" id="collab-list"></div>
+    <p class="hint" id="collab-limit-error" style="display:none;color:#B3441E;margin:0 0 12px;"></p>
+    <div class="presta-add-block" id="collab-add-block">
+      <label>Ajouter un collaborateur</label>
+      <div class="presta-add-row">
+        <div class="field">
+          <label for="new-collab-name">Nom</label>
+          <input id="new-collab-name" type="text" placeholder="Ex. Julie">
+        </div>
+        <div class="field">
+          <label for="new-collab-email">E-mail</label>
+          <input id="new-collab-email" type="email" placeholder="julie@exemple.fr">
+        </div>
+        <button class="btn-icon" id="btn-add-collab" type="button" aria-label="Ajouter le collaborateur">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <p class="eyebrow">Notifications</p>
+      <h2>Message SMS</h2>
+      <p class="panel-desc" id="sms-template-desc">Personnalisez le SMS envoyé à vos clients quand un créneau se libère. Réservé à la formule Salon.</p>
+    </div>
+    <div class="field">
+      <label for="sms-template">Modèle de message</label>
+      <textarea id="sms-template" rows="3" placeholder="{salon} · Un créneau vient de se libérer {date} à {heure} pour {prestation}{collaborateur}. Confirmez ici : {lien}" style="width:100%;font-family:'Inter',sans-serif;font-size:14px;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink);resize:vertical;"></textarea>
+      <p class="hint" style="margin-top:8px;">Variables disponibles : <code>{salon}</code>, <code>{date}</code>, <code>{heure}</code>, <code>{prestation}</code>, <code>{collaborateur}</code>, <code>{lien}</code>. Laissez vide pour utiliser le message par défaut.</p>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <p class="eyebrow">Facturation</p>
+      <h2>Abonnement</h2>
+      <p class="panel-desc">Votre formule détermine le nombre de SMS inclus, de collaborateurs et de prestations disponibles.</p>
+    </div>
+    <div class="plan-row">
+      <div class="plan-current">
+        <p class="plan-badge" id="current-plan-name">Free</p>
+        <span class="plan-price-tag" id="current-plan-price">0 € /mois</span>
+      </div>
+      <a class="btn-secondary-link" href="abonnement.html">Gérer mon abonnement</a>
+    </div>
+    <p class="hint" id="sms-usage" style="margin-top:10px;"></p>
+    <button class="btn-danger-link" id="btn-cancel-plan" type="button" style="display:none;">Résilier mon abonnement et repasser à Free</button>
+  </div>
+
+  <button class="btn-primary" id="btn-save">Enregistrer les modifications</button>
+
+  <div class="panel" style="margin-top:1.75rem;">
+    <div class="panel-head">
+      <p class="eyebrow">Session</p>
+      <h2>Se déconnecter</h2>
+      <p class="panel-desc">Ferme votre session sur cet appareil. Votre compte et toutes vos données restent intacts.</p>
+    </div>
+    <button class="btn-secondary-link" id="btn-logout" type="button" style="cursor:pointer;">Se déconnecter</button>
+  </div>
+
+  <div class="panel" style="border-color:#E3B9A8;margin-top:1.25rem;">
+    <div class="panel-head">
+      <p class="eyebrow" style="color:#B3441E;">Zone dangereuse</p>
+      <h2>Supprimer mon compte</h2>
+      <p class="panel-desc">Supprime définitivement votre compte, votre liste d'attente, vos prestations, vos collaborateurs et votre historique. Cette action est irréversible.</p>
+    </div>
+    <button class="btn-danger-link" id="btn-delete-account" type="button">Supprimer définitivement mon compte</button>
+  </div>
+
+</div>
+
+<div id="delete-modal" style="display:none;position:fixed;inset:0;background:rgba(27,42,74,.45);z-index:50;align-items:center;justify-content:center;padding:1.25rem;">
+  <div style="background:#fff;border-radius:14px;max-width:380px;width:100%;padding:1.5rem;box-sizing:border-box;">
+    <p style="font-family:'Fraunces',serif;font-size:18px;font-weight:500;margin:0 0 8px;">Confirmer la suppression</p>
+    <p style="font-size:13.5px;color:var(--ink-soft);line-height:1.5;margin:0 0 1rem;">Cette action supprime définitivement votre compte et toutes ses données. Tapez <b>SUPPRIMER</b> pour confirmer.</p>
+    <input id="delete-confirm-input" type="text" style="width:100%;box-sizing:border-box;font-family:'Inter',sans-serif;font-size:16px;padding:11px 12px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink);margin-bottom:1rem;">
+    <p id="delete-error" style="display:none;font-size:12.5px;color:#B3441E;background:#FBEAE2;border-radius:8px;padding:10px 12px;margin:0 0 1rem;"></p>
+    <div style="display:flex;gap:10px;">
+      <button id="delete-cancel" type="button" style="flex:1;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;padding:11px;border-radius:9px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;">Annuler</button>
+      <button id="delete-confirm" type="button" style="flex:1;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;padding:11px;border-radius:9px;border:none;background:#B3441E;color:#fff;cursor:pointer;">Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+(async function(){
+  const HISTORY_PREFIX = 'creneau-history:';
+
+  const SUPABASE_URL = 'https://thxbpjumbntiqwexsqut.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoeGJwanVtYm50aXF3ZXhzcXV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ1NzgyNzksImV4cCI6MjEwMDE1NDI3OX0.tpxE9V5oksnZM16-3xuch3hMqXSJSbmQTuP7NVlj_bY';
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const SUPABASE_FUNCTIONS_URL = SUPABASE_URL + '/functions/v1';
+
+  const { data: { session } } = await sb.auth.getSession();
+  if(!session){
+    window.location.href = 'connexion-prestataire.html';
+    return;
+  }
+  const currentUser = session.user;
+  const currentAccountId = currentUser.id; // alias : conserve le code existant basé sur cet id
+
+  const [{ data: profileRow }, { data: prestaRows }, { data: collabRows }, { data: subRow }] = await Promise.all([
+    sb.from('profiles').select('*').eq('id', currentUser.id).single(),
+    sb.from('prestations').select('*').eq('account_id', currentUser.id).order('created_at'),
+    sb.from('collaborators').select('*').eq('account_id', currentUser.id).order('created_at'),
+    sb.from('subscriptions').select('plan').eq('account_id', currentUser.id).maybeSingle()
+  ]);
+
+  // Remplace toute la liste des prestations en base (plus simple et plus sûr
+  // qu'un diff ligne à ligne pour ce formulaire).
+  async function persistPrestations(){
+    await sb.from('prestations').delete().eq('account_id', currentUser.id);
+    if(prestations.length){
+      await sb.from('prestations').insert(
+        prestations.map(p => ({ account_id: currentUser.id, name: p.name, duration_minutes: p.dur, price: p.price || 0 }))
+      );
+    }
+  }
+
+  let prestations = (prestaRows && prestaRows.length)
+    ? prestaRows.map(p => ({ name: p.name, dur: p.duration_minutes, price: p.price }))
+    : [];
+  let editingIndex = null;
+
+  const [ownerRow, ...restCollabRows] = collabRows || [];
+  const account = {
+    name: profileRow ? profileRow.name : '',
+    type: profileRow ? profileRow.type : 'Coiffure',
+    address: profileRow ? profileRow.address : '',
+    phone: profileRow ? profileRow.phone : '',
+    email: currentUser.email || '',
+    plan: subRow ? subRow.plan : 'free',
+    smsTemplate: profileRow ? (profileRow.sms_template || '') : '',
+    ownerName: ownerRow ? ownerRow.name : '',
+    collaborators: restCollabRows.map(c => ({ id: c.id, name: c.name, email: c.email || '' }))
+  };
+
+  document.getElementById('salon-name').value = account.name || '';
+  document.getElementById('salon-type').value = account.type || 'Coiffure';
+  document.getElementById('salon-address').value = account.address || '';
+  document.getElementById('salon-email').value = account.email || '';
+  document.getElementById('salon-phone').value = account.phone || '';
+  document.getElementById('owner-name').value = account.ownerName || '';
+
+  let collaborators = account.collaborators;
+
+  const PLAN_LABELS = {
+    free:  { name: 'Free',  price: '0 € /mois' },
+    solo:  { name: 'Solo',  price: '19,99 € /mois' },
+    salon: { name: 'Salon', price: '39,99 € /mois' }
+  };
+  // Limites réelles appliquées selon la formule active.
+  // "collaborators" compte le titulaire du compte (+1 implicite).
+  const PLAN_LIMITS = {
+    free:  { prestations: 1,        collaborators: 1 },
+    solo:  { prestations: 3,        collaborators: 1 },
+    salon: { prestations: Infinity, collaborators: 5 }
+  };
+  const planId = PLAN_LIMITS[account.plan] ? account.plan : 'free';
+  const currentPlan = PLAN_LABELS[planId];
+  document.getElementById('current-plan-name').textContent = currentPlan.name;
+  document.getElementById('current-plan-price').textContent = currentPlan.price;
+
+  // Quota SMS de la formule (mêmes règles que espace-prestataire.html) :
+  // Free est plafonné (bloqué au-delà), Solo facture au-delà de l'inclus,
+  // Salon est illimité.
+  const SMS_LIMITS = {
+    free:  { smsIncluded: 20,       smsHardCap: true },
+    solo:  { smsIncluded: 200,      smsHardCap: false },
+    salon: { smsIncluded: Infinity, smsHardCap: false }
+  };
+  const SMS_USAGE_PREFIX = 'creneau-sms-usage:';
+  function currentMonthKey(){ return new Date().toISOString().slice(0, 7); }
+  function readSmsUsage(id){
+    const raw = JSON.parse(localStorage.getItem(SMS_USAGE_PREFIX + id) || 'null');
+    const month = currentMonthKey();
+    if(!raw || raw.month !== month) return { month, count: 0 };
+    return raw;
+  }
+
+  function renderSmsUsage(){
+    const limits = SMS_LIMITS[planId];
+    const usage = readSmsUsage(currentAccountId);
+    const el = document.getElementById('sms-usage');
+    if(limits.smsIncluded === Infinity){
+      el.textContent = usage.count + ' SMS envoyés ce mois-ci · illimité (formule ' + currentPlan.name + ')';
+    } else if(limits.smsHardCap){
+      const remaining = Math.max(0, limits.smsIncluded - usage.count);
+      el.textContent = usage.count + ' / ' + limits.smsIncluded + ' SMS utilisés ce mois-ci (formule ' + currentPlan.name + ')' +
+        (remaining === 0 ? ' · quota atteint' : '');
+      el.style.color = remaining === 0 ? '#B3441E' : '';
+    } else {
+      const extra = Math.max(0, usage.count - limits.smsIncluded);
+      el.textContent = usage.count + ' / ' + limits.smsIncluded + ' SMS inclus utilisés ce mois-ci (formule ' + currentPlan.name + ')' +
+        (extra > 0 ? ' · ' + extra + ' facturé(s) en supplément' : '');
+    }
+  }
+  renderSmsUsage();
+
+  // Résiliation : repasse immédiatement en Free et applique les limites de
+  // cette formule (retire le surplus de prestations/collaborateurs, comme
+  // pour tout changement de formule depuis paiement.html).
+  const cancelBtn = document.getElementById('btn-cancel-plan');
+  if(planId !== 'free'){
+    cancelBtn.style.display = 'inline-block';
+    cancelBtn.addEventListener('click', async () => {
+      const ok = confirm('Résilier votre abonnement ? Vous repasserez immédiatement à la formule Free : le surplus de prestations, de collaborateurs et le message SMS personnalisé seront retirés.');
+      if(!ok) return;
+
+      const freeLimits = PLAN_LIMITS.free;
+      await sb.from('subscriptions').upsert({ account_id: currentUser.id, plan: 'free' });
+
+      if(freeLimits.prestations !== Infinity && prestations.length > freeLimits.prestations){
+        prestations.splice(freeLimits.prestations);
+        await persistPrestations();
+      }
+
+      const maxCollaborators = Math.max(0, freeLimits.collaborators - 1);
+      if(collaborators.length > maxCollaborators){
+        collaborators.splice(maxCollaborators);
+      }
+      await sb.from('profiles').update({ sms_template: null }).eq('id', currentUser.id);
+      await persistCollaboratorsRows();
+      window.location.reload();
+    });
+  }
+
+  const smsTemplateInput = document.getElementById('sms-template');
+  smsTemplateInput.value = account.smsTemplate || '';
+  if(planId !== 'salon'){
+    smsTemplateInput.disabled = true;
+    smsTemplateInput.placeholder = 'Fonctionnalité réservée à la formule Salon.';
+    document.getElementById('sms-template-desc').innerHTML =
+      'Personnalisez le SMS envoyé à vos clients quand un créneau se libère. <a href="abonnement.html">Passez à Salon</a> pour l\u2019activer.';
+  }
+
+
+  function escapeHtml(str){
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function formatPrice(value){
+    const price = Number(value || 0);
+    return price.toFixed(2).replace(/\.00$/, '') + ' €';
+  }
+
+  // Remplace toute la liste des collaborateurs en base (titulaire inclus en
+  // 1re ligne), même logique que persistPrestations : plus simple et sûr
+  // qu'un diff ligne à ligne pour ce formulaire.
+  async function persistCollaboratorsRows(){
+    const ownerName = document.getElementById('owner-name').value.trim();
+    await sb.from('collaborators').delete().eq('account_id', currentUser.id);
+    await sb.from('collaborators').insert([
+      { account_id: currentUser.id, name: ownerName || 'Titulaire' },
+      ...collaborators.map(c => ({ account_id: currentUser.id, name: c.name, email: c.email || null }))
+    ]);
+  }
+
+  async function saveAll(showToast){
+    const email = document.getElementById('salon-email').value.trim();
+    const errEmailEl = document.getElementById('err-salon-email');
+    errEmailEl.style.display = 'none';
+
+    const name = document.getElementById('salon-name').value.trim();
+    const profileFields = {
+      id: currentUser.id,
+      name,
+      type: document.getElementById('salon-type').value,
+      address: document.getElementById('salon-address').value.trim(),
+      phone: document.getElementById('salon-phone').value.trim()
+    };
+    // Le message SMS personnalisé n'est modifiable (et donc écrit) que sur la
+    // formule Salon : sur les autres formules, on ne touche pas cette
+    // colonne pour ne pas écraser une valeur existante avec le champ
+    // désactivé affiché à l'écran.
+    if(planId === 'salon'){
+      profileFields.sms_template = smsTemplateInput.value.trim() || null;
+    }
+
+    await sb.from('profiles').upsert(profileFields);
+
+    if(email && email !== (currentUser.email || '')){
+      const { error: emailError } = await sb.auth.updateUser({ email });
+      if(emailError){
+        errEmailEl.textContent = 'Erreur e-mail : ' + emailError.message;
+        errEmailEl.style.display = 'block';
+      }
+    }
+
+    await persistPrestations();
+    await persistCollaboratorsRows();
+
+    document.title = (name || 'Mon profil') + ' · Espace prestataire';
+    if(showToast){
+      const toast = document.getElementById('toast');
+      toast.classList.add('visible');
+      setTimeout(() => toast.classList.remove('visible'), 2500);
+    }
+  }
+
+  function renderPrestaLimit(){
+    const limit = PLAN_LIMITS[planId].prestations;
+    const usageEl = document.getElementById('presta-usage');
+    const addBlock = document.getElementById('presta-add-block');
+    const reached = limit !== Infinity && prestations.length >= limit;
+
+    usageEl.textContent = limit === Infinity
+      ? prestations.length + ' prestation(s) · illimité (formule ' + currentPlan.name + ')'
+      : prestations.length + ' / ' + limit + ' prestations utilisées (formule ' + currentPlan.name + ')';
+
+    const errorEl = document.getElementById('presta-limit-error');
+    if(reached){
+      errorEl.innerHTML = 'Limite de prestations atteinte pour la formule ' + currentPlan.name + '. <a href="abonnement.html">Changer de formule</a> pour en ajouter d\u2019autres.';
+      errorEl.style.display = 'block';
+      addBlock.style.opacity = '.5';
+      addBlock.style.pointerEvents = 'none';
+    } else {
+      errorEl.style.display = 'none';
+      addBlock.style.opacity = '1';
+      addBlock.style.pointerEvents = 'auto';
+    }
+  }
+
+  function renderPrestations(){
+    const list = document.getElementById('presta-list');
+    renderPrestaLimit();
+
+    if(!prestations.length){
+      list.innerHTML = '<p class="presta-empty">Aucune prestation. Ajoutez-en une ci-dessous.</p>';
+      return;
+    }
+
+    list.innerHTML = prestations.map((p, i) => {
+      if(editingIndex === i){
+        return (
+          '<div class="presta-row">' +
+            '<div class="presta-edit-row">' +
+              '<div class="field">' +
+                '<label for="edit-presta-name-' + i + '">Nom</label>' +
+                '<input id="edit-presta-name-' + i + '" type="text" value="' + escapeHtml(p.name) + '">' +
+              '</div>' +
+              '<div class="field">' +
+                '<label for="edit-presta-dur-' + i + '">Durée</label>' +
+                '<input id="edit-presta-dur-' + i + '" type="number" min="5" step="5" value="' + p.dur + '">' +
+              '</div>' +
+              '<div class="field">' +
+                '<label for="edit-presta-price-' + i + '">Prix (€)</label>' +
+                '<input id="edit-presta-price-' + i + '" type="number" min="0" step="0.01" value="' + (p.price ?? 0) + '">' +
+              '</div>' +
+              '<button class="btn-icon edit-save-btn" data-i="' + i + '" type="button" aria-label="Enregistrer">' +
+                '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M20 6L9 17l-5-5"></path></svg>' +
+              '</button>' +
+            '</div>' +
+          '</div>'
+        );
+      }
+
+      return (
+        '<div class="presta-row">' +
+          '<div style="min-width:0;">' +
+            '<p class="presta-row-name">' + escapeHtml(p.name) + '</p>' +
+          '</div>' +
+          '<div class="presta-row-actions">' +
+            '<span class="presta-dur">' + p.dur + ' min · ' + formatPrice(p.price) + '</span>' +
+            '<button class="icon-btn edit-btn" data-i="' + i + '" type="button" aria-label="Modifier ' + escapeHtml(p.name) + '">' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z"></path></svg>' +
+            '</button>' +
+            '<button class="rm-btn" data-i="' + i + '" type="button" aria-label="Retirer ' + escapeHtml(p.name) + '">' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>' +
+            '</button>' +
+          '</div>' +
+        '</div>'
+      );
+    }).join('');
+
+    list.querySelectorAll('.rm-btn').forEach(b => {
+      b.addEventListener('click', () => {
+        prestations.splice(Number(b.getAttribute('data-i')), 1);
+        editingIndex = null;
+        renderPrestations();
+        persistPrestations();
+      });
+    });
+
+    list.querySelectorAll('.edit-btn').forEach(b => {
+      b.addEventListener('click', () => {
+        editingIndex = Number(b.getAttribute('data-i'));
+        renderPrestations();
+        const input = document.getElementById('edit-presta-name-' + editingIndex);
+        if(input) input.focus();
+      });
+    });
+
+    list.querySelectorAll('.edit-save-btn').forEach(b => {
+      b.addEventListener('click', () => saveEdit(Number(b.getAttribute('data-i'))));
+    });
+
+    list.querySelectorAll('[id^="edit-presta-name-"], [id^="edit-presta-dur-"], [id^="edit-presta-price-"]').forEach(input => {
+      input.addEventListener('change', () => {
+        saveEdit(Number(input.id.split('-').pop()));
+      });
+      input.addEventListener('keydown', e => {
+        if(e.key === 'Enter'){
+          e.preventDefault();
+          saveEdit(Number(input.id.split('-').pop()));
+        }
+        if(e.key === 'Escape'){
+          editingIndex = null;
+          renderPrestations();
+        }
+      });
+    });
+  }
+
+  function saveEdit(i){
+    const nameEl = document.getElementById('edit-presta-name-' + i);
+    const durEl = document.getElementById('edit-presta-dur-' + i);
+    const priceEl = document.getElementById('edit-presta-price-' + i);
+    if(!nameEl || !durEl || !priceEl) return;
+    const name = nameEl.value.trim();
+    const dur = Number(durEl.value);
+    const price = Number(priceEl.value || 0);
+    if(!name || !dur || dur < 5) return;
+    prestations[i] = { ...prestations[i], name, dur, price };
+    editingIndex = null;
+    renderPrestations();
+    persistPrestations();
+  }
+
+  function addPrestation(){
+    if(prestations.length >= PLAN_LIMITS[planId].prestations){
+      renderPrestaLimit();
+      return;
+    }
+    const nameEl = document.getElementById('new-presta-name');
+    const durEl = document.getElementById('new-presta-dur');
+    const priceEl = document.getElementById('new-presta-price');
+    if(!nameEl.value.trim() || !durEl.value) return;
+    prestations.push({ name: nameEl.value.trim(), dur: Number(durEl.value), price: Number(priceEl.value || 0) });
+    nameEl.value = '';
+    durEl.value = '';
+    priceEl.value = '';
+    renderPrestations();
+    persistPrestations();
+    nameEl.focus();
+  }
+
+
+  function persistCollaborators(){
+    persistCollaboratorsRows();
+  }
+
+  function renderCollaborators(){
+    const list = document.getElementById('collab-list');
+    const usageEl = document.getElementById('collab-usage');
+    const errorEl = document.getElementById('collab-limit-error');
+    const addBlock = document.getElementById('collab-add-block');
+    const limit = PLAN_LIMITS[planId].collaborators;
+    const total = 1 + collaborators.length; // +1 pour le titulaire du compte
+    const reached = total >= limit;
+
+    usageEl.textContent = total + ' / ' + limit + ' collaborateurs (formule ' + currentPlan.name + ', vous inclus)';
+
+    if(reached){
+      errorEl.innerHTML = collaborators.length === 0 && limit === 1
+        ? 'Votre formule ' + currentPlan.name + ' ne permet pas d\u2019ajouter de collaborateur. <a href="abonnement.html">Passer à Salon</a> pour en ajouter jusqu\u2019à 5.'
+        : 'Limite de collaborateurs atteinte pour la formule ' + currentPlan.name + '. <a href="abonnement.html">Changer de formule</a> pour en ajouter d\u2019autres.';
+      errorEl.style.display = 'block';
+      addBlock.style.opacity = '.5';
+      addBlock.style.pointerEvents = 'none';
+    } else {
+      errorEl.style.display = 'none';
+      addBlock.style.opacity = '1';
+      addBlock.style.pointerEvents = 'auto';
+    }
+
+    const ownerName = document.getElementById('owner-name').value.trim();
+    const ownerRow =
+      '<div class="presta-row">' +
+        '<div style="min-width:0;">' +
+          '<p class="presta-row-name">' + escapeHtml(ownerName || 'Vous') + '</p>' +
+        '</div>' +
+        '<div class="presta-row-actions">' +
+          '<span class="badge" style="background:var(--paper-2);color:var(--ink-soft);font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;">Vous</span>' +
+        '</div>' +
+      '</div>';
+
+    if(!collaborators.length){
+      list.innerHTML = ownerRow;
+      return;
+    }
+
+    list.innerHTML = ownerRow + collaborators.map((c, i) => (
+      '<div class="presta-row">' +
+        '<div style="min-width:0;">' +
+          '<p class="presta-row-name">' + escapeHtml(c.name) + '</p>' +
+        '</div>' +
+        '<div class="presta-row-actions">' +
+          (c.email ? '<span class="presta-dur">' + escapeHtml(c.email) + '</span>' : '') +
+          '<button class="rm-btn" data-i="' + i + '" type="button" aria-label="Retirer ' + escapeHtml(c.name) + '">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>' +
+          '</button>' +
+        '</div>' +
+      '</div>'
+    )).join('');
+
+    list.querySelectorAll('.rm-btn').forEach(b => {
+      b.addEventListener('click', () => {
+        collaborators.splice(Number(b.getAttribute('data-i')), 1);
+        renderCollaborators();
+        persistCollaborators();
+      });
+    });
+  }
+
+  function addCollaborator(){
+    const limit = PLAN_LIMITS[planId].collaborators;
+    if(1 + collaborators.length >= limit){
+      renderCollaborators();
+      return;
+    }
+    const nameEl = document.getElementById('new-collab-name');
+    const emailEl = document.getElementById('new-collab-email');
+    if(!nameEl.value.trim()) return;
+    collaborators.push({ name: nameEl.value.trim(), email: emailEl.value.trim() });
+    nameEl.value = '';
+    emailEl.value = '';
+    renderCollaborators();
+    persistCollaborators();
+    nameEl.focus();
+  }
+
+  document.getElementById('btn-add-collab').addEventListener('click', addCollaborator);
+  document.getElementById('owner-name').addEventListener('input', renderCollaborators);
+  ['new-collab-name', 'new-collab-email'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', e => {
+      if(e.key === 'Enter'){
+        e.preventDefault();
+        addCollaborator();
+      }
+    });
+  });
+
+  document.getElementById('btn-add-presta').addEventListener('click', addPrestation);
+  ['new-presta-name', 'new-presta-dur', 'new-presta-price'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', e => {
+      if(e.key === 'Enter'){
+        e.preventDefault();
+        addPrestation();
+      }
+    });
+  });
+
+  document.getElementById('btn-save').addEventListener('click', () => saveAll(true));
+
+  renderPrestations();
+  renderCollaborators();
+  if(account.name) document.title = account.name + ' · Mon profil';
+  document.getElementById('btn-logout').addEventListener('click', async () => {
+    await sb.auth.signOut();
+    window.location.href = 'connexion-prestataire.html';
+  });
+
+  document.getElementById('btn-delete-account').addEventListener('click', () => {
+    document.getElementById('delete-confirm-input').value = '';
+    document.getElementById('delete-error').style.display = 'none';
+    document.getElementById('delete-modal').style.display = 'flex';
+  });
+  document.getElementById('delete-cancel').addEventListener('click', () => {
+    document.getElementById('delete-modal').style.display = 'none';
+  });
+  document.getElementById('delete-confirm').addEventListener('click', async () => {
+    if(document.getElementById('delete-confirm-input').value.trim().toUpperCase() !== 'SUPPRIMER') return;
+
+    const btn = document.getElementById('delete-confirm');
+    const errorEl = document.getElementById('delete-error');
+    errorEl.style.display = 'none';
+    btn.disabled = true;
+    btn.textContent = 'Suppression…';
+
+    try{
+      // Supprime le vrai compte Supabase Auth. La ligne auth.users est
+      // supprimée côté serveur (clé service_role, jamais exposée ici) ;
+      // profiles/prestations/collaborators/waitlist_clients/subscriptions
+      // disparaissent en cascade grâce aux clés étrangères.
+      const res = await fetch(SUPABASE_FUNCTIONS_URL + '/delete-account', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + session.access_token
+        }
+      });
+      const data = await res.json();
+      if(!res.ok || !data.success){
+        throw new Error(data.error || 'La suppression a échoué.');
+      }
+
+      await sb.auth.signOut();
+      window.location.href = 'index.html';
+    } catch(err){
+      errorEl.textContent = 'Erreur : ' + err.message;
+      errorEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Supprimer';
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

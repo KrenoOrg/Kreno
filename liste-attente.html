@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Salon Léa · Liste d'attente</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F3EFE6;
+    --paper-2:#EAE4D6;
+    --ink:#1B2A4A;
+    --ink-soft:#4A5670;
+    --mustard:#D9A441;
+    --mustard-dark:#9C731E;
+    --line:#D8D0BE;
+    --success-bg:#E4EDE2;
+    --success-text:#2E5233;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding:0;
+  }
+  @media (prefers-reduced-motion: no-preference){
+    .ticket{animation:rise .5s ease both;}
+  }
+  @keyframes rise{
+    from{opacity:0;transform:translateY(12px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+  .screen{
+    width:100%;
+    max-width:420px;
+    min-height:100vh;
+    padding:2rem 1.25rem 3rem;
+  }
+  .back-link{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-size:13px;
+    font-weight:500;
+    color:var(--ink-soft);
+    text-decoration:none;
+    margin-bottom:1.25rem;
+  }
+  .back-link svg{width:15px;height:15px;stroke:var(--ink-soft);}
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:1.75rem;
+  }
+  .brand-mark{
+    width:38px;height:38px;border-radius:50%;
+    background:var(--ink);
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  .brand-mark svg{width:18px;height:18px;stroke:var(--paper);}
+  .brand-name{
+    font-family:'Fraunces',serif;
+    font-size:19px;
+    font-weight:500;
+    margin:0;
+  }
+  .brand-sub{
+    font-size:12px;
+    color:var(--ink-soft);
+    margin:1px 0 0;
+  }
+  .ticket{
+    background:#fff;
+    border-radius:var(--radius);
+    border:1px solid var(--line);
+    box-shadow:0 1px 0 var(--line);
+    overflow:hidden;
+  }
+  .ticket-head{
+    padding:1.5rem 1.5rem 1.25rem;
+  }
+  .eyebrow{
+    font-size:11px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--mustard-dark);
+    font-weight:600;
+    margin:0 0 6px;
+  }
+  h1{
+    font-family:'Fraunces',serif;
+    font-size:24px;
+    font-weight:500;
+    line-height:1.25;
+    margin:0 0 .5rem;
+  }
+  .next-slot{
+    font-size:13px;
+    color:var(--ink-soft);
+    margin:0;
+  }
+  .next-slot b{color:var(--ink);font-weight:600;}
+  .perforation{
+    position:relative;
+    height:0;
+    border-top:1.5px dashed var(--line);
+    margin:0 0;
+  }
+  .perforation::before,.perforation::after{
+    content:"";
+    position:absolute;
+    top:-9px;
+    width:18px;height:18px;
+    border-radius:50%;
+    background:var(--paper);
+  }
+  .perforation::before{left:-9px;}
+  .perforation::after{right:-9px;}
+  .ticket-body{
+    padding:1.5rem;
+  }
+  label{
+    display:block;
+    font-size:12px;
+    font-weight:600;
+    color:var(--ink-soft);
+    margin:0 0 6px;
+  }
+  .field{margin-bottom:1.1rem;}
+  select,input[type=tel]{
+    width:100%;
+    font-family:'Inter',sans-serif;
+    font-size:15px;
+    padding:11px 12px;
+    border-radius:8px;
+    border:1px solid var(--line);
+    background:var(--paper);
+    color:var(--ink);
+    appearance:none;
+    -webkit-appearance:none;
+  }
+  select{
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%234A5670' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;
+    background-position:right 12px center;
+    padding-right:34px;
+  }
+  select:focus-visible,input:focus-visible,button:focus-visible,.chip:focus-visible{
+    outline:2px solid var(--ink);
+    outline-offset:2px;
+  }
+  .hint{
+    font-size:11.5px;
+    color:var(--ink-soft);
+    margin:6px 0 0;
+  }
+  .error{
+    font-size:11.5px;
+    color:#B3441E;
+    margin:0 0 10px;
+    display:none;
+  }
+  .chips{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .chip{
+    font-family:'Inter',sans-serif;
+    font-size:13px;
+    font-weight:500;
+    padding:8px 14px;
+    border-radius:20px;
+    border:1px solid var(--line);
+    background:var(--paper);
+    color:var(--ink-soft);
+    cursor:pointer;
+    transition:background .15s,color .15s,border-color .15s;
+  }
+  .chip.on{
+    background:var(--ink);
+    border-color:var(--ink);
+    color:var(--paper);
+  }
+  .date-add-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:10px;
+  }
+  .date-add-row input{flex:1 1 100%;min-width:0;}
+  .btn-date{
+    flex:1 1 0;
+    min-width:110px;
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    font-weight:600;
+    padding:11px 10px;
+    border-radius:8px;
+    border:1px solid var(--line);
+    background:#fff;
+    color:var(--ink);
+    cursor:pointer;
+    text-align:center;
+    line-height:1.25;
+  }
+  .btn-date.on{
+    background:var(--ink);
+    border-color:var(--ink);
+    color:var(--paper);
+  }
+  .date-list{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin:0 0 4px;
+  }
+  .date-chip{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    background:var(--paper-2);
+    border-radius:999px;
+    padding:.4rem .5rem .4rem .75rem;
+    font-size:12px;
+    color:var(--ink-soft);
+  }
+  .date-chip button{
+    border:none;
+    background:none;
+    cursor:pointer;
+    color:var(--ink-soft);
+    display:flex;
+    align-items:center;
+    padding:2px;
+  }
+  .date-chip button svg{width:12px;height:12px;stroke:var(--ink-soft);}
+  .btn-primary{
+    width:100%;
+    font-family:'Inter',sans-serif;
+    font-size:15px;
+    font-weight:600;
+    padding:14px;
+    border-radius:10px;
+    border:none;
+    background:var(--ink);
+    color:var(--paper);
+    cursor:pointer;
+    margin-top:.25rem;
+  }
+  .btn-primary:active{transform:scale(.98);}
+  .fine-print{
+    text-align:center;
+    font-size:11.5px;
+    color:var(--ink-soft);
+    margin:14px 0 0;
+    line-height:1.5;
+  }
+  .confirm-screen{display:none;}
+  .confirm-badge{
+    width:52px;height:52px;
+    border-radius:50%;
+    background:var(--success-bg);
+    display:flex;align-items:center;justify-content:center;
+    margin:0 auto 1.1rem;
+  }
+  .confirm-badge svg{width:24px;height:24px;stroke:var(--success-text);}
+  .confirm-title{
+    font-family:'Fraunces',serif;
+    font-size:21px;
+    font-weight:500;
+    text-align:center;
+    margin:0 0 8px;
+  }
+  .confirm-text{
+    font-size:14px;
+    color:var(--ink-soft);
+    text-align:center;
+    line-height:1.6;
+    margin:0 0 1.5rem;
+  }
+  .stub{
+    background:var(--paper-2);
+    border-radius:10px;
+    padding:14px 16px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:13px;
+  }
+  .stub-label{color:var(--ink-soft);}
+  .stub-val{font-weight:600;}
+</style>
+</head>
+<body>
+
+<div class="screen">
+
+  <a href="index.html" class="back-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+    Tous les prestataires
+  </a>
+
+  <div class="brand">
+    <div class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="6" cy="6" r="3"></circle>
+        <circle cx="6" cy="18" r="3"></circle>
+        <line x1="20" y1="4" x2="8.12" y2="15.88"></line>
+        <line x1="14.47" y1="14.48" x2="20" y2="20"></line>
+        <line x1="8.12" y1="8.12" x2="12" y2="12"></line>
+      </svg>
+    </div>
+    <div>
+      <p class="brand-name" id="brand-name">Salon Léa</p>
+      <p class="brand-sub" id="brand-sub">12 rue des Lilas · Besançon</p>
+    </div>
+  </div>
+
+  <!-- Écran d'inscription -->
+  <div class="ticket" id="form-screen">
+    <div class="ticket-head">
+      <p class="eyebrow">Liste d'attente</p>
+      <h1>Soyez prévenu·e dès qu'une place se libère</h1>
+      <p class="next-slot">Le prestataire vous préviendra par SMS dès qu'un créneau compatible se libère.</p>
+    </div>
+
+    <div class="perforation"></div>
+
+    <div class="ticket-body">
+      <div class="field">
+        <label for="client-name">Votre nom</label>
+        <input id="client-name" type="text" placeholder="Marion D.">
+      </div>
+
+      <div class="field">
+        <label for="presta">Prestation souhaitée</label>
+        <select id="presta"></select>
+      </div>
+
+      <div class="field" id="collab-field" style="display:none;">
+        <label for="collab-choice">Avec qui souhaitez-vous votre rendez-vous ?</label>
+        <select id="collab-choice"></select>
+      </div>
+
+      <div class="field">
+        <label for="avail-date">Vos disponibilités</label>
+        <div class="date-add-row">
+          <input id="avail-date" type="date">
+          <button class="btn-date" type="button" id="btn-add-avail-date">Ajouter</button>
+          <button class="btn-date" type="button" id="btn-avail-everyday">Tous les jours</button>
+        </div>
+        <div class="date-list" id="avail-dates"></div>
+        <p class="hint">Ajoutez une ou plusieurs dates, ou choisissez "Tous les jours" pour être notifié·e quel que soit le jour.</p>
+      </div>
+
+      <div class="field">
+        <label for="phone">Numéro de téléphone</label>
+        <input id="phone" type="tel" placeholder="06 12 34 56 78" inputmode="tel">
+        <p class="hint">Utilisé uniquement pour vous prévenir si un créneau se libère.</p>
+      </div>
+
+      <p class="error" id="join-error" style="display:none;">Merci de renseigner votre nom et un numéro de téléphone.</p>
+      <button class="btn-primary" id="btn-join">Rejoindre la liste d'attente</button>
+      <p class="fine-print">Sans engagement — retirez-vous à tout moment depuis le site.</p>
+    </div>
+  </div>
+
+  <!-- Écran de confirmation -->
+  <div class="ticket confirm-screen" id="confirm-screen">
+    <div class="ticket-body" style="padding-top:2rem;">
+      <div class="confirm-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 6L9 17l-5-5"></path>
+        </svg>
+      </div>
+      <p class="confirm-title">Vous êtes sur la liste</p>
+      <p class="confirm-text" id="confirm-text">Salon Léa vous préviendra par SMS dès qu'un créneau compatible avec vos disponibilités se libère.</p>
+
+      <div class="perforation" style="margin-bottom:1.25rem;"></div>
+
+      <div class="stub" style="margin-bottom:8px;">
+        <span class="stub-label">Prestation</span>
+        <span class="stub-val" id="stub-presta">Coupe femme</span>
+      </div>
+      <div class="stub" id="stub-collab-row" style="display:none;margin-bottom:8px;">
+        <span class="stub-label">Avec</span>
+        <span class="stub-val" id="stub-collab">—</span>
+      </div>
+      <div class="stub">
+        <span class="stub-label">Disponibilités</span>
+        <span class="stub-val" id="stub-dispo">—</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  if (!window.supabase) {
+    document.write('<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"><\/script>');
+  }
+</script>
+<script>
+(async function(){
+  const SUPABASE_URL = 'https://thxbpjumbntiqwexsqut.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoeGJwanVtYm50aXF3ZXhzcXV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ1NzgyNzksImV4cCI6MjEwMDE1NDI3OX0.tpxE9V5oksnZM16-3xuch3hMqXSJSbmQTuP7NVlj_bY';
+  window.__sb = window.__sb || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const sb = window.__sb;
+
+  const params = new URLSearchParams(window.location.search);
+  const slug = params.get('salon');
+
+  let directoryRow = null, prestaRows = [], collabRows = [], planRow = null;
+  if(slug){
+    const [{ data: dRow }, { data: pRows }, { data: cRows }, { data: plRow }] = await Promise.all([
+      sb.from('provider_directory').select('*').eq('id', slug).maybeSingle(),
+      sb.from('prestations').select('*').eq('account_id', slug).order('created_at'),
+      sb.from('collaborators').select('*').eq('account_id', slug).order('created_at'),
+      sb.from('public_plan').select('plan').eq('account_id', slug).maybeSingle()
+    ]);
+    directoryRow = dRow; prestaRows = pRows || []; collabRows = cRows || []; planRow = plRow;
+  }
+
+  const account = directoryRow ? { name: directoryRow.name, address: directoryRow.address } : null;
+  const prestations = prestaRows.map(p => ({ id: p.id, name: p.name, dur: p.duration_minutes, price: p.price }));
+
+  if(!account){
+    document.getElementById('form-screen').innerHTML =
+      '<div class="ticket-body" style="text-align:center;">' +
+        '<p style="font-size:14px;color:var(--ink-soft);margin:0 0 1rem;">Ce prestataire est introuvable ou n\u2019existe plus.</p>' +
+        '<a href="index.html" class="btn-primary" style="display:block;text-decoration:none;box-sizing:border-box;">Voir tous les prestataires</a>' +
+      '</div>';
+  } else {
+    document.getElementById('brand-name').textContent = account.name;
+    document.getElementById('brand-sub').textContent = account.address || '';
+    document.title = account.name + " · Liste d'attente";
+
+    // Limite d'inscriptions mensuelles selon la formule du prestataire
+    // (seule la formule Free est plafonnée).
+    const PLAN_WAITLIST_LIMITS = { free: 20, solo: Infinity, salon: Infinity };
+    const planId = PLAN_WAITLIST_LIMITS[planRow ? planRow.plan : 'free'] !== undefined ? (planRow ? planRow.plan : 'free') : 'free';
+    const waitlistLimit = PLAN_WAITLIST_LIMITS[planId];
+
+    function countJoinedThisMonth(){
+      return directoryRow && directoryRow.joined_this_month ? directoryRow.joined_this_month : 0;
+    }
+
+    const prestaSelect = document.getElementById('presta');
+    prestaSelect.innerHTML = prestations.length
+      ? prestations.map(p => '<option>' + p.name + '</option>').join('')
+      : '<option disabled selected>Aucune prestation configurée</option>';
+
+    // Liste des personnes disponibles pour le rendez-vous : le titulaire du
+    // compte (1re ligne créée) puis ses éventuels collaborateurs, avec leurs
+    // vrais identifiants Supabase (utilisés tels quels comme collaborator_id).
+    const team = collabRows.map(c => ({ id: c.id, name: c.name, email: c.email || '' }));
+    const nameCounts = {};
+    team.forEach(t => { const k = t.name.trim().toLowerCase(); nameCounts[k] = (nameCounts[k] || 0) + 1; });
+    const seenCounts = {};
+    team.forEach(t => {
+      const k = t.name.trim().toLowerCase();
+      if(nameCounts[k] <= 1){ t.label = t.name; return; }
+      seenCounts[k] = (seenCounts[k] || 0) + 1;
+      t.label = t.name + (t.email ? ' (' + t.email + ')' : ' (' + seenCounts[k] + ')');
+    });
+    const teamNames = team.map(t => t.name);
+    function teamLabelById(id){
+      const t = team.find(t => t.id === id);
+      return t ? t.label : '';
+    }
+    const collabField = document.getElementById('collab-field');
+    const collabSelect = document.getElementById('collab-choice');
+    if(team.length > 1){
+      collabField.style.display = 'block';
+      collabSelect.innerHTML =
+        '<option value="">Peu importe</option>' +
+        team.map(t => '<option value="' + t.id + '">' + t.label + '</option>').join('');
+    }
+
+    const todayISO = new Date().toISOString().slice(0, 10);
+    const availDateInput = document.getElementById('avail-date');
+    availDateInput.value = todayISO;
+    availDateInput.min = todayISO;
+    const availDatesContainer = document.getElementById('avail-dates');
+    const btnEveryday = document.getElementById('btn-avail-everyday');
+    let availDates = [];
+
+    function formatDate(iso){
+      const d = new Date(iso + 'T00:00:00');
+      const today = new Date(todayISO + 'T00:00:00');
+      const diffDays = Math.round((d - today) / 86400000);
+      if(diffDays === 0) return "aujourd'hui";
+      if(diffDays === 1) return 'demain';
+      return d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+    }
+
+    function renderAvailDates(){
+      btnEveryday.classList.toggle('on', availDates.length === 1 && availDates[0] === 'everyday');
+
+      if(!availDates.length){
+        availDatesContainer.innerHTML = '';
+        return;
+      }
+      if(availDates.length === 1 && availDates[0] === 'everyday'){
+        availDatesContainer.innerHTML = '<span class="date-chip">Tous les jours</span>';
+        return;
+      }
+      availDatesContainer.innerHTML = availDates.map(date => (
+        '<span class="date-chip">' + formatDate(date) +
+          '<button type="button" data-date="' + date + '" aria-label="Retirer cette date">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>' +
+          '</button>' +
+        '</span>'
+      )).join('');
+      availDatesContainer.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          availDates = availDates.filter(d => d !== btn.getAttribute('data-date'));
+          renderAvailDates();
+        });
+      });
+    }
+    renderAvailDates();
+
+    document.getElementById('btn-add-avail-date').addEventListener('click', () => {
+      const date = availDateInput.value;
+      if(!date) return;
+      availDates = availDates.filter(d => d !== 'everyday');
+      if(!availDates.includes(date)) availDates.push(date);
+      renderAvailDates();
+    });
+
+    btnEveryday.addEventListener('click', () => {
+      availDates = (availDates.length === 1 && availDates[0] === 'everyday') ? [] : ['everyday'];
+      renderAvailDates();
+    });
+
+    document.getElementById('btn-join').addEventListener('click', async () => {
+      const name = document.getElementById('client-name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const presta = prestaSelect.value;
+      const collaborator = team.length > 1 ? collabSelect.value : '';
+      const errorEl = document.getElementById('join-error');
+      const joinBtn = document.getElementById('btn-join');
+
+      if(!name || !phone || availDates.length === 0){
+        errorEl.textContent = !name || !phone
+          ? 'Merci de renseigner votre nom et un numéro de téléphone.'
+          : 'Merci d\u2019ajouter au moins une date, ou de choisir "Tous les jours".';
+        errorEl.style.display = 'block';
+        return;
+      }
+
+      if(waitlistLimit !== Infinity && countJoinedThisMonth() >= waitlistLimit){
+        errorEl.textContent = 'La liste d\u2019attente de ' + account.name + ' est complète pour ce mois-ci. Réessayez le mois prochain.';
+        errorEl.style.display = 'block';
+        return;
+      }
+      errorEl.style.display = 'none';
+
+      const dispoText = (availDates.length === 1 && availDates[0] === 'everyday')
+        ? 'Tous les jours'
+        : availDates.map(formatDate).join(', ');
+
+      const prestaObj = prestations.find(p => p.name === presta);
+      joinBtn.disabled = true;
+      joinBtn.textContent = 'Inscription…';
+
+      const { error: insertError } = await sb.from('waitlist_clients').insert({
+        account_id: slug,
+        name,
+        phone,
+        service_id: prestaObj ? prestaObj.id : null,
+        collaborator_id: collaborator || null,
+        preferred_dates: { dates: [...availDates] },
+        origine: 'En ligne',
+        status: null
+      });
+
+      joinBtn.disabled = false;
+      joinBtn.textContent = 'Rejoindre la liste d\u2019attente';
+
+      if(insertError){
+        errorEl.textContent = 'Erreur : ' + insertError.message;
+        errorEl.style.display = 'block';
+        return;
+      }
+
+      document.getElementById('confirm-text').textContent =
+        account.name + ' vous préviendra par SMS dès qu\u2019un créneau compatible avec vos disponibilités se libère.';
+      document.getElementById('stub-presta').textContent = presta;
+      if(collaborator){
+        document.getElementById('stub-collab-row').style.display = 'flex';
+        document.getElementById('stub-collab').textContent = teamLabelById(collaborator);
+      }
+      document.getElementById('stub-dispo').textContent = dispoText;
+
+      document.getElementById('form-screen').style.display = 'none';
+      document.getElementById('confirm-screen').style.display = 'block';
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
