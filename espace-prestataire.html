@@ -614,7 +614,7 @@
   const [ownerRow, ...restCollabRows] = collabRows || [];
   const account = {
     name: profileRow ? profileRow.name : '',
-    plan: subRow ? subRow.plan : 'free',
+    plan: subRow ? subRow.plan : 'solo',
     smsTemplate: profileRow ? (profileRow.sms_template || '') : '',
     ownerName: ownerRow ? ownerRow.name : '',
     ownerId: ownerRow ? ownerRow.id : null,
@@ -623,13 +623,13 @@
   const salonName = account && account.name ? account.name : 'Salon Léa';
 
   // Limites réelles appliquées selon la formule active du compte.
-  const PLAN_LABELS = { free: 'Free', solo: 'Solo', salon: 'Salon' };
+  const PLAN_LABELS = { solo: 'Solo', pro: 'Pro', business: 'Business' };
   const PLAN_LIMITS = {
-    free:  { smsIncluded: 5,        smsHardCap: true,  waitlistPerMonth: 20 },
-    solo:  { smsIncluded: 20,       smsHardCap: false, waitlistPerMonth: Infinity },
-    salon: { smsIncluded: Infinity, smsHardCap: false, waitlistPerMonth: Infinity }
+    solo:     { smsIncluded: 20,       smsHardCap: false, waitlistPerMonth: Infinity },
+    pro:      { smsIncluded: 100,      smsHardCap: true,  waitlistPerMonth: Infinity },
+    business: { smsIncluded: Infinity, smsHardCap: false, waitlistPerMonth: Infinity }
   };
-  const planId = PLAN_LIMITS[account.plan] ? account.plan : 'free';
+  const planId = PLAN_LIMITS[account.plan] ? account.plan : 'solo';
   const planLimits = PLAN_LIMITS[planId];
   const planName = PLAN_LABELS[planId];
 
@@ -708,7 +708,7 @@
 
   function renderCollabStats(){
     const el = document.getElementById('collab-stats');
-    if(planId !== 'salon' || teamNames.length <= 1){
+    if(planId !== 'business' || teamNames.length <= 1){
       el.style.display = 'none';
       el.innerHTML = '';
       return;
@@ -728,7 +728,7 @@
   }
 
   function updateStatsVisibility(){
-    const showStats = planId === 'salon';
+    const showStats = planId === 'pro' || planId === 'business';
     document.getElementById('metrics').style.display = showStats ? 'grid' : 'none';
     document.getElementById('stats-locked').style.display = showStats ? 'none' : 'block';
     if(!showStats) document.getElementById('collab-stats').style.display = 'none';
@@ -1053,7 +1053,7 @@
 
     const collaboratorName = collaborator ? teamLabelById(collaborator) : '';
     const withLabel = collaboratorName ? ' avec <b>' + escapeHtml(collaboratorName) + '</b>' : '';
-    const customTemplate = planId === 'salon' ? (account.smsTemplate || '').trim() : '';
+    const customTemplate = planId === 'business' ? (account.smsTemplate || '').trim() : '';
     if(customTemplate){
       const rendered = customTemplate
         .replace(/\{salon\}/g, salonName)

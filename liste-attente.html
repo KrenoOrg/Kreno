@@ -454,10 +454,11 @@
     document.getElementById('brand-sub').textContent = account.address || '';
     document.title = account.name + " · Liste d'attente";
 
-    // Limite d'inscriptions mensuelles selon la formule du prestataire
-    // (seule la formule Free est plafonnée).
-    const PLAN_WAITLIST_LIMITS = { free: 20, solo: Infinity, salon: Infinity };
-    const planId = PLAN_WAITLIST_LIMITS[planRow ? planRow.plan : 'free'] !== undefined ? (planRow ? planRow.plan : 'free') : 'free';
+    // Limite d'inscriptions mensuelles selon la formule du prestataire :
+    // plus de formule gratuite plafonnée, Solo/Pro/Business sont toutes
+    // illimitées.
+    const PLAN_WAITLIST_LIMITS = { solo: Infinity, pro: Infinity, business: Infinity };
+    const planId = PLAN_WAITLIST_LIMITS[planRow ? planRow.plan : 'solo'] !== undefined ? (planRow ? planRow.plan : 'solo') : 'solo';
     const waitlistLimit = PLAN_WAITLIST_LIMITS[planId];
 
     function countJoinedThisMonth(){

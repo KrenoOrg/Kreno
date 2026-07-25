@@ -489,11 +489,11 @@
   let collaborators = [];
   let editingIndex = null;
   let currentUser = null;
-  let planId = 'free';
+  let planId = 'solo';
 
-  const PLAN_LABELS = { free: 'Free', solo: 'Solo', salon: 'Salon' };
-  const PLAN_LIMITS = { free: 1, solo: 3, salon: Infinity };
-  const PLAN_COLLAB_LIMITS = { free: 1, solo: 1, salon: 5 };
+  const PLAN_LABELS = { solo: 'Solo', pro: 'Pro', business: 'Business' };
+  const PLAN_LIMITS = { solo: 3, pro: Infinity, business: Infinity };
+  const PLAN_COLLAB_LIMITS = { solo: 1, pro: 3, business: Infinity };
 
   function formatPrice(value){
     const price = Number(value || 0);
@@ -971,7 +971,7 @@
       sb.from('subscriptions').select('plan').eq('account_id', currentUser.id).maybeSingle()
     ]);
 
-    planId = PLAN_LIMITS[subRow && subRow.plan] ? subRow.plan : 'free';
+    planId = PLAN_LIMITS[subRow && subRow.plan] ? subRow.plan : 'solo';
 
     if(profileRow){
       document.getElementById('salon-name').value = profileRow.name || '';

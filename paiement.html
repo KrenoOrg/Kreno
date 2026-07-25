@@ -254,9 +254,9 @@
   let onboarding = params.get('onboarding') === '1';
 
   const PLANS = {
-    free:  { name: 'Free',  price: '0 €',      priceLabel: '0 € /mois' },
-    solo:  { name: 'Solo',  price: '19,99 €',  priceLabel: '19,99 € /mois' },
-    salon: { name: 'Salon', price: '49,99 €',  priceLabel: '49,99 € /mois' }
+    solo:     { name: 'Solo',     price: '19,90 €', priceLabel: '19,90 € /mois' },
+    pro:      { name: 'Pro',      price: '39,90 €', priceLabel: '39,90 € /mois' },
+    business: { name: 'Business', price: '79,90 €', priceLabel: '79,90 € /mois' }
   };
 
   let planId = PLANS[params.get('plan')] ? params.get('plan') : null;
@@ -291,21 +291,21 @@
     document.title = 'Paiement · ' + plan.name;
   }
 
-  const isFree = planId === 'free';
-  if(isFree){
-    document.getElementById('free-note').style.display = 'block';
-    document.getElementById('btn-pay').textContent = 'Activer l\u2019offre Free';
-  } else {
-    document.getElementById('stripe-note').style.display = 'block';
-    document.getElementById('btn-pay').textContent = 'Continuer vers le paiement Stripe';
-  }
+  const isFree = false; // plus de formule gratuite : toutes les formules passent par Stripe (avec 14 jours d'essai)
+  document.getElementById('stripe-note').textContent = 'Essai gratuit de 14 jours, puis redirection vers Stripe pour saisir votre carte (paiement sécurisé, aucun prélèvement avant la fin de l\u2019essai).';
+  document.getElementById('stripe-note').style.display = 'block';
+  document.getElementById('btn-pay').textContent = 'Démarrer mon essai gratuit de 14 jours';
 
   // Limites réelles par formule (mêmes valeurs que profil-prestataire.html et
   // espace-prestataire.html). "collaborators" inclut le titulaire du compte.
+  // La clé "free" est conservée uniquement pour les anciens comptes déjà en
+  // base sur cette formule (supprimée de l'offre commerciale) : elle reçoit
+  // les mêmes limites que Solo par sécurité.
   const PLAN_LIMITS = {
-    free:  { prestations: 1,        collaborators: 1 },
-    solo:  { prestations: 3,        collaborators: 1 },
-    salon: { prestations: Infinity, collaborators: 5 }
+    free:     { prestations: 3,        collaborators: 1 },
+    solo:     { prestations: 3,        collaborators: 1 },
+    pro:      { prestations: Infinity, collaborators: 3 },
+    business: { prestations: Infinity, collaborators: Infinity }
   };
 
   let currentUser = null;
@@ -334,7 +334,7 @@
       trimmed = true;
     }
 
-    if(newPlanId !== 'salon'){
+    if(newPlanId !== 'business'){
       const { data: profile } = await sb
         .from('profiles').select('sms_template').eq('id', currentUser.id).single();
       if(profile && profile.sms_template){

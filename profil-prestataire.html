@@ -414,7 +414,7 @@
     </div>
     <div class="plan-row">
       <div class="plan-current">
-        <p class="plan-badge" id="current-plan-name">Free</p>
+        <p class="plan-badge" id="current-plan-name">Solo</p>
         <span class="plan-price-tag" id="current-plan-price">0 € /mois</span>
       </div>
       <a class="btn-secondary-link" href="abonnement.html">Gérer mon abonnement</a>
@@ -516,7 +516,7 @@
     address: profileRow ? profileRow.address : '',
     phone: profileRow ? profileRow.phone : '',
     email: currentUser.email || '',
-    plan: subRow ? subRow.plan : 'free',
+    plan: subRow ? subRow.plan : 'solo',
     smsTemplate: profileRow ? (profileRow.sms_template || '') : '',
     ownerName: ownerRow ? ownerRow.name : '',
     collaborators: restCollabRows.map(c => ({ id: c.id, name: c.name, email: c.email || '' }))
@@ -532,18 +532,18 @@
   let collaborators = account.collaborators;
 
   const PLAN_LABELS = {
-    free:  { name: 'Free',  price: '0 € /mois' },
-    solo:  { name: 'Solo',  price: '19,99 € /mois' },
-    salon: { name: 'Salon', price: '49,99 € /mois' }
+    solo:     { name: 'Solo',     price: '19,90 € /mois' },
+    pro:      { name: 'Pro',      price: '39,90 € /mois' },
+    business: { name: 'Business', price: '79,90 € /mois' }
   };
   // Limites réelles appliquées selon la formule active.
   // "collaborators" compte le titulaire du compte (+1 implicite).
   const PLAN_LIMITS = {
-    free:  { prestations: 1,        collaborators: 1 },
-    solo:  { prestations: 3,        collaborators: 1 },
-    salon: { prestations: Infinity, collaborators: 5 }
+    solo:     { prestations: 3,        collaborators: 1 },
+    pro:      { prestations: Infinity, collaborators: 3 },
+    business: { prestations: Infinity, collaborators: Infinity }
   };
-  const planId = PLAN_LIMITS[account.plan] ? account.plan : 'free';
+  const planId = PLAN_LIMITS[account.plan] ? account.plan : 'solo';
   const currentPlan = PLAN_LABELS[planId];
   document.getElementById('current-plan-name').textContent = currentPlan.name;
   document.getElementById('current-plan-price').textContent = currentPlan.price;
@@ -558,12 +558,12 @@
   }
 
   // Quota SMS de la formule (mêmes règles que espace-prestataire.html) :
-  // Free est plafonné (bloqué au-delà), Solo facture au-delà de l'inclus,
-  // Salon est illimité.
+  // Solo facture au-delà de l'inclus, Pro est plafonné à 100/mois (bloqué
+  // au-delà), Business est illimité.
   const SMS_LIMITS = {
-    free:  { smsIncluded: 5,        smsHardCap: true },
-    solo:  { smsIncluded: 20,       smsHardCap: false },
-    salon: { smsIncluded: Infinity, smsHardCap: false }
+    solo:     { smsIncluded: 20,       smsHardCap: false },
+    pro:      { smsIncluded: 100,      smsHardCap: true },
+    business: { smsIncluded: Infinity, smsHardCap: false }
   };
   const SMS_USAGE_PREFIX = 'creneau-sms-usage:';
   function currentMonthKey(){ return new Date().toISOString().slice(0, 7); }
@@ -593,16 +593,19 @@
   }
   renderSmsUsage();
 
-  // Résiliation : passe par change-plan, qui programme le retour à Free
-  // pour la fin de la période déjà payée (cancel_at_period_end côté
-  // Stripe). Le compte garde sa formule et ses limites actuelles jusque-là ;
-  // rien n'est retiré tout de suite.
+  // Résiliation : il n'existe plus de formule Free vers laquelle basculer,
+  // donc résilier arrête simplement l'abonnement Stripe en fin de période
+  // déjà payée (cancel_at_period_end), sans changer de plan derrière.
+  // IMPORTANT : l'edge function change-plan doit être adaptée côté serveur
+  // pour accepter newPlan: null comme "annulation simple" (elle ne fait
+  // actuellement que des changements vers un plan existant) — ce fichier
+  // n'a pas accès à son code.
   const cancelBtn = document.getElementById('btn-cancel-plan');
   cancelBtn.textContent = 'Résilier mon abonnement (effet en fin de période)';
-  if(planId !== 'free' && subRow && subRow.stripe_subscription_id && subRow.status === 'active'){
+  if(subRow && subRow.stripe_subscription_id && subRow.status === 'active'){
     cancelBtn.style.display = 'inline-block';
     cancelBtn.addEventListener('click', async () => {
-      const ok = confirm('Résilier votre abonnement ? Vous conservez la formule ' + currentPlan.name + ' jusqu\u2019à la fin de la période déjà payée, puis vous repasserez automatiquement à Free (le surplus de prestations, de collaborateurs et le message SMS personnalisé seront retirés à ce moment-là).');
+      const ok = confirm('Résilier votre abonnement ? Vous conservez la formule ' + currentPlan.name + ' jusqu\u2019à la fin de la période déjà payée, puis votre accès prestataire sera coupé (plus de formule gratuite de repli).');
       if(!ok) return;
 
       cancelBtn.disabled = true;
@@ -611,7 +614,7 @@
         const res = await fetch(SUPABASE_FUNCTIONS_URL + '/change-plan', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ accountId: currentUser.id, newPlan: 'free' })
+          body: JSON.stringify({ accountId: currentUser.id, newPlan: null })
         });
         const data = await res.json();
         if(!res.ok) throw new Error(data.error || 'Erreur serveur.');
@@ -626,11 +629,11 @@
 
   const smsTemplateInput = document.getElementById('sms-template');
   smsTemplateInput.value = account.smsTemplate || '';
-  if(planId !== 'salon'){
+  if(planId !== 'business'){
     smsTemplateInput.disabled = true;
-    smsTemplateInput.placeholder = 'Fonctionnalité réservée à la formule Salon.';
+    smsTemplateInput.placeholder = 'Fonctionnalité réservée à la formule Business.';
     document.getElementById('sms-template-desc').innerHTML =
-      'Personnalisez le SMS envoyé à vos clients quand un créneau se libère. <a href="abonnement.html">Passez à Salon</a> pour l\u2019activer.';
+      'Personnalisez le SMS envoyé à vos clients quand un créneau se libère. <a href="abonnement.html">Passez à Business</a> pour l\u2019activer.';
   }
 
 
@@ -703,10 +706,10 @@
       phone
     };
     // Le message SMS personnalisé n'est modifiable (et donc écrit) que sur la
-    // formule Salon : sur les autres formules, on ne touche pas cette
+    // formule Business : sur les autres formules, on ne touche pas cette
     // colonne pour ne pas écraser une valeur existante avec le champ
     // désactivé affiché à l'écran.
-    if(planId === 'salon'){
+    if(planId === 'business'){
       profileFields.sms_template = smsTemplateInput.value.trim() || null;
     }
 
