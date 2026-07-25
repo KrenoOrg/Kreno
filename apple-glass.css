@@ -1,0 +1,75 @@
+/* =====================================================================
+   apple-glass.css — base "glass" direction for the app.
+   Redefines the warm paper/mustard palette used inline on every page
+   into a cool blue glass palette, and gives cards/panels/tickets a
+   translucent, blurred "frosted glass" surface treatment.
+   Load BEFORE polish.css — polish.css refines shadows/motion/detail on
+   top of this base and is meant to be loaded last.
+   ===================================================================== */
+
+/* --- Palette ---------------------------------------------------------
+   Every page declares its own :root with --paper/--ink/--mustard/--line.
+   Overriding those same variable names here (with !important) reskins
+   every page without having to touch each page's own <style> block. */
+:root{
+  --paper:      #eaf5fb !important;
+  --paper-2:    #dcecf5 !important;
+  --ink:        #0a2540 !important;
+  --ink-soft:   #4a6a80 !important;
+  --mustard:      #55cbed !important;
+  --mustard-dark: #049dc8 !important;
+  --line:       #cfe6f2 !important;
+  --success-bg: #e2f6f1 !important;
+  --success-text:#0e6b52 !important;
+}
+
+/* --- Glass backdrop ---------------------------------------------------- */
+body{
+  background:
+    radial-gradient(1100px 520px at 15% -10%, rgba(85,203,237,.28), transparent 60%),
+    radial-gradient(900px 480px at 100% 0%, rgba(4,157,200,.16), transparent 55%),
+    linear-gradient(180deg, #eef7fb 0%, #e6f2f9 100%) !important;
+  background-attachment: fixed;
+}
+
+/* --- Frosted glass surfaces --------------------------------------------
+   Every card-like container becomes a translucent, blurred glass pane
+   instead of a flat opaque white block. */
+.card, .plan, .ticket, .panel, .summary, .cta-card, .idle, .empty, .metric,
+.wl-card, .agenda-card, .account-card, .filter, .search input, input, select, textarea,
+.presta-row, .presta-add-block, .presta-empty, .add-form, .cancel-box,
+.collab-stats, .collab-stats-row, .sms-bubble, .sms-preview, .stats-locked,
+.confirm-badge, .modal-box, .modal {
+  background: rgba(255, 255, 255, .62) !important;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, .55) !important;
+}
+
+/* Buttons get the same glass treatment as a base; polish.css layers its
+   gradient + shadow refinement on top of this. */
+.btn-dark, .btn-outline, .btn-primary, .btn-plan, .btn, button.primary, .cta,
+.btn-mini, .btn-small, .btn-secondary, .btn-icon {
+  background: rgba(255, 255, 255, .5) !important;
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, .6) !important;
+}
+.plan.featured .btn-plan, .btn-primary{
+  background: linear-gradient(180deg, rgba(85,203,237,.9), rgba(4,157,200,.9)) !important;
+  color: #fff !important;
+  border: 1px solid rgba(255,255,255,.5) !important;
+}
+
+/* Ticket/perforation dots on connexion-prestataire.html need to match the
+   glass backdrop instead of the old flat paper color. */
+.perforation::before, .perforation::after{
+  background: #e6f2f9 !important;
+}
+
+/* Dashed/empty state borders read better a touch bluer against the glass
+   backdrop than the original warm dashed line. */
+.idle, .empty, .cta-card{
+  border-style: dashed !important;
+  border-color: rgba(4,157,200,.35) !important;
+}
