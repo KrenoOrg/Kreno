@@ -607,6 +607,14 @@
     sb.from('waitlist_clients').select('*').eq('account_id', currentUser.id).order('created_at')
   ]);
 
+  if(!subRow){
+    // Compte créé (étape 1) mais jamais de formule choisie/payée : on ne
+    // laisse pas s'afficher un tableau de bord "gratuit" par défaut, on
+    // renvoie directement choisir un abonnement (essai 14 jours).
+    window.location.href = 'abonnement.html?onboarding=1';
+    return;
+  }
+
   const prestations = (prestaRows && prestaRows.length)
     ? prestaRows.map(p => ({ id: p.id, name: p.name, dur: p.duration_minutes, price: p.price }))
     : [];

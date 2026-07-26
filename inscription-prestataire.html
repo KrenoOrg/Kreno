@@ -450,6 +450,7 @@
         </div>
 
         <button class="btn-primary" id="btn-step2-next">Continuer</button>
+        <p class="error" id="err-step2-save" style="display:none;"></p>
         <button class="btn-secondary" id="btn-step2-back">Retour</button>
       </div>
     </div>
@@ -494,6 +495,39 @@
   const PLAN_LABELS = { solo: 'Solo', pro: 'Pro', business: 'Business' };
   const PLAN_LIMITS = { solo: 3, pro: Infinity, business: Infinity };
   const PLAN_COLLAB_LIMITS = { solo: 1, pro: 3, business: Infinity };
+
+  // Brouillon de l'étape 2 (prestations + équipe) : sauvegardé dans
+  // sessionStorage à chaque modification pour survivre à un rafraîchissement
+  // de la page avant le clic sur "Continuer" (les données ne sont écrites
+  // dans Supabase qu'à ce moment-là). Effacé une fois l'enregistrement
+  // réussi côté serveur.
+  function draftKey(){
+    return currentUser ? ('inscription-draft:' + currentUser.id) : null;
+  }
+  function saveDraft(){
+    const key = draftKey();
+    if(!key) return;
+    try{
+      sessionStorage.setItem(key, JSON.stringify({
+        prestations,
+        collaborators,
+        ownerName: document.getElementById('owner-name').value
+      }));
+    } catch(e){ /* stockage indisponible : on continue sans brouillon */ }
+  }
+  function loadDraft(){
+    const key = draftKey();
+    if(!key) return null;
+    try{
+      const raw = sessionStorage.getItem(key);
+      return raw ? JSON.parse(raw) : null;
+    } catch(e){ return null; }
+  }
+  function clearDraft(){
+    const key = draftKey();
+    if(!key) return;
+    try{ sessionStorage.removeItem(key); } catch(e){ /* rien à faire */ }
+  }
 
   function formatPrice(value){
     const price = Number(value || 0);
@@ -616,6 +650,7 @@
       b.addEventListener('click', () => {
         prestations.splice(Number(b.getAttribute('data-i')), 1);
         if(editingIndex !== null) editingIndex = null;
+        saveDraft();
         renderPrestations();
       });
     });
@@ -672,6 +707,7 @@
 
     prestations[i] = { ...prestations[i], name, dur, price };
     editingIndex = null;
+    saveDraft();
     renderPrestations();
   }
 
@@ -706,6 +742,7 @@
     durEl.value = '';
     priceEl.value = '';
     showPrestationsError(false);
+    saveDraft();
     renderPrestations();
     nameEl.focus();
   }
@@ -756,6 +793,7 @@
     list.querySelectorAll('.rm-btn').forEach(b => {
       b.addEventListener('click', () => {
         collaborators.splice(Number(b.getAttribute('data-i')), 1);
+        saveDraft();
         renderCollaborators();
       });
     });
@@ -802,6 +840,7 @@
     collaborators.push({ id: genCollabId(), name, email });
     nameEl.value = '';
     emailEl.value = '';
+    saveDraft();
     renderCollaborators();
     nameEl.focus();
   }
@@ -809,6 +848,7 @@
   document.getElementById('btn-add-collab').addEventListener('click', addCollaborator);
   document.getElementById('owner-name').addEventListener('input', () => {
     renderCollaborators();
+    saveDraft();
     document.getElementById('err-owner-name').style.display = 'none';
   });
   ['new-collab-name', 'new-collab-email'].forEach(id => {
@@ -828,18 +868,26 @@
   async function persistStep2(){
     const ownerName = document.getElementById('owner-name').value.trim();
 
-    await sb.from('prestations').delete().eq('account_id', currentUser.id);
+    const { error: delPrestaErr } = await sb.from('prestations').delete().eq('account_id', currentUser.id);
+    if(delPrestaErr) return { error: delPrestaErr };
+
     if(prestations.length){
-      await sb.from('prestations').insert(
+      const { error: insPrestaErr } = await sb.from('prestations').insert(
         prestations.map(p => ({ account_id: currentUser.id, name: p.name, duration_minutes: p.dur, price: p.price || 0 }))
       );
+      if(insPrestaErr) return { error: insPrestaErr };
     }
 
-    await sb.from('collaborators').delete().eq('account_id', currentUser.id);
-    await sb.from('collaborators').insert([
+    const { error: delCollabErr } = await sb.from('collaborators').delete().eq('account_id', currentUser.id);
+    if(delCollabErr) return { error: delCollabErr };
+
+    const { error: insCollabErr } = await sb.from('collaborators').insert([
       { account_id: currentUser.id, name: ownerName || 'Titulaire' },
       ...collaborators.map(c => ({ account_id: currentUser.id, name: c.name, email: c.email || null }))
     ]);
+    if(insCollabErr) return { error: insCollabErr };
+
+    return { error: null };
   }
 
   document.getElementById('btn-step2-next').addEventListener('click', async () => {
@@ -855,13 +903,21 @@
     if(!ownerNameOk) return;
 
     const btn = document.getElementById('btn-step2-next');
+    const saveErrorEl = document.getElementById('err-step2-save');
+    saveErrorEl.style.display = 'none';
     btn.disabled = true;
     btn.textContent = 'Enregistrement…';
     try{
-      await persistStep2();
+      const { error } = await persistStep2();
+      if(error){
+        saveErrorEl.textContent = 'Erreur lors de l\u2019enregistrement : ' + error.message + '. Vos données n\u2019ont pas toutes été sauvegardées, réessayez.';
+        saveErrorEl.style.display = 'block';
+        return;
+      }
       const name = document.getElementById('salon-name').value.trim() || 'votre établissement';
       document.getElementById('confirm-text').textContent =
         name + ' est configuré avec ' + prestations.length + ' prestation(s). Vous pouvez partager votre page de liste d\u2019attente dès maintenant.';
+      clearDraft();
       goToStep(3);
     } finally {
       btn.disabled = false;
@@ -889,7 +945,9 @@
     const email = document.getElementById('salon-email').value.trim();
     const password = document.getElementById('salon-password').value;
     const emailOk = isValidEmail(email);
-    const passwordOk = password.length >= 8;
+    // Compte déjà créé (on est revenu depuis l'étape 2 via "Retour") : le
+    // mot de passe n'est plus demandé, il n'y a pas de nouveau compte à créer.
+    const passwordOk = currentUser ? true : password.length >= 8;
     const nameOk = Boolean(name);
     const addressOk = Boolean(address);
     const phoneOk = !phone || isValidPhone(phone);
@@ -904,6 +962,25 @@
 
     const btn = document.getElementById('btn-step1-next');
     btn.disabled = true;
+
+    // Retour depuis l'étape 2 : le compte existe déjà (currentUser est déjà
+    // authentifié). On ne rappelle jamais signUp() ici — ça échouerait
+    // toujours ("compte déjà existant") et bloquait l'utilisateur sans
+    // chemin pour revenir à ses prestations. On met juste à jour le profil
+    // et on repart directement sur l'étape 2.
+    if(currentUser){
+      btn.textContent = 'Enregistrement…';
+      const { error: profileError } = await sb.from('profiles').upsert({ id: currentUser.id, name, type, address, phone });
+      btn.disabled = false;
+      btn.textContent = "Continuer vers l'abonnement";
+      if(profileError){
+        setStep1Error('Erreur lors de l\u2019enregistrement du profil : ' + profileError.message + '. Réessayez.');
+        return;
+      }
+      goToStep(2);
+      return;
+    }
+
     btn.textContent = 'Création du compte…';
 
     const { data, error } = await sb.auth.signUp({ email, password });
@@ -929,7 +1006,14 @@
       return;
     }
 
-    await sb.from('profiles').upsert({ id: data.user.id, name, type, address, phone });
+    const { error: profileError } = await sb.from('profiles').upsert({ id: data.user.id, name, type, address, phone });
+
+    if(profileError){
+      btn.disabled = false;
+      btn.textContent = "Continuer vers l'abonnement";
+      setStep1Error('Compte créé, mais erreur lors de l\u2019enregistrement du profil : ' + profileError.message + '. Réessayez.');
+      return;
+    }
 
     if(!data.session){
       // La confirmation par e-mail est activée sur ce projet Supabase : pas
@@ -980,6 +1064,12 @@
       document.getElementById('salon-phone').value = profileRow.phone || '';
     }
     document.getElementById('salon-email').value = currentUser.email || '';
+    // L'e-mail est celui du compte Supabase Auth déjà créé : le rendre
+    // non modifiable ici évite un décalage avec l'e-mail réel de connexion.
+    document.getElementById('salon-email').setAttribute('readonly', 'true');
+    document.getElementById('salon-email').style.background = 'var(--paper-2)';
+    // Le mot de passe n'est plus demandé : le compte existe déjà.
+    document.getElementById('salon-password').closest('.field').style.display = 'none';
 
     if(prestaRows && prestaRows.length){
       prestations = prestaRows.map(p => ({ name: p.name, dur: p.duration_minutes, price: p.price }));
@@ -988,6 +1078,15 @@
     const [ownerRow, ...restCollabRows] = collabRows || [];
     if(ownerRow) document.getElementById('owner-name').value = ownerRow.name || '';
     collaborators = restCollabRows.map(c => ({ id: c.id, name: c.name, email: c.email || '' }));
+
+    // Un brouillon local plus récent (saisie en cours non encore enregistrée
+    // avant un rafraîchissement) prime sur ce qui est déjà en base.
+    const draft = loadDraft();
+    if(draft){
+      if(Array.isArray(draft.prestations)) prestations = draft.prestations;
+      if(Array.isArray(draft.collaborators)) collaborators = draft.collaborators;
+      if(typeof draft.ownerName === 'string') document.getElementById('owner-name').value = draft.ownerName;
+    }
 
     const prestaLimit = PLAN_LIMITS[planId];
     document.getElementById('presta-plan-hint').textContent = prestaLimit === Infinity

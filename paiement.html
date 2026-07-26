@@ -237,6 +237,7 @@
   }
 </script>
 <script>
+(async function(){
   const SUPABASE_URL = 'https://thxbpjumbntiqwexsqut.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoeGJwanVtYm50aXF3ZXhzcXV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ1NzgyNzksImV4cCI6MjEwMDE1NDI3OX0.tpxE9V5oksnZM16-3xuch3hMqXSJSbmQTuP7NVlj_bY';
   window.__sb = window.__sb || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -280,7 +281,7 @@
   // verifyStripeReturn / confirm-checkout), pas devinée côté client.
   if(!planId && !sessionId){
     window.location.href = 'abonnement.html' + (onboarding ? '?onboarding=1' : '');
-    throw new Error('Aucune formule sélectionnée, redirection vers abonnement.html.');
+    return; // redirection en cours, on arrête simplement l'exécution du script
   }
 
   let plan = planId ? PLANS[planId] : null;
@@ -348,7 +349,10 @@
 
   async function activatePlan(){
     sessionStorage.removeItem(CHECKOUT_CONTEXT_KEY);
-    await sb.from('subscriptions').upsert({ account_id: currentUser.id, plan: planId });
+    const { error: subError } = await sb.from('subscriptions').upsert({ account_id: currentUser.id, plan: planId });
+    if(subError){
+      return { error: subError };
+    }
     const trimmed = await applyPlanLimits(planId);
 
     const cta = document.getElementById('confirm-cta');
@@ -368,11 +372,17 @@
     document.getElementById('form-screen').style.display = 'none';
     document.getElementById('confirm-screen').style.display = 'block';
     document.getElementById('back-link').style.display = 'none';
+    return { error: null };
   }
 
   document.getElementById('btn-pay').addEventListener('click', async () => {
     if(isFree){
-      await activatePlan();
+      const { error } = await activatePlan();
+      if(error){
+        const errorEl = document.getElementById('stripe-error');
+        errorEl.textContent = 'Erreur lors de l\u2019activation : ' + error.message + '. Réessayez.';
+        errorEl.style.display = 'block';
+      }
       return;
     }
 
@@ -439,7 +449,27 @@
       plan = PLANS[planId];
       document.getElementById('summary-plan-name').textContent = plan.name;
       document.getElementById('summary-plan-price').innerHTML = plan.price + '<span> /mois</span>';
-      await activatePlan();
+
+      const { error: activationError } = await activatePlan();
+      if(activationError){
+        // Le paiement est déjà confirmé par Stripe à ce stade : on ne
+        // remet surtout pas le formulaire "Confirmer et payer" (ça
+        // relancerait un paiement alors que la carte a déjà été débitée).
+        // On explique la situation et on laisse ?session_id dans l'URL :
+        // recharger la page relance verifyStripeReturn(), confirm-checkout
+        // est idempotent (revérifie juste le paiement déjà effectué) et
+        // retente uniquement l'activation en base.
+        document.getElementById('verify-screen').style.display = 'none';
+        document.getElementById('back-link').style.display = 'none';
+        document.getElementById('btn-pay').style.display = 'none';
+        document.getElementById('free-note').style.display = 'none';
+        document.getElementById('stripe-note').style.display = 'none';
+        document.getElementById('fine-print').style.display = 'none';
+        document.getElementById('form-screen').style.display = 'block';
+        const errorEl = document.getElementById('stripe-error');
+        errorEl.textContent = 'Votre paiement est confirmé, mais l\u2019activation de la formule a échoué (' + activationError.message + '). Ne relancez pas de paiement : rechargez cette page pour réessayer l\u2019activation, ou contactez le support si le problème persiste.';
+        errorEl.style.display = 'block';
+      }
     } catch(err){
       document.getElementById('verify-screen').style.display = 'none';
       document.getElementById('form-screen').style.display = 'block';
@@ -469,6 +499,7 @@
     }
   }
   init();
+})();
 </script>
 
 </body>
