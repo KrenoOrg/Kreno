@@ -480,7 +480,10 @@
       </div>
       <div>
         <label for="slot-time">Heure du créneau</label>
-        <input id="slot-time" type="time" value="14:00">
+        <div class="date-field">
+          <input id="slot-time" type="time" class="date-native" value="14:00">
+          <div class="date-display" id="slot-time-display"></div>
+        </div>
       </div>
     </div>
     <div class="row2" style="margin-bottom:10px;">
@@ -890,6 +893,15 @@
   bindDateDisplay(newDateInput, 'new-date-display');
 
   const slotTimeInput = document.getElementById('slot-time');
+
+  function bindTimeDisplay(input, displayId){
+    const displayEl = document.getElementById(displayId);
+    const sync = () => { displayEl.textContent = input.value || '--:--'; };
+    input.addEventListener('input', sync);
+    input.addEventListener('change', sync);
+    sync();
+  }
+  bindTimeDisplay(slotTimeInput, 'slot-time-display');
 
   function formatDate(iso){
     const d = new Date(iso + 'T00:00:00');

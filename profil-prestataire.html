@@ -449,7 +449,7 @@
   <div style="background:#fff;border-radius:14px;max-width:380px;width:100%;padding:1.5rem;box-sizing:border-box;">
     <p style="font-family:'Fraunces',serif;font-size:18px;font-weight:500;margin:0 0 8px;">Confirmer la suppression</p>
     <p style="font-size:13.5px;color:var(--ink-soft);line-height:1.5;margin:0 0 1rem;">Cette action supprime définitivement votre compte et toutes ses données. Tapez <b>SUPPRIMER</b> pour confirmer.</p>
-    <input id="delete-confirm-input" type="text" style="width:100%;box-sizing:border-box;font-family:'Inter',sans-serif;font-size:16px;padding:11px 12px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink);margin-bottom:1rem;">
+    <input id="delete-confirm-input" type="text" autocomplete="off" placeholder="SUPPRIMER" style="width:100%;box-sizing:border-box;font-family:'Inter',sans-serif;font-size:16px;padding:11px 12px;border-radius:8px;border:1.5px solid #9fb0c2;background:#eef2f6;color:#1B2A4A;margin-bottom:1rem;">
     <p id="delete-error" style="display:none;font-size:12.5px;color:#B3441E;background:#FBEAE2;border-radius:8px;padding:10px 12px;margin:0 0 1rem;"></p>
     <div style="display:flex;gap:10px;">
       <button id="delete-cancel" type="button" style="flex:1;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;padding:11px;border-radius:9px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;">Annuler</button>
@@ -598,18 +598,26 @@
     pro:      { smsIncluded: 100,      smsHardCap: true },
     business: { smsIncluded: Infinity, smsHardCap: false }
   };
-  const SMS_USAGE_PREFIX = 'creneau-sms-usage:';
   function currentMonthKey(){ return new Date().toISOString().slice(0, 7); }
-  function readSmsUsage(id){
-    const raw = JSON.parse(localStorage.getItem(SMS_USAGE_PREFIX + id) || 'null');
-    const month = currentMonthKey();
-    if(!raw || raw.month !== month) return { month, count: 0 };
-    return raw;
+  // Le quota SMS est compté et plafonné côté serveur (table sms_usage,
+  // alimentée par la fonction increment_sms_usage appelée depuis
+  // espace-prestataire.html à chaque signalement de créneau). On lit cette
+  // même table ici pour afficher le vrai compteur du mois, au lieu d'un
+  // stockage local qui n'était jamais écrit nulle part.
+  async function readSmsUsage(id){
+    const { data, error } = await sb
+      .from('sms_usage')
+      .select('count')
+      .eq('account_id', id)
+      .eq('period', currentMonthKey())
+      .maybeSingle();
+    if(error) console.error('Échec de la lecture du quota SMS :', error.message);
+    return { count: (data && data.count) || 0 };
   }
 
-  function renderSmsUsage(){
+  async function renderSmsUsage(){
     const limits = SMS_LIMITS[planId];
-    const usage = readSmsUsage(currentAccountId);
+    const usage = await readSmsUsage(currentAccountId);
     const el = document.getElementById('sms-usage');
     if(limits.smsIncluded === Infinity){
       el.textContent = usage.count + ' SMS envoyés ce mois-ci · illimité (formule ' + currentPlan.name + ')';
