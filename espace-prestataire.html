@@ -576,13 +576,25 @@
   }
 </script>
 <script>
+  // Sans ce garde, un retour arrière depuis le cache navigateur (bfcache)
+  // après déconnexion peut réafficher cette page (clients, téléphones,
+  // statistiques) telle qu'elle était avant la déconnexion, sans repasser
+  // par la vérification de session. Même correctif que profil-prestataire.html.
+  window.addEventListener('pageshow', function(event){
+    if(event.persisted) window.location.reload();
+  });
+</script>
+<script>
 (async function(){
-  const HISTORY_PREFIX = 'creneau-history:';
-  function historyStorageKey(id){ return HISTORY_PREFIX + id; }
+  // L'historique des créneaux signalés vit désormais dans la table
+  // slot_signals (Supabase), chargé plus bas via une requête ; plus rien en
+  // localStorage pour ces données.
 
   const SUPABASE_URL = 'https://thxbpjumbntiqwexsqut.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoeGJwanVtYm50aXF3ZXhzcXV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ1NzgyNzksImV4cCI6MjEwMDE1NDI3OX0.tpxE9V5oksnZM16-3xuch3hMqXSJSbmQTuP7NVlj_bY';
-  window.__sb = window.__sb || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  window.__sb = window.__sb || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: { persistSession: true, autoRefreshToken: true, storageKey: 'espace-prestataire-auth' }
+  });
   const sb = window.__sb;
 
   const { data: { session } } = await sb.auth.getSession();
@@ -615,6 +627,14 @@
     return;
   }
 
+  if(!prestaRows || !prestaRows.length){
+    // Abonnement payé mais inscription abandonnée avant l'étape 2 (aucune
+    // prestation enregistrée) : on ne laisse pas s'afficher un tableau de
+    // bord vide et inutilisable, on renvoie terminer la configuration.
+    window.location.href = 'inscription-prestataire.html?resume=prestations';
+    return;
+  }
+
   const prestations = (prestaRows && prestaRows.length)
     ? prestaRows.map(p => ({ id: p.id, name: p.name, dur: p.duration_minutes, price: p.price }))
     : [];
@@ -641,18 +661,12 @@
   const planLimits = PLAN_LIMITS[planId];
   const planName = PLAN_LABELS[planId];
 
-  const SMS_USAGE_PREFIX = 'creneau-sms-usage:';
+  // Le quota SMS est désormais compté et plafonné côté serveur (fonction
+  // increment_sms_usage, RLS sur sms_usage) : impossible à réinitialiser en
+  // vidant le cache ou en changeant d'appareil. currentMonthKey() reste
+  // utilisé pour l'affichage de l'historique/des stats, sans lien avec le
+  // quota lui-même.
   function currentMonthKey(){ return new Date().toISOString().slice(0, 7); }
-  function smsUsageKey(id){ return SMS_USAGE_PREFIX + id; }
-  function readSmsUsage(id){
-    const raw = JSON.parse(localStorage.getItem(smsUsageKey(id)) || 'null');
-    const month = currentMonthKey();
-    if(!raw || raw.month !== month) return { month, count: 0 };
-    return raw;
-  }
-  function writeSmsUsage(id, usage){
-    localStorage.setItem(smsUsageKey(id), JSON.stringify(usage));
-  }
 
   function countJoinedThisMonth(list){
     const month = currentMonthKey();
@@ -668,7 +682,19 @@
   function hidePlanLimitMsg(){
     document.getElementById('plan-limit-msg').style.display = 'none';
   }
-  let history = (JSON.parse(localStorage.getItem(historyStorageKey(currentAccountId)) || 'null') || []).map(entry => ({ ...entry, accepted: entry.accepted || false }));
+  const { data: signalRows, error: signalRowsError } = await sb
+    .from('slot_signals').select('*').eq('account_id', currentAccountId).order('created_at', { ascending: false });
+  if(signalRowsError) console.error('Échec du chargement de l\u2019historique des créneaux signalés :', signalRowsError.message);
+  let history = (signalRows || []).map(row => ({
+    id: row.id,
+    date: row.signal_date,
+    time: row.signal_time,
+    presta: row.presta,
+    collaborator: row.collaborator_id,
+    matchCount: row.match_count,
+    accepted: row.accepted,
+    price: Number(row.price) || 0
+  }));
   let slots = history.filter(entry => entry.accepted).length || 0;
   document.getElementById('brand-name').textContent = salonName;
   document.title = salonName + ' · Espace prestataire';
@@ -915,12 +941,12 @@
       return (
         '<div class="wl-card">' +
           '<div class="wl-info">' +
-            '<p class="wl-name">' + c.name + '</p>' +
-            '<p class="wl-meta">' + c.presta + collabLabel + dateLabel + '</p>' +
+            '<p class="wl-name">' + escapeHtml(c.name) + '</p>' +
+            '<p class="wl-meta">' + escapeHtml(c.presta) + collabLabel + dateLabel + '</p>' +
           '</div>' +
           '<div class="wl-right">' +
             badgeHtml(c.status) +
-            '<button class="rm-btn" data-i="' + i + '" aria-label="Retirer ' + c.name + ' de la liste">' +
+            '<button class="rm-btn" data-i="' + i + '" aria-label="Retirer ' + escapeHtml(c.name) + ' de la liste">' +
               '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"></path><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"></path></svg>' +
             '</button>' +
           '</div>' +
@@ -941,7 +967,12 @@
         clients.splice(idx, 1);
         renderWaitlist();
         if(removed && removed.id){
-          await sb.from('waitlist_clients').delete().eq('id', removed.id);
+          const { error } = await sb.from('waitlist_clients').delete().eq('id', removed.id);
+          if(error){
+            clients.splice(idx, 0, removed);
+            renderWaitlist();
+            console.error('Échec de la suppression du client en base :', error.message);
+          }
         }
       });
     });
@@ -961,17 +992,13 @@
     return '<span class="badge sent">' + matchCount + ' client(s) prévenu(s)</span>';
   }
 
-  function persistHistory(){
-    localStorage.setItem(historyStorageKey(currentAccountId), JSON.stringify(history));
-  }
-
   function renderHistory(){
     historyHead.style.display = history.length ? 'flex' : 'none';
     const cards = history.map(h => (
       '<div class="agenda-card">' +
         '<span class="agenda-time">' + h.time + '</span>' +
         '<div class="agenda-info">' +
-          '<p class="agenda-presta">' + h.presta + '</p>' +
+          '<p class="agenda-presta">' + escapeHtml(h.presta) + '</p>' +
           '<p class="agenda-date">' + formatDate(h.date) + '</p>' +
         '</div>' +
         historyBadgeHtml(h.matchCount) +
@@ -1018,7 +1045,7 @@
     return false;
   }
 
-  function signalSlot(date, time, presta, collaborator){
+  async function signalSlot(date, time, presta, collaborator){
     hidePlanLimitMsg();
 
     // Le créneau n'est proposé qu'aux clients en liste d'attente dont la
@@ -1037,25 +1064,54 @@
         return isClientAvailable(c, date);
       });
 
-    // Quota SMS de la formule : Free est bloqué au-delà du quota mensuel
-    // inclus ; Solo/Salon ne sont jamais bloqués (au-delà de l'inclus, les
-    // SMS supplémentaires seraient facturés à l'unité).
-    const usage = readSmsUsage(currentAccountId);
-    const remaining = planLimits.smsIncluded === Infinity ? Infinity : Math.max(0, planLimits.smsIncluded - usage.count);
-
-    if(planLimits.smsHardCap && remaining <= 0){
-      showPlanLimitMsg('Quota de ' + planLimits.smsIncluded + ' SMS/mois atteint pour la formule ' + planName + '. Changez de formule pour continuer à prévenir vos clients.', 'error');
-      return;
-    }
-
+    // Quota SMS de la formule : compté et plafonné côté serveur (fonction
+    // increment_sms_usage), donc infalsifiable depuis le navigateur — Pro est
+    // bloqué au-delà du quota mensuel inclus ; Solo/Business ne sont jamais
+    // bloqués (au-delà de l'inclus, les SMS supplémentaires seraient
+    // facturés à l'unité). On ne consomme le quota que s'il y a au moins un
+    // client à prévenir.
     let limitedByQuota = false;
-    if(planLimits.smsHardCap && matching.length > remaining){
-      matching = matching.slice(0, remaining);
-      limitedByQuota = true;
+    let overIncluded = 0;
+    let quotaHardCap = planLimits.smsHardCap;
+    let quotaIncluded = planLimits.smsIncluded;
+    if(matching.length > 0){
+      const { data: rpcData, error: rpcError } = await sb.rpc('increment_sms_usage', { p_requested: matching.length });
+      if(rpcError){
+        showPlanLimitMsg('Impossible de vérifier le quota SMS : ' + rpcError.message, 'error');
+        return;
+      }
+      const usage = Array.isArray(rpcData) ? rpcData[0] : rpcData;
+      quotaHardCap = usage.hard_cap;
+      quotaIncluded = usage.included === null ? Infinity : usage.included;
+      overIncluded = usage.over_included || 0;
+      if(usage.allowed < matching.length){
+        limitedByQuota = true;
+        matching = matching.slice(0, usage.allowed);
+      }
+      if(usage.allowed === 0 && matching.length === 0 && quotaHardCap){
+        showPlanLimitMsg('Quota de ' + quotaIncluded + ' SMS/mois atteint pour la formule ' + planName + '. Changez de formule pour continuer à prévenir vos clients.', 'error');
+        return;
+      }
     }
 
-    history.unshift({ date, time, presta, collaborator: collaborator || null, matchCount: matching.length, accepted: false, price: getPrestationPrice(presta) });
-    persistHistory();
+    const priceForEntry = getPrestationPrice(presta);
+    const { data: insertedRow, error: insertHistoryError } = await sb
+      .from('slot_signals')
+      .insert({
+        account_id: currentAccountId,
+        signal_date: date,
+        signal_time: time,
+        presta,
+        collaborator_id: collaborator || null,
+        match_count: matching.length,
+        price: priceForEntry,
+        accepted: false
+      })
+      .select('id')
+      .single();
+    if(insertHistoryError) console.error('Échec de l\u2019enregistrement du signalement :', insertHistoryError.message);
+    const historyEntryId = insertedRow ? insertedRow.id : null;
+    history.unshift({ id: historyEntryId, date, time, presta, collaborator: collaborator || null, matchCount: matching.length, accepted: false, price: priceForEntry });
     updateMetrics();
     renderHistory();
 
@@ -1086,10 +1142,8 @@
     }
 
     if(matching.length){
-      const newUsage = { month: usage.month, count: usage.count + matching.length };
-      writeSmsUsage(currentAccountId, newUsage);
-      if(!planLimits.smsHardCap && newUsage.count > planLimits.smsIncluded){
-        showPlanLimitMsg((newUsage.count - planLimits.smsIncluded) + ' SMS facturés en supplément ce mois-ci (au-delà des ' + planLimits.smsIncluded + ' inclus dans la formule ' + planName + ').', 'info');
+      if(!quotaHardCap && overIncluded > 0){
+        showPlanLimitMsg(overIncluded + ' SMS facturés en supplément ce mois-ci (au-delà des ' + quotaIncluded + ' inclus dans la formule ' + planName + ').', 'info');
       } else if(limitedByQuota){
         showPlanLimitMsg('Quota SMS de la formule ' + planName + ' atteint : seuls ' + matching.length + ' client(s) sur la liste ont pu être prévenus. Changez de formule pour lever cette limite.', 'error');
       }
@@ -1100,7 +1154,8 @@
         clients[i].status = 'sent';
         renderWaitlist();
         if(clients[i].id){
-          await sb.from('waitlist_clients').update({ status: 'sent' }).eq('id', clients[i].id);
+          const { error } = await sb.from('waitlist_clients').update({ status: 'sent' }).eq('id', clients[i].id);
+          if(error) console.error('Échec de la mise à jour du statut "sent" en base :', error.message);
         }
       }, order * 450);
     });
@@ -1113,16 +1168,19 @@
       const confirmedClient = clients[matching[0].i];
       const takenIds = matching.slice(1).map(({ i }) => clients[i]).filter(c => c.id).map(c => c.id);
       if(confirmedClient.id){
-        await sb.from('waitlist_clients').update({ status: 'confirmed' }).eq('id', confirmedClient.id);
+        const { error } = await sb.from('waitlist_clients').update({ status: 'confirmed' }).eq('id', confirmedClient.id);
+        if(error) console.error('Échec de la mise à jour du statut "confirmed" en base :', error.message);
       }
       if(takenIds.length){
-        await sb.from('waitlist_clients').update({ status: 'taken' }).in('id', takenIds);
+        const { error } = await sb.from('waitlist_clients').update({ status: 'taken' }).in('id', takenIds);
+        if(error) console.error('Échec de la mise à jour du statut "taken" en base :', error.message);
       }
 
-      const acceptedEntryIndex = history.findIndex(entry => entry.date === date && entry.time === time && entry.presta === presta && !entry.accepted);
-      if(acceptedEntryIndex !== -1){
-        history[acceptedEntryIndex].accepted = true;
-        persistHistory();
+      if(historyEntryId){
+        const { error: acceptError } = await sb.from('slot_signals').update({ accepted: true }).eq('id', historyEntryId);
+        if(acceptError) console.error('Échec de la mise à jour du signalement en base :', acceptError.message);
+        const acceptedEntry = history.find(entry => entry.id === historyEntryId);
+        if(acceptedEntry) acceptedEntry.accepted = true;
       }
 
       updateMetrics();

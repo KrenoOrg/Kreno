@@ -300,7 +300,9 @@
 (async function(){
   const SUPABASE_URL = 'https://thxbpjumbntiqwexsqut.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoeGJwanVtYm50aXF3ZXhzcXV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ1NzgyNzksImV4cCI6MjEwMDE1NDI3OX0.tpxE9V5oksnZM16-3xuch3hMqXSJSbmQTuP7NVlj_bY';
-  window.__sb = window.__sb || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  window.__sb = window.__sb || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: { persistSession: true, autoRefreshToken: true, storageKey: 'espace-prestataire-auth' }
+  });
   const sb = window.__sb;
 
   const ICONS = {
@@ -320,6 +322,14 @@
 
   function colorsFor(type){
     return { bg:'#E3F8FD', fg:'#000000' };
+  }
+
+  function escapeHtml(str){
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
   }
 
   async function loadProviders(){
@@ -347,7 +357,7 @@
     ['Tous', ...categories].forEach(c => {
       const b = document.createElement('button');
       b.className = 'filter' + (c === activeFilter ? ' on' : '');
-      b.innerHTML = (c !== 'Tous' ? '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + iconFor(c) + '</svg>' : '') + c;
+      b.innerHTML = (c !== 'Tous' ? '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + iconFor(c) + '</svg>' : '') + escapeHtml(c);
       b.addEventListener('click', () => {
         activeFilter = c;
         renderFilters();
@@ -365,13 +375,13 @@
 
   function card(p){
     const c = colorsFor(p.type);
-    return '<a class="card" href="liste-attente.html?salon=' + p.slug + '">' +
+    return '<a class="card" href="liste-attente.html?salon=' + encodeURIComponent(p.slug) + '">' +
       '<div class="avatar" style="background:' + c.bg + ';color:' + c.fg + ';"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + iconFor(p.type) + '</svg></div>' +
       '<div class="card-body">' +
-        '<p class="card-name">' + p.name + '</p>' +
-        '<p class="card-type">' + p.type + (p.zone ? ' · ' + p.zone : '') + '</p>' +
+        '<p class="card-name">' + escapeHtml(p.name) + '</p>' +
+        '<p class="card-type">' + escapeHtml(p.type) + (p.zone ? ' · ' + escapeHtml(p.zone) : '') + '</p>' +
         (p.wait > 0
-          ? '<span class="badge wait">' + p.wait + ' en liste</span>'
+          ? '<span class="badge wait">' + escapeHtml(p.wait) + ' en liste</span>'
           : '<span class="badge">Liste vide</span>') +
       '</div>' +
       '<svg class="arrow" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>' +

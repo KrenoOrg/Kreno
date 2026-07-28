@@ -322,8 +322,8 @@
       <p class="hint" id="err-salon-email" style="display:none;color:#B3441E;margin-top:6px;">Un compte existe déjà avec cette adresse e-mail.</p>
     </div>
     <div class="field">
-      <label for="salon-phone">Téléphone (optionnel)</label>
-      <input id="salon-phone" type="tel" placeholder="06 00 00 00 00">
+      <label for="salon-phone">Téléphone</label>
+      <input id="salon-phone" type="tel" placeholder="06 00 00 00 00" required>
       <p class="hint">Affiché sur votre page publique pour que les clients puissent vous joindre.</p>
       <p class="hint" id="err-salon-phone" style="display:none;color:#B3441E;">Merci d'indiquer un numéro de téléphone français valide.</p>
     </div>
@@ -460,12 +460,22 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
+  // Idem espace-prestataire.html : évite qu'un retour arrière depuis le
+  // cache navigateur réaffiche ce profil après une déconnexion.
+  window.addEventListener('pageshow', function(event){
+    if(event.persisted) window.location.reload();
+  });
+</script>
+<script>
 (async function(){
   const HISTORY_PREFIX = 'creneau-history:';
 
   const SUPABASE_URL = 'https://thxbpjumbntiqwexsqut.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoeGJwanVtYm50aXF3ZXhzcXV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ1NzgyNzksImV4cCI6MjEwMDE1NDI3OX0.tpxE9V5oksnZM16-3xuch3hMqXSJSbmQTuP7NVlj_bY';
-  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  window.__sb = window.__sb || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: { persistSession: true, autoRefreshToken: true, storageKey: 'espace-prestataire-auth' }
+  });
+  const sb = window.__sb;
   const SUPABASE_FUNCTIONS_URL = SUPABASE_URL + '/functions/v1';
 
   const { data: { session } } = await sb.auth.getSession();
@@ -493,23 +503,45 @@
     sb.from('subscriptions').select('plan, status, stripe_subscription_id, pending_plan, pending_effective_date').eq('account_id', currentUser.id).maybeSingle()
   ]);
 
-  // Remplace toute la liste des prestations en base (plus simple et plus sûr
-  // qu'un diff ligne à ligne pour ce formulaire).
+  // Met à jour/insère/supprime chaque ligne individuellement plutôt que de
+  // tout supprimer puis tout réinsérer : waitlist_clients.service_id
+  // référence ces ID (voir espace-prestataire.html : prestations.find(p =>
+  // p.id === w.service_id)). Un delete+insert global créerait de nouveaux
+  // ID à chaque modification et casserait silencieusement le lien "quelle
+  // prestation" sur toutes les entrées de liste d'attente déjà enregistrées.
   async function persistPrestations(){
-    await sb.from('prestations').delete().eq('account_id', currentUser.id);
-    if(prestations.length){
-      await sb.from('prestations').insert(
-        prestations.map(p => ({ account_id: currentUser.id, name: p.name, duration_minutes: p.dur, price: p.price || 0 }))
-      );
+    const existing = prestations.filter(p => p.id);
+    for(const p of existing){
+      const { error } = await sb.from('prestations').update({ name: p.name, duration_minutes: p.dur, price: p.price || 0 }).eq('id', p.id);
+      if(error) return { error };
     }
+
+    const toInsert = prestations.filter(p => !p.id);
+    if(toInsert.length){
+      const { data: inserted, error } = await sb.from('prestations')
+        .insert(toInsert.map(p => ({ account_id: currentUser.id, name: p.name, duration_minutes: p.dur, price: p.price || 0 })))
+        .select();
+      if(error) return { error };
+      toInsert.forEach((p, i) => { if(inserted && inserted[i]) p.id = inserted[i].id; });
+    }
+
+    const currentIds = new Set(existing.map(p => p.id));
+    const removedIds = (prestaRows || []).map(p => p.id).filter(id => !currentIds.has(id));
+    if(removedIds.length){
+      const { error } = await sb.from('prestations').delete().in('id', removedIds);
+      if(error) return { error };
+    }
+
+    return { error: null };
   }
 
   let prestations = (prestaRows && prestaRows.length)
-    ? prestaRows.map(p => ({ name: p.name, dur: p.duration_minutes, price: p.price }))
+    ? prestaRows.map(p => ({ id: p.id, name: p.name, dur: p.duration_minutes, price: p.price }))
     : [];
   let editingIndex = null;
 
   const [ownerRow, ...restCollabRows] = collabRows || [];
+  const ownerRowId = ownerRow ? ownerRow.id : null;
   const account = {
     name: profileRow ? profileRow.name : '',
     type: profileRow ? profileRow.type : 'Coiffure',
@@ -530,6 +562,7 @@
   document.getElementById('owner-name').value = account.ownerName || '';
 
   let collaborators = account.collaborators;
+  let editingCollabIndex = null;
 
   const PLAN_LABELS = {
     solo:     { name: 'Solo',     price: '19,90 € /mois' },
@@ -613,7 +646,10 @@
       try{
         const res = await fetch(SUPABASE_FUNCTIONS_URL + '/change-plan', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + session.access_token
+          },
           body: JSON.stringify({ accountId: currentUser.id, newPlan: null })
         });
         const data = await res.json();
@@ -659,16 +695,55 @@
     return price.toFixed(2).replace(/\.00$/, '') + ' €';
   }
 
-  // Remplace toute la liste des collaborateurs en base (titulaire inclus en
-  // 1re ligne), même logique que persistPrestations : plus simple et sûr
-  // qu'un diff ligne à ligne pour ce formulaire.
+  // Met à jour/insère/supprime chaque ligne individuellement plutôt que de
+  // tout supprimer puis tout réinsérer : ça préserve les ID existants en
+  // base, indispensable puisque waitlist_clients.collaborator_id référence
+  // ces ID. Un delete+insert global créerait de nouveaux ID à chaque
+  // modification et casserait silencieusement le lien "avec quel
+  // collaborateur" sur toutes les entrées déjà enregistrées.
   async function persistCollaboratorsRows(){
     const ownerName = document.getElementById('owner-name').value.trim();
-    await sb.from('collaborators').delete().eq('account_id', currentUser.id);
-    await sb.from('collaborators').insert([
-      { account_id: currentUser.id, name: ownerName || 'Titulaire' },
-      ...collaborators.map(c => ({ account_id: currentUser.id, name: c.name, email: c.email || null }))
-    ]);
+
+    // Titulaire : update si la ligne existe déjà, sinon insert (compte créé
+    // avant l'ajout de cette colonne, cas normalement rare).
+    if(ownerRowId){
+      const { error } = await sb.from('collaborators').update({ name: ownerName || 'Titulaire' }).eq('id', ownerRowId);
+      if(error) return { error };
+    } else {
+      const { error } = await sb.from('collaborators').insert([{ account_id: currentUser.id, name: ownerName || 'Titulaire' }]);
+      if(error) return { error };
+    }
+
+    // Collaborateurs déjà en base (ont un id) : update en place, sans
+    // toucher à leur id existant.
+    const existing = collaborators.filter(c => c.id);
+    for(const c of existing){
+      const { error } = await sb.from('collaborators').update({ name: c.name, email: c.email || null }).eq('id', c.id);
+      if(error) return { error };
+    }
+
+    // Nouveaux collaborateurs (pas encore d'id) : insert. On récupère les
+    // lignes créées pour attacher leur id côté client (utile si l'appelant
+    // resauvegarde juste après sans recharger la page).
+    const toInsert = collaborators.filter(c => !c.id);
+    if(toInsert.length){
+      const { data: inserted, error } = await sb.from('collaborators')
+        .insert(toInsert.map(c => ({ account_id: currentUser.id, name: c.name, email: c.email || null })))
+        .select();
+      if(error) return { error };
+      toInsert.forEach((c, i) => { if(inserted && inserted[i]) c.id = inserted[i].id; });
+    }
+
+    // Collaborateurs retirés localement (avaient un id au chargement, plus
+    // présents dans la liste courante) : delete uniquement ces lignes-là.
+    const currentIds = new Set(existing.map(c => c.id));
+    const removedIds = restCollabRows.map(c => c.id).filter(id => !currentIds.has(id));
+    if(removedIds.length){
+      const { error } = await sb.from('collaborators').delete().in('id', removedIds);
+      if(error) return { error };
+    }
+
+    return { error: null };
   }
 
   async function saveAll(showToast){
@@ -686,7 +761,7 @@
     const nameOk = Boolean(name);
     const addressOk = Boolean(address);
     const emailOk = isValidEmail(email);
-    const phoneOk = !phone || isValidPhone(phone);
+    const phoneOk = isValidPhone(phone);
 
     errNameEl.style.display = nameOk ? 'none' : 'block';
     errAddressEl.style.display = addressOk ? 'none' : 'block';
@@ -703,7 +778,7 @@
       name,
       type: document.getElementById('salon-type').value,
       address,
-      phone
+      phone: phone.replace(/[\s.\-]/g, '')
     };
     // Le message SMS personnalisé n'est modifiable (et donc écrit) que sur la
     // formule Business : sur les autres formules, on ne touche pas cette
@@ -713,7 +788,12 @@
       profileFields.sms_template = smsTemplateInput.value.trim() || null;
     }
 
-    await sb.from('profiles').upsert(profileFields);
+    const { error: profileError } = await sb.from('profiles').upsert(profileFields);
+    if(profileError){
+      errEmailEl.textContent = 'Erreur lors de l\u2019enregistrement du profil : ' + profileError.message + '. Réessayez.';
+      errEmailEl.style.display = 'block';
+      return;
+    }
 
     if(email && email !== (currentUser.email || '')){
       const { error: emailError } = await sb.auth.updateUser({ email });
@@ -723,8 +803,21 @@
       }
     }
 
-    await persistPrestations();
-    await persistCollaboratorsRows();
+    const { error: prestaError } = await persistPrestations();
+    if(prestaError){
+      const fieldsErrorEl = document.getElementById('err-presta-fields');
+      fieldsErrorEl.textContent = 'Vos informations générales (nom, adresse, téléphone, activité) ont bien été enregistrées. Erreur lors de l\u2019enregistrement des prestations : ' + prestaError.message + '. Réessayez.';
+      fieldsErrorEl.style.display = 'block';
+      return;
+    }
+
+    const { error: collabError } = await persistCollaboratorsRows();
+    if(collabError){
+      const errorEl = document.getElementById('err-collab-fields');
+      errorEl.textContent = 'Vos informations générales et vos prestations ont bien été enregistrées. Erreur lors de l\u2019enregistrement de l\u2019équipe : ' + collabError.message + '. Réessayez.';
+      errorEl.style.display = 'block';
+      return;
+    }
 
     document.title = (name || 'Mon profil') + ' · Espace prestataire';
     if(showToast){
@@ -810,11 +903,41 @@
     }).join('');
 
     list.querySelectorAll('.rm-btn').forEach(b => {
-      b.addEventListener('click', () => {
-        prestations.splice(Number(b.getAttribute('data-i')), 1);
+      b.addEventListener('click', async () => {
+        const i = Number(b.getAttribute('data-i'));
+        const removed = prestations[i];
+        const fieldsErrorEl = document.getElementById('err-presta-fields');
+
+        // Même risque que pour les collaborateurs : waitlist_clients.service_id
+        // référence prestations.id. On vérifie avant de supprimer.
+        if(removed.id){
+          const { count, error: checkError } = await sb
+            .from('waitlist_clients')
+            .select('id', { count: 'exact', head: true })
+            .eq('account_id', currentUser.id)
+            .eq('service_id', removed.id);
+          if(checkError){
+            fieldsErrorEl.textContent = 'Erreur : impossible de vérifier si cette prestation est utilisée (' + checkError.message + '). Réessayez.';
+            fieldsErrorEl.style.display = 'block';
+            return;
+          }
+          if(count > 0){
+            fieldsErrorEl.textContent = escapeHtml(removed.name) + ' est demandée par ' + count + ' client(s) en liste d\u2019attente. Retirez-les ou changez leur prestation avant de la supprimer.';
+            fieldsErrorEl.style.display = 'block';
+            return;
+          }
+        }
+
+        prestations.splice(i, 1);
         editingIndex = null;
         renderPrestations();
-        persistPrestations();
+        const { error } = await persistPrestations();
+        if(error){
+          prestations.splice(i, 0, removed);
+          renderPrestations();
+          fieldsErrorEl.textContent = 'Erreur : la suppression n\u2019a pas pu être enregistrée (' + error.message + '). Réessayez.';
+          fieldsErrorEl.style.display = 'block';
+        }
       });
     });
 
@@ -848,14 +971,15 @@
     });
   }
 
-  function validatePrestaFields(name, dur, durEl, price, priceEl){
+  function validatePrestaFields(name, dur, durEl, price, priceEl, excludeIndex){
     if(!name) return 'Merci d\u2019indiquer un nom de prestation.';
+    if(prestations.some((p, j) => j !== excludeIndex && p.name.trim().toLowerCase() === name.toLowerCase())) return 'Une prestation porte déjà ce nom.';
     if(!durEl.value || !Number.isFinite(dur) || dur < 5) return 'La durée doit être un nombre d\u2019au moins 5 minutes.';
     if(priceEl.value && (!Number.isFinite(price) || price < 0)) return 'Le prix ne peut pas être négatif.';
     return '';
   }
 
-  function saveEdit(i){
+  async function saveEdit(i){
     const nameEl = document.getElementById('edit-presta-name-' + i);
     const durEl = document.getElementById('edit-presta-dur-' + i);
     const priceEl = document.getElementById('edit-presta-price-' + i);
@@ -864,20 +988,27 @@
     const name = nameEl.value.trim();
     const dur = Number(durEl.value);
     const price = Number(priceEl.value || 0);
-    const fieldsError = validatePrestaFields(name, dur, durEl, price, priceEl);
+    const fieldsError = validatePrestaFields(name, dur, durEl, price, priceEl, i);
     if(fieldsError){
       fieldsErrorEl.textContent = fieldsError;
       fieldsErrorEl.style.display = 'block';
       return;
     }
     fieldsErrorEl.style.display = 'none';
+    const previous = prestations[i];
     prestations[i] = { ...prestations[i], name, dur, price };
     editingIndex = null;
     renderPrestations();
-    persistPrestations();
+    const { error } = await persistPrestations();
+    if(error){
+      prestations[i] = previous;
+      renderPrestations();
+      fieldsErrorEl.textContent = 'Erreur d\u2019enregistrement : ' + error.message + '. Réessayez.';
+      fieldsErrorEl.style.display = 'block';
+    }
   }
 
-  function addPrestation(){
+  async function addPrestation(){
     if(prestations.length >= PLAN_LIMITS[planId].prestations){
       renderPrestaLimit();
       return;
@@ -889,7 +1020,7 @@
     const name = nameEl.value.trim();
     const dur = Number(durEl.value);
     const price = Number(priceEl.value || 0);
-    const fieldsError = validatePrestaFields(name, dur, durEl, price, priceEl);
+    const fieldsError = validatePrestaFields(name, dur, durEl, price, priceEl, -1);
     if(fieldsError){
       fieldsErrorEl.textContent = fieldsError;
       fieldsErrorEl.style.display = 'block';
@@ -901,13 +1032,55 @@
     durEl.value = '';
     priceEl.value = '';
     renderPrestations();
-    persistPrestations();
+    const { error } = await persistPrestations();
+    if(error){
+      prestations.pop();
+      renderPrestations();
+      fieldsErrorEl.textContent = 'Erreur d\u2019enregistrement : ' + error.message + '. Réessayez.';
+      fieldsErrorEl.style.display = 'block';
+      return;
+    }
     nameEl.focus();
   }
 
 
   function persistCollaborators(){
-    persistCollaboratorsRows();
+    return persistCollaboratorsRows();
+  }
+
+  async function saveCollabEdit(i){
+    const nameEl = document.getElementById('edit-collab-name-' + i);
+    const emailEl = document.getElementById('edit-collab-email-' + i);
+    if(!nameEl || !emailEl) return;
+    const errorEl = document.getElementById('err-collab-fields');
+    const name = nameEl.value.trim();
+    const email = emailEl.value.trim();
+
+    let fieldsError = '';
+    if(!name) fieldsError = 'Merci d\u2019indiquer le nom du collaborateur.';
+    else if(collaborators.some((c, j) => j !== i && c.name.trim().toLowerCase() === name.toLowerCase())) fieldsError = 'Un collaborateur porte déjà ce nom.';
+    else if(email && !isValidEmail(email)) fieldsError = 'Merci d\u2019indiquer un e-mail valide, ou de laisser le champ vide.';
+    else if(email && collaborators.some((c, j) => j !== i && c.email && c.email.toLowerCase() === email.toLowerCase())) fieldsError = 'Cet e-mail est déjà utilisé par un autre collaborateur.';
+
+    if(fieldsError){
+      errorEl.textContent = fieldsError;
+      errorEl.style.display = 'block';
+      return;
+    }
+    errorEl.style.display = 'none';
+
+    const previous = collaborators[i];
+    collaborators[i] = { ...previous, name, email };
+    editingCollabIndex = null;
+    renderCollaborators();
+    const { error } = await persistCollaborators();
+    if(error){
+      collaborators[i] = previous;
+      editingCollabIndex = i;
+      renderCollaborators();
+      errorEl.textContent = 'Erreur d\u2019enregistrement : ' + error.message + '. Réessayez.';
+      errorEl.style.display = 'block';
+    }
   }
 
   function renderCollaborators(){
@@ -950,30 +1123,113 @@
       return;
     }
 
-    list.innerHTML = ownerRow + collaborators.map((c, i) => (
-      '<div class="presta-row">' +
-        '<div style="min-width:0;">' +
-          '<p class="presta-row-name">' + escapeHtml(c.name) + '</p>' +
-        '</div>' +
-        '<div class="presta-row-actions">' +
-          (c.email ? '<span class="presta-dur">' + escapeHtml(c.email) + '</span>' : '') +
-          '<button class="rm-btn" data-i="' + i + '" type="button" aria-label="Retirer ' + escapeHtml(c.name) + '">' +
-            '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>' +
-          '</button>' +
-        '</div>' +
-      '</div>'
-    )).join('');
+    list.innerHTML = ownerRow + collaborators.map((c, i) => {
+      if(editingCollabIndex === i){
+        return (
+          '<div class="presta-row">' +
+            '<div class="presta-edit-row">' +
+              '<div class="field">' +
+                '<label for="edit-collab-name-' + i + '">Nom</label>' +
+                '<input id="edit-collab-name-' + i + '" type="text" value="' + escapeHtml(c.name) + '">' +
+              '</div>' +
+              '<div class="field">' +
+                '<label for="edit-collab-email-' + i + '">E-mail</label>' +
+                '<input id="edit-collab-email-' + i + '" type="email" value="' + escapeHtml(c.email || '') + '">' +
+              '</div>' +
+              '<button class="btn-icon edit-collab-save-btn" data-i="' + i + '" type="button" aria-label="Enregistrer">' +
+                '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M20 6L9 17l-5-5"></path></svg>' +
+              '</button>' +
+            '</div>' +
+          '</div>'
+        );
+      }
+      return (
+        '<div class="presta-row">' +
+          '<div style="min-width:0;">' +
+            '<p class="presta-row-name">' + escapeHtml(c.name) + '</p>' +
+          '</div>' +
+          '<div class="presta-row-actions">' +
+            (c.email ? '<span class="presta-dur">' + escapeHtml(c.email) + '</span>' : '') +
+            '<button class="icon-btn edit-collab-btn" data-i="' + i + '" type="button" aria-label="Modifier ' + escapeHtml(c.name) + '">' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z"></path></svg>' +
+            '</button>' +
+            '<button class="rm-btn" data-i="' + i + '" type="button" aria-label="Retirer ' + escapeHtml(c.name) + '">' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>' +
+            '</button>' +
+          '</div>' +
+        '</div>'
+      );
+    }).join('');
+
+    list.querySelectorAll('.edit-collab-btn').forEach(b => {
+      b.addEventListener('click', () => {
+        editingCollabIndex = Number(b.getAttribute('data-i'));
+        renderCollaborators();
+        const input = document.getElementById('edit-collab-name-' + editingCollabIndex);
+        if(input) input.focus();
+      });
+    });
+
+    list.querySelectorAll('.edit-collab-save-btn').forEach(b => {
+      b.addEventListener('click', () => saveCollabEdit(Number(b.getAttribute('data-i'))));
+    });
+
+    list.querySelectorAll('[id^="edit-collab-name-"], [id^="edit-collab-email-"]').forEach(input => {
+      input.addEventListener('keydown', e => {
+        if(e.key === 'Enter'){
+          e.preventDefault();
+          saveCollabEdit(Number(input.id.split('-').pop()));
+        }
+        if(e.key === 'Escape'){
+          editingCollabIndex = null;
+          renderCollaborators();
+        }
+      });
+    });
 
     list.querySelectorAll('.rm-btn').forEach(b => {
-      b.addEventListener('click', () => {
-        collaborators.splice(Number(b.getAttribute('data-i')), 1);
+      b.addEventListener('click', async () => {
+        const i = Number(b.getAttribute('data-i'));
+        const removed = collaborators[i];
+        const errorEl = document.getElementById('err-collab-fields');
+
+        // Un collaborateur déjà en base peut être référencé par des clients
+        // en liste d'attente (waitlist_clients.collaborator_id). Le
+        // supprimer casserait ce lien silencieusement : on vérifie et on
+        // bloque plutôt que de laisser des entrées orphelines.
+        if(removed.id){
+          const { count, error: checkError } = await sb
+            .from('waitlist_clients')
+            .select('id', { count: 'exact', head: true })
+            .eq('account_id', currentUser.id)
+            .eq('collaborator_id', removed.id);
+          if(checkError){
+            errorEl.textContent = 'Erreur : impossible de vérifier si ce collaborateur est utilisé (' + checkError.message + '). Réessayez.';
+            errorEl.style.display = 'block';
+            return;
+          }
+          if(count > 0){
+            errorEl.textContent = escapeHtml(removed.name) + ' est associé·e à ' + count + ' client(s) en liste d\u2019attente. Retirez-les ou changez leur collaborateur avant de le/la supprimer.';
+            errorEl.style.display = 'block';
+            return;
+          }
+        }
+
+        collaborators.splice(i, 1);
+        editingCollabIndex = null;
         renderCollaborators();
-        persistCollaborators();
+        const { error } = await persistCollaborators();
+        if(error){
+          collaborators.splice(i, 0, removed);
+          renderCollaborators();
+          errorEl.textContent = 'Erreur : la suppression n\u2019a pas pu être enregistrée (' + error.message + '). Réessayez.';
+          errorEl.style.display = 'block';
+        }
       });
     });
   }
 
-  function addCollaborator(){
+  async function addCollaborator(){
     const limit = PLAN_LIMITS[planId].collaborators;
     if(1 + collaborators.length >= limit){
       renderCollaborators();
@@ -987,6 +1243,7 @@
 
     let fieldsError = '';
     if(!name) fieldsError = 'Merci d\u2019indiquer le nom du collaborateur.';
+    else if(collaborators.some(c => c.name.trim().toLowerCase() === name.toLowerCase())) fieldsError = 'Un collaborateur porte déjà ce nom.';
     else if(email && !isValidEmail(email)) fieldsError = 'Merci d\u2019indiquer un e-mail valide, ou de laisser le champ vide.';
     else if(email && collaborators.some(c => c.email && c.email.toLowerCase() === email.toLowerCase())) fieldsError = 'Cet e-mail est déjà utilisé par un autre collaborateur.';
 
@@ -1001,7 +1258,14 @@
     nameEl.value = '';
     emailEl.value = '';
     renderCollaborators();
-    persistCollaborators();
+    const { error } = await persistCollaborators();
+    if(error){
+      collaborators.pop();
+      renderCollaborators();
+      fieldsErrorEl.textContent = 'Erreur d\u2019enregistrement : ' + error.message + '. Réessayez.';
+      fieldsErrorEl.style.display = 'block';
+      return;
+    }
     nameEl.focus();
   }
 

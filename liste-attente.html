@@ -418,12 +418,22 @@
 (async function(){
   const SUPABASE_URL = 'https://thxbpjumbntiqwexsqut.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoeGJwanVtYm50aXF3ZXhzcXV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ1NzgyNzksImV4cCI6MjEwMDE1NDI3OX0.tpxE9V5oksnZM16-3xuch3hMqXSJSbmQTuP7NVlj_bY';
-  window.__sb = window.__sb || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  window.__sb = window.__sb || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: { persistSession: true, autoRefreshToken: true, storageKey: 'espace-prestataire-auth' }
+  });
   const sb = window.__sb;
 
   function isValidPhone(v){
     const cleaned = v.replace(/[\s.\-]/g, '');
     return /^(0[1-9]\d{8}|\+33[1-9]\d{8})$/.test(cleaned);
+  }
+
+  function escapeHtml(str){
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
   }
 
   const params = new URLSearchParams(window.location.search);
@@ -434,7 +444,7 @@
     const [{ data: dRow }, { data: pRows }, { data: cRows }, { data: plRow }] = await Promise.all([
       sb.from('provider_directory').select('*').eq('id', slug).maybeSingle(),
       sb.from('prestations').select('*').eq('account_id', slug).order('created_at'),
-      sb.from('collaborators').select('*').eq('account_id', slug).order('created_at'),
+      sb.from('collaborators_directory').select('*').eq('account_id', slug).order('created_at'),
       sb.from('public_plan').select('plan').eq('account_id', slug).maybeSingle()
     ]);
     directoryRow = dRow; prestaRows = pRows || []; collabRows = cRows || []; planRow = plRow;
@@ -467,7 +477,7 @@
 
     const prestaSelect = document.getElementById('presta');
     prestaSelect.innerHTML = prestations.length
-      ? prestations.map(p => '<option>' + p.name + '</option>').join('')
+      ? prestations.map(p => '<option>' + escapeHtml(p.name) + '</option>').join('')
       : '<option disabled selected>Aucune prestation configurée</option>';
 
     // Liste des personnes disponibles pour le rendez-vous : le titulaire du
@@ -494,7 +504,7 @@
       collabField.style.display = 'block';
       collabSelect.innerHTML =
         '<option value="">Peu importe</option>' +
-        team.map(t => '<option value="' + t.id + '">' + t.label + '</option>').join('');
+        team.map(t => '<option value="' + escapeHtml(t.id) + '">' + escapeHtml(t.label) + '</option>').join('');
     }
 
     const todayISO = new Date().toISOString().slice(0, 10);
@@ -526,8 +536,8 @@
         return;
       }
       availDatesContainer.innerHTML = availDates.map(date => (
-        '<span class="date-chip">' + formatDate(date) +
-          '<button type="button" data-date="' + date + '" aria-label="Retirer cette date">' +
+        '<span class="date-chip">' + escapeHtml(formatDate(date)) +
+          '<button type="button" data-date="' + escapeHtml(date) + '" aria-label="Retirer cette date">' +
             '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>' +
           '</button>' +
         '</span>'

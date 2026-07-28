@@ -237,10 +237,17 @@
   }
 </script>
 <script>
+  window.addEventListener('pageshow', function(event){
+    if(event.persisted) window.location.reload();
+  });
+</script>
+<script>
 (async function(){
   const SUPABASE_URL = 'https://thxbpjumbntiqwexsqut.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoeGJwanVtYm50aXF3ZXhzcXV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ1NzgyNzksImV4cCI6MjEwMDE1NDI3OX0.tpxE9V5oksnZM16-3xuch3hMqXSJSbmQTuP7NVlj_bY';
-  window.__sb = window.__sb || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  window.__sb = window.__sb || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: { persistSession: true, autoRefreshToken: true, storageKey: 'espace-prestataire-auth' }
+  });
   const sb = window.__sb;
   const SUPABASE_FUNCTIONS_URL = SUPABASE_URL + '/functions/v1';
 
@@ -349,10 +356,13 @@
 
   async function activatePlan(){
     sessionStorage.removeItem(CHECKOUT_CONTEXT_KEY);
-    const { error: subError } = await sb.from('subscriptions').upsert({ account_id: currentUser.id, plan: planId });
-    if(subError){
-      return { error: subError };
-    }
+    // La ligne "subscriptions" est désormais écrite uniquement côté serveur
+    // (confirm-checkout, avec la clé service_role) : la RLS interdit
+    // volontairement au client d'écrire plan/status lui-même (ça permettait
+    // avant de s'auto-attribuer une formule sans payer). Au moment où
+    // activatePlan() est appelée après verifyStripeReturn(), confirm-checkout
+    // a déjà fait cette écriture ; il ne reste plus qu'à appliquer les
+    // limites de la formule et mettre à jour l'écran.
     const trimmed = await applyPlanLimits(planId);
 
     const cta = document.getElementById('confirm-cta');
@@ -403,9 +413,13 @@
     const cancelUrl = returnUrl.replace(/paiement\.html$/, 'abonnement.html');
 
     try{
+      const { data: { session: currentSession } } = await sb.auth.getSession();
       const res = await fetch(SUPABASE_FUNCTIONS_URL + '/create-checkout-session', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + (currentSession ? currentSession.access_token : '')
+        },
         body: JSON.stringify({ accountId: currentUser.id, plan: planId, email: currentUser.email || '', returnUrl, cancelUrl })
       });
       const data = await res.json();

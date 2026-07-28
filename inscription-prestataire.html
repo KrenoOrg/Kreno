@@ -369,9 +369,10 @@
           <p class="error" id="err-password">Le mot de passe doit contenir au moins 8 caractères.</p>
         </div>
         <div class="field">
-          <label for="salon-phone">Téléphone (optionnel)</label>
-          <input id="salon-phone" type="tel" placeholder="06 00 00 00 00">
+          <label for="salon-phone">Téléphone</label>
+          <input id="salon-phone" type="tel" placeholder="06 00 00 00 00" required>
           <p class="error" id="err-phone">Merci d'indiquer un numéro de téléphone français valide.</p>
+          <p class="hint" id="hint-phone">Utilisé pour vous prévenir par SMS quand un créneau est pris.</p>
         </div>
         <button class="btn-primary" id="btn-step1-next">Continuer vers l'abonnement</button>
         <p class="fine-print">Déjà un compte ? <a href="connexion-prestataire.html">Se connecter</a></p>
@@ -483,7 +484,9 @@
 (async function(){
   const SUPABASE_URL = 'https://thxbpjumbntiqwexsqut.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoeGJwanVtYm50aXF3ZXhzcXV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ1NzgyNzksImV4cCI6MjEwMDE1NDI3OX0.tpxE9V5oksnZM16-3xuch3hMqXSJSbmQTuP7NVlj_bY';
-  window.__sb = window.__sb || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  window.__sb = window.__sb || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: { persistSession: true, autoRefreshToken: true, storageKey: 'espace-prestataire-auth' }
+  });
   const sb = window.__sb;
 
   let prestations = [];
@@ -868,8 +871,27 @@
   async function persistStep2(){
     const ownerName = document.getElementById('owner-name').value.trim();
 
-    const { error: delPrestaErr } = await sb.from('prestations').delete().eq('account_id', currentUser.id);
-    if(delPrestaErr) return { error: delPrestaErr };
+    // On insère d'abord les nouvelles lignes, puis on supprime les
+    // anciennes (identifiées par leur id, pas par un delete-all sur
+    // account_id) : si l'insertion échoue en cours de route, les
+    // prestations/l'équipe déjà enregistrées restent intactes au lieu
+    // d'être perdues entre un delete réussi et un insert en échec.
+    const { data: oldPrestaRows, error: oldPrestaErr } = await sb.from('prestations').select('id').eq('account_id', currentUser.id);
+    if(oldPrestaErr) return { error: oldPrestaErr };
+    let oldPrestaIds = (oldPrestaRows || []).map(r => r.id);
+
+    // Un client a pu rejoindre la liste d'attente (via liste-attente.html)
+    // entre l'activation de l'abonnement et la fin de cette étape 2 : on ne
+    // supprime jamais une ancienne prestation encore référencée par
+    // waitlist_clients.service_id, sous peine de casser ce lien ou de faire
+    // échouer tout l'enregistrement sur une contrainte de clé étrangère.
+    if(oldPrestaIds.length){
+      const { data: usedPresta, error: usedPrestaErr } = await sb
+        .from('waitlist_clients').select('service_id').eq('account_id', currentUser.id).in('service_id', oldPrestaIds);
+      if(usedPrestaErr) return { error: usedPrestaErr };
+      const usedIds = new Set((usedPresta || []).map(r => r.service_id));
+      oldPrestaIds = oldPrestaIds.filter(id => !usedIds.has(id));
+    }
 
     if(prestations.length){
       const { error: insPrestaErr } = await sb.from('prestations').insert(
@@ -878,14 +900,34 @@
       if(insPrestaErr) return { error: insPrestaErr };
     }
 
-    const { error: delCollabErr } = await sb.from('collaborators').delete().eq('account_id', currentUser.id);
-    if(delCollabErr) return { error: delCollabErr };
+    if(oldPrestaIds.length){
+      const { error: delPrestaErr } = await sb.from('prestations').delete().in('id', oldPrestaIds);
+      if(delPrestaErr) return { error: delPrestaErr };
+    }
+
+    const { data: oldCollabRows, error: oldCollabErr } = await sb.from('collaborators').select('id').eq('account_id', currentUser.id);
+    if(oldCollabErr) return { error: oldCollabErr };
+    let oldCollabIds = (oldCollabRows || []).map(r => r.id);
+
+    // Même précaution pour les collaborateurs (waitlist_clients.collaborator_id).
+    if(oldCollabIds.length){
+      const { data: usedCollab, error: usedCollabErr } = await sb
+        .from('waitlist_clients').select('collaborator_id').eq('account_id', currentUser.id).in('collaborator_id', oldCollabIds);
+      if(usedCollabErr) return { error: usedCollabErr };
+      const usedIds = new Set((usedCollab || []).map(r => r.collaborator_id));
+      oldCollabIds = oldCollabIds.filter(id => !usedIds.has(id));
+    }
 
     const { error: insCollabErr } = await sb.from('collaborators').insert([
       { account_id: currentUser.id, name: ownerName || 'Titulaire' },
       ...collaborators.map(c => ({ account_id: currentUser.id, name: c.name, email: c.email || null }))
     ]);
     if(insCollabErr) return { error: insCollabErr };
+
+    if(oldCollabIds.length){
+      const { error: delCollabErr } = await sb.from('collaborators').delete().in('id', oldCollabIds);
+      if(delCollabErr) return { error: delCollabErr };
+    }
 
     return { error: null };
   }
@@ -942,7 +984,7 @@
     const type = document.getElementById('salon-type').value;
     const address = document.getElementById('salon-address').value.trim();
     const phone = document.getElementById('salon-phone').value.trim();
-    const email = document.getElementById('salon-email').value.trim();
+    const email = document.getElementById('salon-email').value.trim().toLowerCase();
     const password = document.getElementById('salon-password').value;
     const emailOk = isValidEmail(email);
     // Compte déjà créé (on est revenu depuis l'étape 2 via "Retour") : le
@@ -950,7 +992,8 @@
     const passwordOk = currentUser ? true : password.length >= 8;
     const nameOk = Boolean(name);
     const addressOk = Boolean(address);
-    const phoneOk = !phone || isValidPhone(phone);
+    const phoneOk = isValidPhone(phone);
+    const cleanedPhone = phone.replace(/[\s.\-]/g, '');
 
     document.getElementById('err-name').style.display = nameOk ? 'none' : 'block';
     document.getElementById('err-address').style.display = addressOk ? 'none' : 'block';
@@ -970,7 +1013,7 @@
     // et on repart directement sur l'étape 2.
     if(currentUser){
       btn.textContent = 'Enregistrement…';
-      const { error: profileError } = await sb.from('profiles').upsert({ id: currentUser.id, name, type, address, phone });
+      const { error: profileError } = await sb.from('profiles').upsert({ id: currentUser.id, name, type, address, phone: cleanedPhone });
       btn.disabled = false;
       btn.textContent = "Continuer vers l'abonnement";
       if(profileError){
@@ -988,8 +1031,15 @@
     if(error){
       btn.disabled = false;
       btn.textContent = "Continuer vers l'abonnement";
+      // Détection basée d'abord sur error.code (stable, propre à l'API
+      // Supabase), avec le texte du message comme filet de secours si
+      // jamais le code n'est pas renvoyé (anciennes versions du SDK).
+      const isDuplicate =
+        error.code === 'user_already_exists' ||
+        error.status === 422 ||
+        /already registered|already exists/i.test(error.message || '');
       setStep1Error(
-        /already registered|already exists/i.test(error.message)
+        isDuplicate
           ? 'Un compte existe déjà avec cette adresse e-mail.'
           : 'Erreur : ' + error.message
       );
@@ -1006,7 +1056,7 @@
       return;
     }
 
-    const { error: profileError } = await sb.from('profiles').upsert({ id: data.user.id, name, type, address, phone });
+    const { error: profileError } = await sb.from('profiles').upsert({ id: data.user.id, name, type, address, phone: cleanedPhone });
 
     if(profileError){
       btn.disabled = false;
