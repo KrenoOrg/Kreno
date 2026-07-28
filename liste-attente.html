@@ -602,15 +602,17 @@
       joinBtn.disabled = true;
       joinBtn.textContent = 'Inscription…';
 
-      const { error: insertError } = await sb.from('waitlist_clients').insert({
-        account_id: slug,
-        name,
-        phone,
-        service_id: prestaObj ? prestaObj.id : null,
-        collaborator_id: collaborator || null,
-        preferred_dates: { dates: [...availDates] },
-        origine: 'En ligne',
-        status: null
+      // join_waitlist() met à jour une inscription en attente existante
+      // (même numéro, même prestation, pas encore prévenue) au lieu d'en
+      // recréer une : évite les doublons en cas de double clic ou de
+      // nouvelle visite du client avant d'avoir été contacté.
+      const { error: insertError } = await sb.rpc('join_waitlist', {
+        p_account_id: slug,
+        p_name: name,
+        p_phone: phone,
+        p_service_id: prestaObj ? prestaObj.id : null,
+        p_collaborator_id: collaborator || null,
+        p_preferred_dates: { dates: [...availDates] }
       });
 
       joinBtn.disabled = false;

@@ -349,11 +349,12 @@
     border-radius:12px;
     padding:12px 14px;
     display:flex;
+    flex-wrap:wrap;
     align-items:center;
     justify-content:space-between;
     gap:10px;
   }
-  .wl-info{min-width:0;}
+  .wl-info{min-width:0;flex:1 1 140px;}
   .wl-name{font-size:14px;font-weight:600;margin:0 0 2px;}
   .wl-meta{
     font-size:12px;
@@ -644,6 +645,14 @@
   }
   const currentUser = session.user;
   const currentAccountId = currentUser.id; // alias : conserve tout le code existant qui utilisait cet id local
+
+  // Repasse en attente les offres dont le délai de réponse est dépassé
+  // avant même de charger la liste d'attente, pour que les badges affichés
+  // à l'ouverture de la page reflètent l'état réel (et pas un "SMS envoyé"
+  // qui traîne indéfiniment si personne n'a jamais confirmé ni resignalé).
+  await sb.rpc('expire_stale_offers').then(({ error }) => {
+    if(error) console.error('Échec de l\u2019expiration des offres en retard :', error.message);
+  });
 
   const [{ data: profileRow }, { data: prestaRows }, { data: collabRows }, { data: subRow }, { data: waitlistRows }] = await Promise.all([
     sb.from('profiles').select('*').eq('id', currentUser.id).single(),
@@ -1003,8 +1012,8 @@
           '<div class="wl-right">' +
             '<div class="wl-actions">' +
               badgeHtml(c.status) +
-              (canConfirm ? '<button class="btn-mini confirm-btn" data-i="' + i + '">Confirmer (test)</button>' : '') +
-              (canStop ? '<button class="btn-mini danger stop-btn" data-i="' + i + '">STOP</button>' : '') +
+              (canConfirm ? '<button class="btn-mini confirm-btn" data-i="' + i + '" title="Simulation en attendant un vrai fournisseur SMS">Confirmer</button>' : '') +
+              (canStop ? '<button class="btn-mini danger stop-btn" data-i="' + i + '" title="Le client a répondu STOP">STOP</button>' : '') +
             '</div>' +
             '<button class="rm-btn" data-i="' + i + '" aria-label="Retirer ' + escapeHtml(c.name) + ' de la liste">' +
               '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"></path><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"></path></svg>' +
@@ -1031,7 +1040,7 @@
         if(error){
           console.error('Échec de la confirmation :', error.message);
           b.disabled = false;
-          b.textContent = 'Confirmer (test)';
+          b.textContent = 'Confirmer';
           return;
         }
         if(data === 'confirmed'){
