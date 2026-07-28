@@ -169,11 +169,15 @@
     font-weight:600;
     color:var(--ink-soft);
     text-decoration:none;
-    margin:-4px 0 0;
+    margin:8px 0 0;
     background:none;
     border:none;
     padding:0;
     cursor:pointer;
+  }
+  .forgot-link:disabled{
+    opacity:.6;
+    cursor:default;
   }
   .btn-primary{
     width:100%;
@@ -281,7 +285,32 @@
     el.style.display = 'block';
   }
 
+  let forgotCooldownUntil = 0;
+  let forgotCooldownTimer = null;
+  const FORGOT_LABEL = 'Mot de passe oublié ?';
+
+  function startForgotCooldown(seconds){
+    const btn = document.getElementById('btn-forgot');
+    forgotCooldownUntil = Date.now() + seconds * 1000;
+    btn.disabled = true;
+    clearInterval(forgotCooldownTimer);
+    const tick = () => {
+      const remaining = Math.ceil((forgotCooldownUntil - Date.now()) / 1000);
+      if(remaining <= 0){
+        clearInterval(forgotCooldownTimer);
+        btn.disabled = false;
+        btn.textContent = FORGOT_LABEL;
+        return;
+      }
+      btn.textContent = 'Renvoyer dans ' + remaining + 's';
+    };
+    tick();
+    forgotCooldownTimer = setInterval(tick, 1000);
+  }
+
   document.getElementById('btn-forgot').addEventListener('click', async () => {
+    if(Date.now() < forgotCooldownUntil) return;
+
     const emailInput = document.getElementById('login-email');
     const email = emailInput.value.trim().toLowerCase();
     const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -298,24 +327,28 @@
 
     const btn = document.getElementById('btn-forgot');
     btn.disabled = true;
-    const originalText = btn.textContent;
     btn.textContent = 'Envoi en cours…';
 
     const redirectTo = new URL('reinitialiser-mot-de-passe.html', window.location.href).href;
     const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo });
 
-    btn.disabled = false;
-    btn.textContent = originalText;
-
     if(error){
+      // Une erreur de type "rate limit" (Supabase bloque déjà les envois
+      // trop rapprochés côté serveur) démarre quand même le compteur, pour
+      // éviter que le bouton ne redevienne immédiatement cliquable sur une
+      // demande qui échouera à nouveau.
+      btn.disabled = false;
+      btn.textContent = FORGOT_LABEL;
       const el = document.getElementById('form-error');
       el.textContent = 'Impossible d\u2019envoyer l\u2019e-mail : ' + error.message;
       el.style.display = 'block';
+      startForgotCooldown(30);
       return;
     }
     const success = document.getElementById('form-success');
     success.textContent = 'Un e-mail de réinitialisation a été envoyé à ' + email + ', si un compte lui est associé. Pensez à vérifier vos spams.';
     success.style.display = 'block';
+    startForgotCooldown(30);
   });
 
   document.getElementById('btn-login').addEventListener('click', async () => {
