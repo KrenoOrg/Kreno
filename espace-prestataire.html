@@ -529,7 +529,7 @@
       </div>
       <div>
         <label for="new-phone">Téléphone</label>
-        <input id="new-phone" type="tel" placeholder="06 00 00 00 00">
+        <input id="new-phone" type="tel" inputmode="tel" placeholder="06 00 00 00 00">
       </div>
     </div>
     <div class="row2">
@@ -570,11 +570,14 @@
 
 </div>
 
-<script>
-  if (!window.supabase) {
-    document.write('<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"><\/script>');
-  }
-</script>
+<!-- Chargement direct (pas de document.write conditionnel) : sur connexion
+     mobile lente, les navigateurs (Safari/Chrome) ignorent silencieusement
+     les scripts externes injectés via document.write ("intervention"
+     anti-blocage de rendu) — le SDK Supabase ne se chargeait alors jamais,
+     bloquant toute la page sans erreur visible. Chaque page étant un
+     rechargement complet (pas une SPA), window.supabase n'existe de toute
+     façon jamais déjà : la vérification conditionnelle ne servait à rien. -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
   // Sans ce garde, un retour arrière depuis le cache navigateur (bfcache)
   // après déconnexion peut réafficher cette page (clients, téléphones,

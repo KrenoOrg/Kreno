@@ -370,7 +370,7 @@
         </div>
         <div class="field">
           <label for="salon-phone">Téléphone</label>
-          <input id="salon-phone" type="tel" placeholder="06 00 00 00 00" required>
+          <input id="salon-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="06 00 00 00 00" required>
           <p class="error" id="err-phone">Merci d'indiquer un numéro de téléphone français valide.</p>
           <p class="hint" id="hint-phone">Utilisé pour vous prévenir par SMS quand un créneau est pris.</p>
         </div>
@@ -475,11 +475,14 @@
 
 </div>
 
-<script>
-  if (!window.supabase) {
-    document.write('<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"><\/script>');
-  }
-</script>
+<!-- Chargement direct (pas de document.write conditionnel) : sur connexion
+     mobile lente, les navigateurs (Safari/Chrome) ignorent silencieusement
+     les scripts externes injectés via document.write ("intervention"
+     anti-blocage de rendu) — le SDK Supabase ne se chargeait alors jamais,
+     bloquant toute la page sans erreur visible. Chaque page étant un
+     rechargement complet (pas une SPA), window.supabase n'existe de toute
+     façon jamais déjà : la vérification conditionnelle ne servait à rien. -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 (async function(){
   const SUPABASE_URL = 'https://thxbpjumbntiqwexsqut.supabase.co';
@@ -1006,75 +1009,86 @@
     const btn = document.getElementById('btn-step1-next');
     btn.disabled = true;
 
-    // Retour depuis l'étape 2 : le compte existe déjà (currentUser est déjà
-    // authentifié). On ne rappelle jamais signUp() ici — ça échouerait
-    // toujours ("compte déjà existant") et bloquait l'utilisateur sans
-    // chemin pour revenir à ses prestations. On met juste à jour le profil
-    // et on repart directement sur l'étape 2.
-    if(currentUser){
-      btn.textContent = 'Enregistrement…';
-      const { error: profileError } = await sb.from('profiles').upsert({ id: currentUser.id, name, type, address, phone: cleanedPhone });
-      btn.disabled = false;
-      btn.textContent = "Continuer vers l'abonnement";
-      if(profileError){
-        setStep1Error('Erreur lors de l\u2019enregistrement du profil : ' + profileError.message + '. Réessayez.');
+    try {
+      // Retour depuis l'étape 2 : le compte existe déjà (currentUser est déjà
+      // authentifié). On ne rappelle jamais signUp() ici — ça échouerait
+      // toujours ("compte déjà existant") et bloquait l'utilisateur sans
+      // chemin pour revenir à ses prestations. On met juste à jour le profil
+      // et on repart directement sur l'étape 2.
+      if(currentUser){
+        btn.textContent = 'Enregistrement…';
+        const { error: profileError } = await sb.from('profiles').upsert({ id: currentUser.id, name, type, address, phone: cleanedPhone });
+        btn.disabled = false;
+        btn.textContent = "Continuer vers l'abonnement";
+        if(profileError){
+          setStep1Error('Erreur lors de l\u2019enregistrement du profil : ' + profileError.message + '. Réessayez.');
+          return;
+        }
+        goToStep(2);
         return;
       }
-      goToStep(2);
-      return;
-    }
 
-    btn.textContent = 'Création du compte…';
+      btn.textContent = 'Création du compte…';
 
-    const { data, error } = await sb.auth.signUp({ email, password });
+      const { data, error } = await sb.auth.signUp({ email, password });
 
-    if(error){
+      if(error){
+        btn.disabled = false;
+        btn.textContent = "Continuer vers l'abonnement";
+        // Détection basée d'abord sur error.code (stable, propre à l'API
+        // Supabase), avec le texte du message comme filet de secours si
+        // jamais le code n'est pas renvoyé (anciennes versions du SDK).
+        const isDuplicate =
+          error.code === 'user_already_exists' ||
+          error.status === 422 ||
+          /already registered|already exists/i.test(error.message || '');
+        setStep1Error(
+          isDuplicate
+            ? 'Un compte existe déjà avec cette adresse e-mail.'
+            : 'Erreur : ' + error.message
+        );
+        return;
+      }
+
+      // Anti-énumération Supabase : si l'e-mail existe déjà et que la
+      // confirmation par e-mail est activée, signUp() ne renvoie pas d'erreur
+      // mais data.user.identities est vide et aucune session n'est créée.
+      if(data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0){
+        btn.disabled = false;
+        btn.textContent = "Continuer vers l'abonnement";
+        setStep1Error('Un compte existe déjà avec cette adresse e-mail.');
+        return;
+      }
+
+      const { error: profileError } = await sb.from('profiles').upsert({ id: data.user.id, name, type, address, phone: cleanedPhone });
+
+      if(profileError){
+        btn.disabled = false;
+        btn.textContent = "Continuer vers l'abonnement";
+        setStep1Error('Compte créé, mais erreur lors de l\u2019enregistrement du profil : ' + profileError.message + '. Réessayez.');
+        return;
+      }
+
+      if(!data.session){
+        // La confirmation par e-mail est activée sur ce projet Supabase : pas
+        // de session tant que le lien reçu par e-mail n'a pas été cliqué.
+        btn.disabled = false;
+        btn.textContent = "Continuer vers l'abonnement";
+        setStep1Error('Un e-mail de confirmation vous a été envoyé à ' + email + '. Cliquez sur le lien reçu, puis connectez-vous pour choisir votre formule.');
+        return;
+      }
+
+      window.location.href = 'abonnement.html?onboarding=1';
+    } catch(err){
+      // BUG CORRIGÉ : sur réseau mobile instable, une exception réseau (pas
+      // une simple erreur Supabase) laissait le bouton bloqué indéfiniment
+      // sur "Création du compte…", sans message ni redirection — aucun
+      // chemin de sortie pour l'utilisateur. On rattrape maintenant toute
+      // exception pour réactiver le bouton et afficher un message clair.
       btn.disabled = false;
       btn.textContent = "Continuer vers l'abonnement";
-      // Détection basée d'abord sur error.code (stable, propre à l'API
-      // Supabase), avec le texte du message comme filet de secours si
-      // jamais le code n'est pas renvoyé (anciennes versions du SDK).
-      const isDuplicate =
-        error.code === 'user_already_exists' ||
-        error.status === 422 ||
-        /already registered|already exists/i.test(error.message || '');
-      setStep1Error(
-        isDuplicate
-          ? 'Un compte existe déjà avec cette adresse e-mail.'
-          : 'Erreur : ' + error.message
-      );
-      return;
+      setStep1Error('Connexion interrompue. Vérifiez votre réseau et réessayez.');
     }
-
-    // Anti-énumération Supabase : si l'e-mail existe déjà et que la
-    // confirmation par e-mail est activée, signUp() ne renvoie pas d'erreur
-    // mais data.user.identities est vide et aucune session n'est créée.
-    if(data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0){
-      btn.disabled = false;
-      btn.textContent = "Continuer vers l'abonnement";
-      setStep1Error('Un compte existe déjà avec cette adresse e-mail.');
-      return;
-    }
-
-    const { error: profileError } = await sb.from('profiles').upsert({ id: data.user.id, name, type, address, phone: cleanedPhone });
-
-    if(profileError){
-      btn.disabled = false;
-      btn.textContent = "Continuer vers l'abonnement";
-      setStep1Error('Compte créé, mais erreur lors de l\u2019enregistrement du profil : ' + profileError.message + '. Réessayez.');
-      return;
-    }
-
-    if(!data.session){
-      // La confirmation par e-mail est activée sur ce projet Supabase : pas
-      // de session tant que le lien reçu par e-mail n'a pas été cliqué.
-      btn.disabled = false;
-      btn.textContent = "Continuer vers l'abonnement";
-      setStep1Error('Un e-mail de confirmation vous a été envoyé à ' + email + '. Cliquez sur le lien reçu, puis connectez-vous pour choisir votre formule.');
-      return;
-    }
-
-    window.location.href = 'abonnement.html?onboarding=1';
   });
 
   // ---- Reprise après paiement : ?resume=prestations ----
