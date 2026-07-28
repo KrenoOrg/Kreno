@@ -381,6 +381,34 @@
   .badge.sent{background:#EAF1FB;color:#2A5B96;}
   .badge.confirmed{background:var(--success-bg);color:var(--success-text);}
   .badge.taken{background:var(--paper-2);color:var(--ink-soft);}
+  .badge.stop{background:#FBEAE2;color:#B3441E;}
+  .wl-actions{display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+  .btn-mini{
+    font-family:'Inter',sans-serif;
+    font-size:11px;
+    font-weight:600;
+    padding:4px 9px;
+    border-radius:20px;
+    border:1px solid var(--line);
+    background:#fff;
+    color:var(--ink);
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .btn-mini.danger{color:#B3441E;border-color:#EBD3C7;}
+  .agenda-card{flex-wrap:wrap;}
+  .agenda-cancel{
+    font-family:'Inter',sans-serif;
+    font-size:11px;
+    font-weight:600;
+    color:#B3441E;
+    background:none;
+    border:none;
+    padding:0;
+    margin-left:8px;
+    cursor:pointer;
+    text-decoration:underline;
+  }
   .rm-btn{
     background:none;
     border:none;
@@ -699,6 +727,7 @@
     collaborator: row.collaborator_id,
     matchCount: row.match_count,
     accepted: row.accepted,
+    cancelled: !!row.cancelled,
     price: Number(row.price) || 0
   }));
   let slots = history.filter(entry => entry.accepted).length || 0;
@@ -856,6 +885,8 @@
       dates: (w.preferred_dates && w.preferred_dates.dates) ? w.preferred_dates.dates : undefined,
       days: (w.preferred_dates && w.preferred_dates.days) ? w.preferred_dates.days : undefined,
       status: w.status,
+      offerSignalId: w.offer_signal_id || null,
+      offerExpiresAt: w.offer_expires_at || null,
       origine: w.origine || 'Ajouté',
       joinedAt: w.created_at
     };
@@ -917,6 +948,7 @@
     if(status === 'sent') return '<span class="badge sent">SMS envoyé</span>';
     if(status === 'confirmed') return '<span class="badge confirmed">Confirmé</span>';
     if(status === 'taken') return '<span class="badge taken">Manqué · toujours en attente</span>';
+    if(status === 'stop') return '<span class="badge stop">A refusé (STOP)</span>';
   }
 
   function persistWaitlist(){
@@ -953,6 +985,15 @@
         dateLabel = ' · ' + c.days.join(', ');
       }
       const collabLabel = c.collaborator ? ' · avec ' + escapeHtml(teamLabelById(c.collaborator)) : '';
+      // Bouton "Confirmer (test)" : tant qu'aucun vrai fournisseur SMS
+      // n'est branché, c'est le prestataire qui simule la réponse du
+      // client à sa place, mais l'opération passe par confirm_slot_offer
+      // (verrou serveur sur le signalement) — donc si deux onglets
+      // cliquent confirmer pour deux clients différents du même créneau
+      // quasi en même temps, un seul gagnera réellement, comme le ferait
+      // une vraie réponse SMS.
+      const canConfirm = c.status === 'sent' && c.offerSignalId;
+      const canStop = c.status !== 'confirmed' && c.status !== 'stop';
       return (
         '<div class="wl-card">' +
           '<div class="wl-info">' +
@@ -960,7 +1001,11 @@
             '<p class="wl-meta">' + escapeHtml(c.presta) + collabLabel + dateLabel + '</p>' +
           '</div>' +
           '<div class="wl-right">' +
-            badgeHtml(c.status) +
+            '<div class="wl-actions">' +
+              badgeHtml(c.status) +
+              (canConfirm ? '<button class="btn-mini confirm-btn" data-i="' + i + '">Confirmer (test)</button>' : '') +
+              (canStop ? '<button class="btn-mini danger stop-btn" data-i="' + i + '">STOP</button>' : '') +
+            '</div>' +
             '<button class="rm-btn" data-i="' + i + '" aria-label="Retirer ' + escapeHtml(c.name) + ' de la liste">' +
               '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"></path><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"></path></svg>' +
             '</button>' +
@@ -974,6 +1019,78 @@
       (cards.length > PAGE_SIZE && !wlShowAll
         ? '<button class="btn-show-more" id="wl-show-more" type="button">Voir plus (' + (cards.length - visibleCount) + ')</button>'
         : '');
+
+    wlList.querySelectorAll('.confirm-btn').forEach(b => {
+      b.addEventListener('click', async () => {
+        const idx = Number(b.getAttribute('data-i'));
+        const client = clients[idx];
+        if(!client || !client.offerSignalId) return;
+        b.disabled = true;
+        b.textContent = '…';
+        const { data, error } = await sb.rpc('confirm_slot_offer', { p_signal_id: client.offerSignalId, p_client_id: client.id });
+        if(error){
+          console.error('Échec de la confirmation :', error.message);
+          b.disabled = false;
+          b.textContent = 'Confirmer (test)';
+          return;
+        }
+        if(data === 'confirmed'){
+          const signalId = client.offerSignalId;
+          client.status = 'confirmed';
+          client.offerSignalId = null;
+          // Les autres clients ayant reçu la même offre repassent "manqué,
+          // toujours en attente" (perdus au profit du premier confirmé).
+          clients.forEach(c => {
+            if(c !== client && c.offerSignalId === signalId && c.status === 'sent'){
+              c.status = 'taken';
+              c.offerSignalId = null;
+            }
+          });
+          const entry = history.find(h => h.id === signalId);
+          if(entry) entry.accepted = true;
+          updateMetrics();
+          renderHistory();
+        } else if(data === 'already_taken'){
+          showPlanLimitMsg('Ce créneau a déjà été confirmé par un autre client entre-temps.', 'error');
+          client.status = 'taken';
+          client.offerSignalId = null;
+        } else if(data === 'expired'){
+          showPlanLimitMsg('Le délai de réponse de ce client est dépassé, il est repassé en attente.', 'info');
+          client.status = null;
+          client.offerSignalId = null;
+        } else if(data === 'cancelled'){
+          client.status = null;
+          client.offerSignalId = null;
+        }
+        renderWaitlist();
+      });
+    });
+
+    wlList.querySelectorAll('.stop-btn').forEach(b => {
+      b.addEventListener('click', async () => {
+        const idx = Number(b.getAttribute('data-i'));
+        const client = clients[idx];
+        if(!client) return;
+        if(!confirm(client.name + ' a demandé à ne plus recevoir de SMS (STOP) ? Il ne sera plus jamais proposé sur un créneau.')) return;
+        const previousStatus = client.status;
+        const previousOffer = client.offerSignalId;
+        client.status = 'stop';
+        client.offerSignalId = null;
+        client.offerExpiresAt = null;
+        renderWaitlist();
+        if(client.id){
+          const { error } = await sb.from('waitlist_clients')
+            .update({ status: 'stop', offer_signal_id: null, offer_expires_at: null })
+            .eq('id', client.id);
+          if(error){
+            console.error('Échec de l\u2019enregistrement du STOP :', error.message);
+            client.status = previousStatus;
+            client.offerSignalId = previousOffer;
+            renderWaitlist();
+          }
+        }
+      });
+    });
 
     wlList.querySelectorAll('.rm-btn').forEach(b => {
       b.addEventListener('click', async () => {
@@ -1002,9 +1119,11 @@
   }
   renderWaitlist();
 
-  function historyBadgeHtml(matchCount){
-    if(matchCount === 0) return '<span class="badge">Aucun client compatible</span>';
-    return '<span class="badge sent">' + matchCount + ' client(s) prévenu(s)</span>';
+  function historyBadgeHtml(h){
+    if(h.cancelled) return '<span class="badge taken">Annulé</span>';
+    if(h.accepted) return '<span class="badge confirmed">Créneau pris</span>';
+    if(h.matchCount === 0) return '<span class="badge">Aucun client compatible</span>';
+    return '<span class="badge sent">' + h.matchCount + ' client(s) prévenu(s)</span>';
   }
 
   function renderHistory(){
@@ -1016,7 +1135,10 @@
           '<p class="agenda-presta">' + escapeHtml(h.presta) + '</p>' +
           '<p class="agenda-date">' + formatDate(h.date) + '</p>' +
         '</div>' +
-        historyBadgeHtml(h.matchCount) +
+        historyBadgeHtml(h) +
+        (!h.accepted && !h.cancelled && h.matchCount > 0
+          ? '<button class="agenda-cancel" data-id="' + h.id + '">Annuler ce créneau</button>'
+          : '') +
       '</div>'
     ));
 
@@ -1033,6 +1155,37 @@
         renderHistory();
       });
     }
+
+    historyList.querySelectorAll('.agenda-cancel').forEach(b => {
+      b.addEventListener('click', async () => {
+        const signalId = b.getAttribute('data-id');
+        if(!confirm('Annuler ce créneau ? Les clients prévenus qui n\u2019ont pas encore confirmé repasseront en liste d\u2019attente.')) return;
+        b.disabled = true;
+        b.textContent = '…';
+        const { data, error } = await sb.rpc('cancel_slot_signal', { p_signal_id: signalId });
+        if(error){
+          console.error('Échec de l\u2019annulation du créneau :', error.message);
+          b.disabled = false;
+          b.textContent = 'Annuler ce créneau';
+          return;
+        }
+        if(data === 'cancelled'){
+          const entry = history.find(h => h.id === signalId);
+          if(entry) entry.cancelled = true;
+          clients.forEach(c => {
+            if(c.offerSignalId === signalId && c.status === 'sent'){
+              c.status = null;
+              c.offerSignalId = null;
+              c.offerExpiresAt = null;
+            }
+          });
+          renderWaitlist();
+          renderHistory();
+        } else if(data === 'already_confirmed'){
+          showPlanLimitMsg('Ce créneau a déjà été confirmé par un client, impossible de l\u2019annuler.', 'error');
+        }
+      });
+    });
   }
   renderHistory();
 
@@ -1063,72 +1216,58 @@
   async function signalSlot(date, time, presta, collaborator){
     hidePlanLimitMsg();
 
-    // Le créneau n'est proposé qu'aux clients en liste d'attente dont la
-    // prestation demandée, la disponibilité (date précise ou jour récurrent)
-    // et, s'ils ont exprimé une préférence, le collaborateur souhaité
-    // correspondent au créneau libéré. Un client dont le créneau précédent a
-    // été pris par quelqu'un d'autre ("taken") reste en liste d'attente et
-    // redevient éligible ; seul un client ayant confirmé un rendez-vous
-    // ("confirmed") est définitivement retiré des prochains signalements.
-    let matching = clients
-      .map((c, i) => ({ c, i }))
-      .filter(({ c }) => {
-        if(c.status === 'confirmed' || c.status === 'sent') return false;
-        if(c.presta !== presta) return false;
-        if(collaborator && c.collaborator && c.collaborator !== collaborator) return false;
-        return isClientAvailable(c, date);
-      });
+    const prestaObj = prestations.find(p => p.name === presta);
+    if(!prestaObj){
+      showPlanLimitMsg('Sélectionnez une prestation valide.', 'error');
+      return;
+    }
+    const priceForEntry = getPrestationPrice(presta);
 
-    // Quota SMS de la formule : compté et plafonné côté serveur (fonction
-    // increment_sms_usage), donc infalsifiable depuis le navigateur — Pro est
-    // bloqué au-delà du quota mensuel inclus ; Solo/Business ne sont jamais
-    // bloqués (au-delà de l'inclus, les SMS supplémentaires seraient
-    // facturés à l'unité). On ne consomme le quota que s'il y a au moins un
-    // client à prévenir.
-    let limitedByQuota = false;
-    let overIncluded = 0;
-    let quotaHardCap = planLimits.smsHardCap;
-    let quotaIncluded = planLimits.smsIncluded;
-    if(matching.length > 0){
-      const { data: rpcData, error: rpcError } = await sb.rpc('increment_sms_usage', { p_requested: matching.length });
-      if(rpcError){
-        showPlanLimitMsg('Impossible de vérifier le quota SMS : ' + rpcError.message, 'error');
-        return;
-      }
-      const usage = Array.isArray(rpcData) ? rpcData[0] : rpcData;
-      quotaHardCap = usage.hard_cap;
-      quotaIncluded = usage.included === null ? Infinity : usage.included;
-      overIncluded = usage.over_included || 0;
-      if(usage.allowed < matching.length){
-        limitedByQuota = true;
-        matching = matching.slice(0, usage.allowed);
-      }
-      if(usage.allowed === 0 && matching.length === 0 && quotaHardCap){
-        showPlanLimitMsg('Quota de ' + quotaIncluded + ' SMS/mois atteint pour la formule ' + planName + '. Changez de formule pour continuer à prévenir vos clients.', 'error');
-        return;
-      }
+    // Le matching (clients éligibles selon prestation/dispo/collaborateur),
+    // le quota SMS et le passage en "sent" sont désormais faits de façon
+    // atomique côté serveur (fonction signal_slot), plutôt que calculés ici
+    // puis simulés avec des setTimeout : ça règle les cas limites (offre
+    // qui n'expire jamais, quota qui pourrait être contourné en rechargeant
+    // la page pendant l'envoi, etc.) une fois pour toutes en base.
+    const { data: rpcData, error: rpcError } = await sb.rpc('signal_slot', {
+      p_date: date,
+      p_time: time,
+      p_service_id: prestaObj.id,
+      p_collaborator_id: collaborator || null,
+      p_price: priceForEntry
+    });
+    if(rpcError){
+      showPlanLimitMsg('Impossible de signaler ce créneau : ' + rpcError.message, 'error');
+      return;
+    }
+    const result = Array.isArray(rpcData) ? rpcData[0] : rpcData;
+    if(!result){
+      showPlanLimitMsg('Impossible de signaler ce créneau.', 'error');
+      return;
     }
 
-    const priceForEntry = getPrestationPrice(presta);
-    const { data: insertedRow, error: insertHistoryError } = await sb
-      .from('slot_signals')
-      .insert({
-        account_id: currentAccountId,
-        signal_date: date,
-        signal_time: time,
-        presta,
-        collaborator_id: collaborator || null,
-        match_count: matching.length,
-        price: priceForEntry,
-        accepted: false
-      })
-      .select('id')
-      .single();
-    if(insertHistoryError) console.error('Échec de l\u2019enregistrement du signalement :', insertHistoryError.message);
-    const historyEntryId = insertedRow ? insertedRow.id : null;
-    history.unshift({ id: historyEntryId, date, time, presta, collaborator: collaborator || null, matchCount: matching.length, accepted: false, price: priceForEntry });
+    const quotaHardCap = result.quota_hard_cap;
+    const quotaIncluded = result.quota_included === null ? Infinity : result.quota_included;
+    const overIncluded = result.quota_over_included || 0;
+    const matchedCount = result.matched_count || 0;
+    const offeredIds = result.offered_client_ids || [];
+    const limitedByQuota = offeredIds.length < matchedCount;
+
+    history.unshift({
+      id: result.signal_id, date, time, presta, collaborator: collaborator || null,
+      matchCount: offeredIds.length, accepted: false, cancelled: false, price: priceForEntry
+    });
     updateMetrics();
     renderHistory();
+
+    offeredIds.forEach(clientId => {
+      const c = clients.find(cl => cl.id === clientId);
+      if(c){
+        c.status = 'sent';
+        c.offerSignalId = result.signal_id;
+      }
+    });
+    renderWaitlist();
 
     const collaboratorName = collaborator ? teamLabelById(collaborator) : '';
     const withLabel = collaboratorName ? ' avec <b>' + escapeHtml(collaboratorName) + '</b>' : '';
@@ -1147,59 +1286,26 @@
         escapeHtml(salonName) + ' · Un créneau vient de se libérer <b>' + formatDate(date) + ' à ' + time + '</b> pour <b>' + escapeHtml(presta) + '</b>' + withLabel + '. ' +
         'Vous êtes sur liste d\u2019attente : confirmer.salon-lea.fr/x92k (1er arrivé, 1er servi)';
     }
-    document.getElementById('sms-preview').style.display = matching.length ? 'block' : 'none';
+    document.getElementById('sms-preview').style.display = offeredIds.length ? 'block' : 'none';
 
-    if(matching.length === 0){
+    if(offeredIds.length === 0){
       if(limitedByQuota){
         showPlanLimitMsg('Quota SMS de la formule ' + planName + ' atteint : aucun client n\u2019a pu être prévenu ce mois-ci. Changez de formule pour lever cette limite.', 'error');
       }
       return;
     }
 
-    if(matching.length){
-      if(!quotaHardCap && overIncluded > 0){
-        showPlanLimitMsg(overIncluded + ' SMS facturés en supplément ce mois-ci (au-delà des ' + quotaIncluded + ' inclus dans la formule ' + planName + ').', 'info');
-      } else if(limitedByQuota){
-        showPlanLimitMsg('Quota SMS de la formule ' + planName + ' atteint : seuls ' + matching.length + ' client(s) sur la liste ont pu être prévenus. Changez de formule pour lever cette limite.', 'error');
-      }
+    if(!quotaHardCap && overIncluded > 0){
+      showPlanLimitMsg(overIncluded + ' SMS facturés en supplément ce mois-ci (au-delà des ' + quotaIncluded + ' inclus dans la formule ' + planName + ').', 'info');
+    } else if(limitedByQuota){
+      showPlanLimitMsg('Quota SMS de la formule ' + planName + ' atteint : seuls ' + offeredIds.length + ' client(s) sur la liste ont pu être prévenus. Changez de formule pour lever cette limite.', 'error');
     }
 
-    matching.forEach(({ i }, order) => {
-      setTimeout(async () => {
-        clients[i].status = 'sent';
-        renderWaitlist();
-        if(clients[i].id){
-          const { error } = await sb.from('waitlist_clients').update({ status: 'sent' }).eq('id', clients[i].id);
-          if(error) console.error('Échec de la mise à jour du statut "sent" en base :', error.message);
-        }
-      }, order * 450);
-    });
-
-    setTimeout(async () => {
-      clients[matching[0].i].status = 'confirmed';
-      matching.slice(1).forEach(({ i }) => clients[i].status = 'taken');
-      renderWaitlist();
-
-      const confirmedClient = clients[matching[0].i];
-      const takenIds = matching.slice(1).map(({ i }) => clients[i]).filter(c => c.id).map(c => c.id);
-      if(confirmedClient.id){
-        const { error } = await sb.from('waitlist_clients').update({ status: 'confirmed' }).eq('id', confirmedClient.id);
-        if(error) console.error('Échec de la mise à jour du statut "confirmed" en base :', error.message);
-      }
-      if(takenIds.length){
-        const { error } = await sb.from('waitlist_clients').update({ status: 'taken' }).in('id', takenIds);
-        if(error) console.error('Échec de la mise à jour du statut "taken" en base :', error.message);
-      }
-
-      if(historyEntryId){
-        const { error: acceptError } = await sb.from('slot_signals').update({ accepted: true }).eq('id', historyEntryId);
-        if(acceptError) console.error('Échec de la mise à jour du signalement en base :', acceptError.message);
-        const acceptedEntry = history.find(entry => entry.id === historyEntryId);
-        if(acceptedEntry) acceptedEntry.accepted = true;
-      }
-
-      updateMetrics();
-    }, matching.length * 450 + 600);
+    // Plus de confirmation automatique simulée après un délai : tant
+    // qu'aucun vrai fournisseur SMS n'est branché pour recevoir de vraies
+    // réponses, c'est le prestataire qui clique "Confirmer (test)" sur le
+    // client concerné, dans la liste d'attente ci-dessous — l'appel passe
+    // par confirm_slot_offer, qui gère lui-même la concurrence.
   }
 
   function renderWaitlistUsage(){
