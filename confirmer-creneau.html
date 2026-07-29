@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="fr">
   <head>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://thxbpjumbntiqwexsqut.supabase.co https://cdn.jsdelivr.net; frame-src https://checkout.stripe.com; base-uri 'self'; form-action 'self' https://checkout.stripe.com;">
     <title>Confirmer un créneau · Kreno</title>
     <link href="apple-glass.css" rel="stylesheet">
     <link href="polish.css" rel="stylesheet">
@@ -74,7 +76,7 @@
         class="muted legal-note">Cette confirmation ne remplace pas la validation finale du rendez-vous par le prestataire.</p>
     </main>
     <script
-      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js" crossorigin="anonymous"></script>
     <script>
     (async function () {
       const url = "https://thxbpjumbntiqwexsqut.supabase.co";

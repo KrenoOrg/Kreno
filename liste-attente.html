@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="fr">
   <head>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <meta charset="UTF-8">
     <meta name="viewport"
       content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://thxbpjumbntiqwexsqut.supabase.co https://cdn.jsdelivr.net; frame-src https://checkout.stripe.com; base-uri 'self'; form-action 'self' https://checkout.stripe.com;">
     <title>Salon Léa · Liste d'attente</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -368,6 +370,19 @@
     .stub-val {
       font-weight: 600;
     }
+      .consent-field { display: flex; gap: 9px; align-items: flex-start; }
+      .consent-checkbox { width: auto; margin-top: 3px; }
+      .consent-label { font-size: 12px; font-weight: 400; line-height: 1.45; }
+      .is-hidden { display: none; }
+      .ticket-body-spaced { padding-top: 2rem; }
+      .perforation-spaced { margin-bottom: 1.25rem; }
+      .stub-spaced { margin-bottom: 8px; }
+      .stub-collaborator { display: none; margin-bottom: 8px; }
+      .availability-time-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; margin-top: 10px; }
+      .availability-time-row input { width: 100%; box-sizing: border-box; }
+      .availability-all-day { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 12px; font-weight: 400; color: var(--ink-soft); }
+      .availability-all-day input { width: auto; margin: 0; }
+      .availability-time-row[hidden] { display: none; }
     </style>
     <link href="apple-glass.css" rel="stylesheet">
     <link href="polish.css" rel="stylesheet">
@@ -436,6 +451,20 @@
             <div class="date-list" id="avail-dates"></div>
             <p
               class="hint">Ajoutez une ou plusieurs dates, ou choisissez "Tous les jours" pour être notifié·e quel que soit le jour.</p>
+            <label class="availability-all-day">
+              <input id="avail-any-time" type="checkbox" checked>
+              Disponible toute la journée
+            </label>
+            <div class="availability-time-row" id="avail-time-window" hidden>
+              <div>
+                <label for="avail-time-start">À partir de</label>
+                <input id="avail-time-start" type="time" value="09:00">
+              </div>
+              <div>
+                <label for="avail-time-end">Jusqu’à</label>
+                <input id="avail-time-end" type="time" value="19:00">
+              </div>
+            </div>
           </div>
 
           <div class="field">
@@ -446,17 +475,22 @@
               class="hint">Utilisé uniquement pour vous prévenir si un créneau se libère.</p>
           </div>
 
-          <div class="field"
-            style="display:flex;gap:9px;align-items:flex-start;">
-            <input id="consent-sms" type="checkbox"
-              style="width:auto;margin-top:3px;">
-            <label for="consent-sms"
-              style="font-size:12px;font-weight:400;line-height:1.45;">J’accepte de recevoir des SMS de ce prestataire au sujet des créneaux compatibles avec ma demande. Je peux répondre STOP à tout moment.</label>
+          <div class="field consent-field">
+            <input class="consent-checkbox" id="consent-sms" type="checkbox">
+            <label class="consent-label" for="consent-sms">J’accepte de recevoir des SMS de ce prestataire au sujet des créneaux compatibles avec ma demande. Je peux répondre STOP à tout moment.</label>
           </div>
 
-          <p class="error" id="join-error"
-            style="display:none;">Merci de renseigner votre nom et un numéro de téléphone.</p>
-          <button class="btn-primary"
+          <!-- Champ honeypot : invisible pour un humain (hors écran, jamais
+               atteint au clavier), mais souvent rempli automatiquement par un
+               bot de spam. S'il est rempli, la soumission est silencieusement
+               ignorée côté client (voir script plus bas). -->
+          <input type="text" id="website" name="website" autocomplete="off"
+            tabindex="-1" aria-hidden="true"
+            style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;">
+
+
+          <p class="error is-hidden" id="join-error" role="alert">Merci de renseigner votre nom et un numéro de téléphone.</p>
+          <button class="btn-primary" type="button"
             id="btn-join">Rejoindre la liste d'attente</button>
           <p
             class="fine-print">Sans engagement — retirez-vous à tout moment depuis le site.</p>
@@ -465,7 +499,7 @@
 
       <!-- Écran de confirmation -->
       <div class="ticket confirm-screen" id="confirm-screen">
-        <div class="ticket-body" style="padding-top:2rem;">
+        <div class="ticket-body ticket-body-spaced">
           <div class="confirm-badge">
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2"
               stroke-linecap="round" stroke-linejoin="round">
@@ -476,14 +510,13 @@
           <p class="confirm-text"
             id="confirm-text">Salon Léa vous préviendra par SMS dès qu'un créneau compatible avec vos disponibilités se libère.</p>
 
-          <div class="perforation" style="margin-bottom:1.25rem;"></div>
+          <div class="perforation perforation-spaced"></div>
 
-          <div class="stub" style="margin-bottom:8px;">
+          <div class="stub stub-spaced">
             <span class="stub-label">Prestation</span>
             <span class="stub-val" id="stub-presta">Coupe femme</span>
           </div>
-          <div class="stub" id="stub-collab-row"
-            style="display:none;margin-bottom:8px;">
+          <div class="stub stub-collaborator" id="stub-collab-row">
             <span class="stub-label">Avec</span>
             <span class="stub-val" id="stub-collab">—</span>
           </div>
@@ -503,7 +536,7 @@
          rechargement complet (pas une SPA), window.supabase n'existe de toute
          façon jamais déjà : la vérification conditionnelle ne servait à rien. -->
     <script
-      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js" crossorigin="anonymous"></script>
     <script>
     (async function () {
       const SUPABASE_URL = "https://thxbpjumbntiqwexsqut.supabase.co";
@@ -647,7 +680,15 @@
         availDateInput.min = todayISO;
         const availDatesContainer = document.getElementById("avail-dates");
         const btnEveryday = document.getElementById("btn-avail-everyday");
+        const availAnyTime = document.getElementById("avail-any-time");
+        const availTimeWindow = document.getElementById("avail-time-window");
+        const availTimeStart = document.getElementById("avail-time-start");
+        const availTimeEnd = document.getElementById("avail-time-end");
         let availDates = [];
+
+        availAnyTime.addEventListener("change", () => {
+          availTimeWindow.hidden = availAnyTime.checked;
+        });
 
         function formatDate(iso) {
           const d = new Date(iso + "T00:00:00");
@@ -714,24 +755,55 @@
           renderAvailDates();
         });
 
+        // Anti-spam minimal côté client : ne remplace pas un vrai rate-limit
+        // serveur (à ajouter sur la fonction/RPC join_waitlist elle-même,
+        // hors de portée de ce dépôt de pages statiques), mais relève la
+        // barre contre les bots naïfs qui n'exécutent pas de JavaScript
+        // complexe ni ne gèrent de délai entre soumissions.
+        const JOIN_THROTTLE_KEY = "kreno-join-last-submit";
+        const JOIN_THROTTLE_MS = 15000;
+
         document.getElementById("btn-join").addEventListener("click", async () => {
           const name = document.getElementById("client-name").value.trim();
           const phone = document.getElementById("phone").value.trim();
           const smsConsent = document.getElementById("consent-sms").checked;
           const presta = prestaSelect.value;
           const collaborator = team.length > 1 ? collabSelect.value : "";
+          const timeStart = availAnyTime.checked ? null : availTimeStart.value;
+          const timeEnd = availAnyTime.checked ? null : availTimeEnd.value;
           const errorEl = document.getElementById("join-error");
           const joinBtn = document.getElementById("btn-join");
+          const honeypot = document.getElementById("website").value;
+
+          // Champ honeypot rempli : très probablement un bot. On simule un
+          // succès sans rien écrire en base, pour ne pas révéler la
+          // détection à l'attaquant.
+          if (honeypot) {
+            document.getElementById("form-screen").style.display = "none";
+            document.getElementById("confirm-screen").style.display = "block";
+            return;
+          }
+
+          const lastSubmit = Number(localStorage.getItem(JOIN_THROTTLE_KEY)) || 0;
+          if (Date.now() - lastSubmit < JOIN_THROTTLE_MS) {
+            errorEl.textContent =
+              "Merci de patienter quelques secondes avant de renvoyer le formulaire.";
+            errorEl.style.display = "block";
+            return;
+          }
 
           const phoneOk = phone && isValidPhone(phone);
 
-          if (!name || !phoneOk || availDates.length === 0 || !smsConsent) {
+          if (!name || !phoneOk || availDates.length === 0 || !smsConsent ||
+            (!availAnyTime.checked && (!timeStart || !timeEnd || timeStart >= timeEnd))) {
             errorEl.textContent = !name
               ? "Merci de renseigner votre nom."
               : !phoneOk
               ? "Merci d\u2019indiquer un numéro de téléphone français valide."
               : !smsConsent
               ? "Votre consentement est requis pour recevoir les alertes SMS."
+              : !availAnyTime.checked && (!timeStart || !timeEnd || timeStart >= timeEnd)
+              ? "Choisissez une plage horaire valide."
               : 'Merci d\u2019ajouter au moins une date, ou de choisir "Tous les jours".';
             errorEl.style.display = "block";
             return;
@@ -751,6 +823,7 @@
             (availDates.length === 1 && availDates[0] === "everyday")
               ? "Tous les jours"
               : availDates.map(formatDate).join(", ");
+          const availabilityLabel = dispoText + (timeStart ? " · " + timeStart + "–" + timeEnd : " · toute la journée");
 
           const prestaObj = prestations.find((p) => p.name === presta);
           joinBtn.disabled = true;
@@ -766,7 +839,10 @@
             p_phone: phone,
             p_service_id: prestaObj ? prestaObj.id : null,
             p_collaborator_id: collaborator || null,
-            p_preferred_dates: { dates: [...availDates] },
+            p_preferred_dates: {
+              dates: [...availDates],
+              ...(timeStart ? { time_start: timeStart, time_end: timeEnd } : {}),
+            },
             p_sms_consent: smsConsent,
           });
 
@@ -779,6 +855,8 @@
             return;
           }
 
+          localStorage.setItem(JOIN_THROTTLE_KEY, String(Date.now()));
+
           document.getElementById("confirm-text").textContent = account.name +
             " vous préviendra par SMS dès qu\u2019un créneau compatible avec vos disponibilités se libère.";
           document.getElementById("stub-presta").textContent = presta;
@@ -788,7 +866,7 @@
               collaborator,
             );
           }
-          document.getElementById("stub-dispo").textContent = dispoText;
+          document.getElementById("stub-dispo").textContent = availabilityLabel;
 
           document.getElementById("form-screen").style.display = "none";
           document.getElementById("confirm-screen").style.display = "block";

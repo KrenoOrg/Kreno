@@ -1,1416 +1,1871 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Salon Léa · Espace prestataire</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --paper:#F3EFE6;
-    --paper-2:#EAE4D6;
-    --ink:#1B2A4A;
-    --ink-soft:#4A5670;
-    --mustard:#D9A441;
-    --mustard-dark:#9C731E;
-    --line:#D8D0BE;
-    --success-bg:#E4EDE2;
-    --success-text:#2E5233;
-    --radius:14px;
-  }
-  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-  html,body{margin:0;padding:0;}
-  body{
-    background:var(--paper);
-    color:var(--ink);
-    font-family:'Inter',sans-serif;
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-  }
-  .screen{
-    width:100%;
-    max-width:440px;
-    min-height:100vh;
-    padding:2rem 1.25rem 3rem;
-  }
-  .brand{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    margin-bottom:1.5rem;
-  }
-  .brand-left{display:flex;align-items:center;gap:10px;min-width:0;}
-  .btn-profile{
-    display:inline-flex;
-    align-items:center;
-    gap:5px;
-    font-family:'Inter',sans-serif;
-    font-size:12.5px;
-    font-weight:600;
-    color:var(--ink);
-    background:#fff;
-    border:1px solid var(--line);
-    border-radius:20px;
-    padding:6px 12px;
-    cursor:pointer;
-    text-decoration:none;
-    flex-shrink:0;
-  }
-  .btn-profile svg{width:14px;height:14px;stroke:var(--ink);}
-  .brand-mark{
-    width:38px;height:38px;border-radius:50%;
-    background:var(--ink);
-    display:flex;align-items:center;justify-content:center;
-    flex-shrink:0;
-    overflow:hidden;
-  }
-  .brand-mark img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    display:block;
-  }
-  .brand-mark svg{width:18px;height:18px;stroke:var(--paper);}
-  .brand-name{
-    font-family:'Fraunces',serif;
-    font-size:19px;
-    font-weight:500;
-    margin:0;
-  }
-  .brand-sub{
-    font-size:12px;
-    color:var(--ink-soft);
-    margin:1px 0 0;
-  }
+  <head>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <meta charset="UTF-8">
+    <meta name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://thxbpjumbntiqwexsqut.supabase.co https://cdn.jsdelivr.net; frame-src https://checkout.stripe.com; base-uri 'self'; form-action 'self' https://checkout.stripe.com;">
+    <title>Salon Léa · Espace prestataire</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet">
+    <style>
+    :root {
+      --paper: #F3EFE6;
+      --paper-2: #EAE4D6;
+      --ink: #1B2A4A;
+      --ink-soft: #4A5670;
+      --mustard: #D9A441;
+      --mustard-dark: #9C731E;
+      --line: #D8D0BE;
+      --success-bg: #E4EDE2;
+      --success-text: #2E5233;
+      --radius: 14px;
+    }
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'Inter',sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+    }
+    .screen {
+      width: 100%;
+      max-width: 440px;
+      min-height: 100vh;
+      padding: 2rem 1.25rem 3rem;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 1.5rem;
+    }
+    .brand-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+    .btn-profile {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: 'Inter',sans-serif;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--ink);
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 6px 12px;
+      cursor: pointer;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+    .btn-profile svg {
+      width: 14px;
+      height: 14px;
+      stroke: var(--ink);
+    }
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .brand-mark img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .brand-mark svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--paper);
+    }
+    .brand-name {
+      font-family: 'Fraunces',serif;
+      font-size: 19px;
+      font-weight: 500;
+      margin: 0;
+    }
+    .brand-sub {
+      font-size: 12px;
+      color: var(--ink-soft);
+      margin: 1px 0 0;
+    }
 
-  .metrics{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:8px;
-    margin-bottom:1.75rem;
-  }
-  .metric{
-    background:#fff;
-    border:1px solid var(--line);
-    border-radius:12px;
-    padding:12px 10px;
-    text-align:center;
-  }
-  .metric-label{
-    font-size:10.5px;
-    color:var(--ink-soft);
-    margin:0 0 4px;
-    line-height:1.3;
-  }
-  .metric-val{
-    font-family:'Fraunces',serif;
-    font-size:19px;
-    font-weight:500;
-    margin:0;
-  }
-  .metric-val.success{color:var(--success-text);}
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(2,1fr);
+      gap: 8px;
+      margin-bottom: 1.75rem;
+    }
+    .metric {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 10px;
+      text-align: center;
+    }
+    .metric-label {
+      font-size: 10.5px;
+      color: var(--ink-soft);
+      margin: 0 0 4px;
+      line-height: 1.3;
+    }
+    .metric-val {
+      font-family: 'Fraunces',serif;
+      font-size: 19px;
+      font-weight: 500;
+      margin: 0;
+    }
+    .metric-val.success {
+      color: var(--success-text);
+    }
 
-  .stats-locked{
-    background:#fff;
-    border:1px dashed var(--line);
-    border-radius:var(--radius);
-    padding:1rem 1.15rem;
-    margin-bottom:1.75rem;
-    display:none;
-  }
-  .stats-locked p{
-    font-size:13px;
-    color:var(--ink-soft);
-    line-height:1.55;
-    margin:0;
-  }
-  .stats-locked a{color:var(--ink);font-weight:600;}
-  .collab-stats{display:none;flex-direction:column;gap:8px;margin-bottom:1.75rem;}
-  .collab-stats-row{
-    background:#fff;
-    border:1px solid var(--line);
-    border-radius:12px;
-    padding:10px 14px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-  }
-  .collab-stats-name{font-size:13.5px;font-weight:600;margin:0;}
-  .collab-stats-vals{
-    font-size:12px;
-    color:var(--ink-soft);
-    white-space:nowrap;
-    text-align:right;
-  }
-  .collab-stats-vals b{color:var(--ink);}
+    .stats-locked {
+      background: #fff;
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+      padding: 1rem 1.15rem;
+      margin-bottom: 1.75rem;
+      display: none;
+    }
+    .stats-locked p {
+      font-size: 13px;
+      color: var(--ink-soft);
+      line-height: 1.55;
+      margin: 0;
+    }
+    .stats-locked a {
+      color: var(--ink);
+      font-weight: 600;
+    }
+    .collab-stats {
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 1.75rem;
+    }
+    .collab-stats-row {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .collab-stats-name {
+      font-size: 13.5px;
+      font-weight: 600;
+      margin: 0;
+    }
+    .collab-stats-vals {
+      font-size: 12px;
+      color: var(--ink-soft);
+      white-space: nowrap;
+      text-align: right;
+    }
+    .collab-stats-vals b {
+      color: var(--ink);
+    }
 
-  .section-head{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    margin-bottom:.9rem;
-  }
-  h2{
-    font-family:'Fraunces',serif;
-    font-size:18px;
-    font-weight:500;
-    margin:0;
-  }
-  .btn-ghost{
-    display:inline-flex;
-    align-items:center;
-    gap:5px;
-    font-family:'Inter',sans-serif;
-    font-size:12.5px;
-    font-weight:600;
-    color:var(--ink);
-    background:#fff;
-    border:1px solid var(--line);
-    border-radius:20px;
-    padding:6px 12px;
-    cursor:pointer;
-  }
-  .btn-ghost svg{width:13px;height:13px;stroke:var(--ink);}
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: .9rem;
+    }
+    h2 {
+      font-family: 'Fraunces',serif;
+      font-size: 18px;
+      font-weight: 500;
+      margin: 0;
+    }
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: 'Inter',sans-serif;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--ink);
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 6px 12px;
+      cursor: pointer;
+    }
+    .btn-ghost svg {
+      width: 13px;
+      height: 13px;
+      stroke: var(--ink);
+    }
 
-  .cancel-box{
-    background:#fff;
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    padding:1rem 1.15rem;
-    margin-bottom:1.5rem;
-  }
-  .cancel-box p{
-    font-size:13px;
-    color:var(--ink-soft);
-    margin:0 0 10px;
-    line-height:1.5;
-  }
-  input[type=time]{
-    width:100%;
-    height:44px;
-    font-family:'Inter',sans-serif;
-    font-size:16px;
-    padding:9px 10px;
-    border-radius:8px;
-    border:1px solid var(--line);
-    background:var(--paper);
-    color:var(--ink);
-    box-sizing:border-box;
-  }
-  .date-field{position:relative;}
-  .date-field .date-native{
-    position:absolute;
-    inset:0;
-    width:100%;
-    height:100%;
-    opacity:0;
-    z-index:2;
-    cursor:pointer;
-    padding:0;
-    border:none;
-  }
-  .date-display{
-    width:100%;
-    height:44px;
-    box-sizing:border-box;
-    display:flex;
-    align-items:center;
-    font-family:'Inter',sans-serif;
-    font-size:16px;
-    padding:9px 10px;
-    border-radius:8px;
-    border:1px solid var(--line);
-    background:var(--paper);
-    color:var(--ink);
-    pointer-events:none;
-  }
-  .agenda-list{display:flex;flex-direction:column;gap:8px;margin-bottom:1.25rem;}
-  .agenda-card{
-    background:#fff;
-    border:1px solid var(--line);
-    border-radius:12px;
-    padding:11px 14px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-  }
-  .agenda-time{
-    font-family:'Fraunces',serif;
-    font-size:15px;
-    font-weight:500;
-    width:52px;
-    flex-shrink:0;
-  }
-  .agenda-info{flex:1;min-width:0;}
-  .agenda-presta{font-size:13.5px;font-weight:600;margin:0;}
-  .agenda-date{font-size:11.5px;color:var(--ink-soft);margin:2px 0 0;text-transform:capitalize;}
-  .btn-primary{
-    width:100%;
-    font-family:'Inter',sans-serif;
-    font-size:14.5px;
-    font-weight:600;
-    padding:12px;
-    border-radius:10px;
-    border:none;
-    background:var(--ink);
-    color:var(--paper);
-    cursor:pointer;
-  }
-  .btn-primary:disabled{opacity:.5;cursor:default;}
-  .btn-primary:active:not(:disabled){transform:scale(.98);}
+    .cancel-box {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1rem 1.15rem;
+      margin-bottom: 1.5rem;
+    }
+    .cancel-box p {
+      font-size: 13px;
+      color: var(--ink-soft);
+      margin: 0 0 10px;
+      line-height: 1.5;
+    }
+    input[type=time] {
+      width: 100%;
+      height: 44px;
+      font-family: 'Inter',sans-serif;
+      font-size: 16px;
+      padding: 9px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--paper);
+      color: var(--ink);
+      box-sizing: border-box;
+    }
+    .date-field {
+      position: relative;
+    }
+    .date-field .date-native {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      z-index: 2;
+      cursor: pointer;
+      padding: 0;
+      border: none;
+    }
+    .date-display {
+      width: 100%;
+      height: 44px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      font-family: 'Inter',sans-serif;
+      font-size: 16px;
+      padding: 9px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--paper);
+      color: var(--ink);
+      pointer-events: none;
+    }
+    .agenda-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 1.25rem;
+    }
+    .agenda-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 11px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .agenda-time {
+      font-family: 'Fraunces',serif;
+      font-size: 15px;
+      font-weight: 500;
+      width: 52px;
+      flex-shrink: 0;
+    }
+    .agenda-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .agenda-presta {
+      font-size: 13.5px;
+      font-weight: 600;
+      margin: 0;
+    }
+    .agenda-date {
+      font-size: 11.5px;
+      color: var(--ink-soft);
+      margin: 2px 0 0;
+      text-transform: capitalize;
+    }
+    .btn-primary {
+      width: 100%;
+      font-family: 'Inter',sans-serif;
+      font-size: 14.5px;
+      font-weight: 600;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      background: var(--ink);
+      color: var(--paper);
+      cursor: pointer;
+    }
+    .btn-primary:disabled {
+      opacity: .5;
+      cursor: default;
+    }
+    .btn-primary:active:not(:disabled) {
+      transform: scale(.98);
+    }
 
-  .add-form{
-    display:none;
-    background:#fff;
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    padding:1rem 1.15rem;
-    margin-bottom:1rem;
-  }
-  .row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin-bottom:10px;}
-  label{
-    display:block;
-    font-size:11.5px;
-    font-weight:600;
-    color:var(--ink-soft);
-    margin:0 0 5px;
-  }
-  input,select{
-    width:100%;
-    height:44px;
-    box-sizing:border-box;
-    font-family:'Inter',sans-serif;
-    font-size:16px;
-    padding:9px 10px;
-    border-radius:8px;
-    border:1px solid var(--line);
-    background:var(--paper);
-    color:var(--ink);
-  }
-  select{
-    -webkit-appearance:none;
-    appearance:none;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%234A5670' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-    background-repeat:no-repeat;
-    background-position:right 10px center;
-    background-size:16px;
-    padding-right:32px;
-  }
-  input:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible{
-    outline:2px solid var(--ink);
-    outline-offset:2px;
-  }
-  .btn-small{
-    font-family:'Inter',sans-serif;
-    font-size:13px;
-    font-weight:600;
-    padding:9px 14px;
-    border-radius:8px;
-    border:none;
-    background:var(--ink);
-    color:var(--paper);
-    cursor:pointer;
-  }
-  .btn-show-more{
-    display:block;
-    width:100%;
-    box-sizing:border-box;
-    text-align:center;
-    font-family:'Inter',sans-serif;
-    font-size:13px;
-    font-weight:600;
-    padding:10px;
-    border-radius:8px;
-    border:1px solid var(--line);
-    background:#fff;
-    color:var(--ink);
-    cursor:pointer;
-    margin-top:4px;
-  }
+    .add-form {
+      display: none;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1rem 1.15rem;
+      margin-bottom: 1rem;
+    }
+    .row2 {
+      display: grid;
+      grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    label {
+      display: block;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--ink-soft);
+      margin: 0 0 5px;
+    }
+    input,
+    select {
+      width: 100%;
+      height: 44px;
+      box-sizing: border-box;
+      font-family: 'Inter',sans-serif;
+      font-size: 16px;
+      padding: 9px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--paper);
+      color: var(--ink);
+    }
+    select {
+      -webkit-appearance: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%234A5670' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 16px;
+      padding-right: 32px;
+    }
+    input:focus-visible,
+    select:focus-visible,
+    button:focus-visible,
+    a:focus-visible {
+      outline: 2px solid var(--ink);
+      outline-offset: 2px;
+    }
+    .btn-small {
+      font-family: 'Inter',sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 9px 14px;
+      border-radius: 8px;
+      border: none;
+      background: var(--ink);
+      color: var(--paper);
+      cursor: pointer;
+    }
+    .btn-show-more {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      text-align: center;
+      font-family: 'Inter',sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      cursor: pointer;
+      margin-top: 4px;
+    }
 
-  .wl-list{display:flex;flex-direction:column;gap:8px;}
-  .date-list{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 1rem;}
-  .date-chip{
-    background:var(--paper-2);
-    border-radius:999px;
-    padding:.45rem .75rem;
-    font-size:12px;
-    color:var(--ink-soft);
-  }
-  .wl-card{
-    background:#fff;
-    border:1px solid var(--line);
-    border-radius:12px;
-    padding:12px 14px;
-    display:flex;
-    flex-wrap:wrap;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-  }
-  .wl-info{min-width:0;flex:1 1 140px;}
-  .wl-name{font-size:14px;font-weight:600;margin:0 0 2px;}
-  .wl-meta{
-    font-size:12px;
-    color:var(--ink-soft);
-    margin:0;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-  }
-  .wl-right{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    flex-shrink:0;
-  }
-  .badge{
-    font-size:11px;
-    font-weight:600;
-    padding:4px 10px;
-    border-radius:20px;
-    background:var(--paper-2);
-    color:var(--ink-soft);
-    white-space:nowrap;
-  }
-  .badge.sent{background:#EAF1FB;color:#2A5B96;}
-  .badge.confirmed{background:var(--success-bg);color:var(--success-text);}
-  .badge.taken{background:var(--paper-2);color:var(--ink-soft);}
-  .badge.stop{background:#FBEAE2;color:#B3441E;}
-  .wl-actions{display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
-  .btn-mini{
-    font-family:'Inter',sans-serif;
-    font-size:11px;
-    font-weight:600;
-    padding:4px 9px;
-    border-radius:20px;
-    border:1px solid var(--line);
-    background:#fff;
-    color:var(--ink);
-    cursor:pointer;
-    white-space:nowrap;
-  }
-  .btn-mini.danger{color:#B3441E;border-color:#EBD3C7;}
-  .agenda-card{flex-wrap:wrap;}
-  .agenda-cancel{
-    font-family:'Inter',sans-serif;
-    font-size:11px;
-    font-weight:600;
-    color:#B3441E;
-    background:none;
-    border:none;
-    padding:0;
-    margin-left:8px;
-    cursor:pointer;
-    text-decoration:underline;
-  }
-  .rm-btn{
-    background:none;
-    border:none;
-    padding:4px;
-    cursor:pointer;
-    line-height:0;
-  }
-  .rm-btn svg{width:15px;height:15px;stroke:var(--ink-soft);}
+    .wl-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .date-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0 0 1rem;
+    }
+    .date-chip {
+      background: var(--paper-2);
+      border-radius: 999px;
+      padding: .45rem .75rem;
+      font-size: 12px;
+      color: var(--ink-soft);
+    }
+    .wl-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .wl-info {
+      min-width: 0;
+      flex: 1 1 140px;
+    }
+    .wl-name {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 0 0 2px;
+    }
+    .wl-meta {
+      font-size: 12px;
+      color: var(--ink-soft);
+      margin: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .wl-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: var(--paper-2);
+      color: var(--ink-soft);
+      white-space: nowrap;
+    }
+    .badge.sent {
+      background: #EAF1FB;
+      color: #2A5B96;
+    }
+    .badge.confirmed {
+      background: var(--success-bg);
+      color: var(--success-text);
+    }
+    .badge.taken {
+      background: var(--paper-2);
+      color: var(--ink-soft);
+    }
+    .badge.stop {
+      background: #FBEAE2;
+      color: #B3441E;
+    }
+    .wl-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
+    .btn-mini {
+      font-family: 'Inter',sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 9px;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .btn-mini.danger {
+      color: #B3441E;
+      border-color: #EBD3C7;
+    }
+    .agenda-card {
+      flex-wrap: wrap;
+    }
+    .agenda-cancel {
+      font-family: 'Inter',sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      color: #B3441E;
+      background: none;
+      border: none;
+      padding: 0;
+      margin-left: 8px;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    .rm-btn {
+      background: none;
+      border: none;
+      padding: 4px;
+      cursor: pointer;
+      line-height: 0;
+    }
+    .rm-btn svg {
+      width: 15px;
+      height: 15px;
+      stroke: var(--ink-soft);
+    }
 
-  .sms-preview{
-    display:none;
-    background:#fff;
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    padding:1rem 1.15rem;
-    margin-top:1.25rem;
-  }
-  .sms-preview p.label{
-    font-size:12px;
-    color:var(--ink-soft);
-    margin:0 0 8px;
-    display:flex;
-    align-items:center;
-    gap:6px;
-  }
-  .sms-preview p.label svg{width:14px;height:14px;stroke:var(--ink-soft);}
-  .sms-bubble{
-    background:var(--paper);
-    border:1px solid var(--line);
-    border-radius:10px;
-    padding:10px 12px;
-    font-size:13px;
-    line-height:1.5;
-  }
-
-</style>
-<link href="apple-glass.css" rel="stylesheet">
-<link href="polish.css" rel="stylesheet">
-</head>
-<body>
-
-<div class="screen">
-
-  <div class="brand">
-    <div class="brand-left">
-      <div class="brand-mark" id="brand-mark">
-        <img id="brand-avatar" alt="Photo de profil" style="display:none;">
-        <svg id="brand-avatar-fallback" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="6" cy="6" r="3"></circle>
-          <circle cx="6" cy="18" r="3"></circle>
-          <line x1="20" y1="4" x2="8.12" y2="15.88"></line>
-          <line x1="14.47" y1="14.48" x2="20" y2="20"></line>
-          <line x1="8.12" y1="8.12" x2="12" y2="12"></line>
-        </svg>
-      </div>
-      <div>
-        <p class="brand-name" id="brand-name">Salon Léa</p>
-        <p class="brand-sub">Espace prestataire</p>
-      </div>
-    </div>
-    <a class="btn-profile" href="profil-prestataire.html" aria-label="Voir mon profil prestataire">
+    .sms-preview {
+      display: none;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1rem 1.15rem;
+      margin-top: 1.25rem;
+    }
+    .sms-preview p.label {
+      font-size: 12px;
+      color: var(--ink-soft);
+      margin: 0 0 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .sms-preview p.label svg {
+      width: 14px;
+      height: 14px;
+      stroke: var(--ink-soft);
+    }
+    .sms-bubble {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .hidden {
+      display: none;
+    }
+    .row-space-10 {
+      margin-bottom: 10px;
+    }
+    .row-space-small {
+      margin-bottom: 0.5rem;
+      gap: 8px;
+    }
+    .plan-message {
+      font-size: 11.5px;
+      margin: 10px 0 0;
+      line-height: 1.5;
+    }
+    .section-spacer {
+      height: 1.75rem;
+    }
+    .usage-hint {
+      margin: 0 0 8px;
+    }
+    .form-error {
+      font-size: 11.5px;
+      color: #B3441E;
+      margin: 8px 0 0;
+    }
+    .feedback-box { border: 1px solid var(--line); border-radius: 12px; padding: 1rem; background: var(--paper); }
+    .feedback-box textarea { width: 100%; min-height: 96px; box-sizing: border-box; resize: vertical; font: inherit; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }
+    .feedback-box textarea:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+    .feedback-actions { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+    .feedback-actions .btn-small { width: auto; }
+    .feedback-status { margin: 0; font-size: 12px; color: var(--ink-soft); }
+    .consent-field { display: flex; align-items: flex-start; gap: 8px; margin: 10px 0; font-size: 12px; line-height: 1.45; color: var(--ink-soft); }
+    .consent-field input { width: auto; margin-top: 2px; }
+    </style>
+    <link href="apple-glass.css" rel="stylesheet">
+    <link href="polish.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="screen">
+      <div class="brand">
+        <div class="brand-left">
+          <div class="brand-mark" id="brand-mark">
+            <img id="brand-avatar"
+              src="data:image/gif;base64,R0lGODlhAQABAAAAACw="
+              alt="Photo de profil" class="hidden">
+            <svg id="brand-avatar-fallback" viewBox="0 0 24 24" fill="none"
+              stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="6" cy="6" r="3"></circle>
+              <circle cx="6" cy="18" r="3"></circle>
+              <line x1="20" y1="4" x2="8.12" y2="15.88"></line>
+              <line x1="14.47" y1="14.48" x2="20" y2="20"></line>
+              <line x1="8.12" y1="8.12" x2="12" y2="12"></line>
+            </svg>
+          </div>
+          <div>
+            <p class="brand-name" id="brand-name">Salon Léa</p>
+            <p class="brand-sub">Espace prestataire</p>
+          </div>
+        </div>
+        <a class="btn-profile" href="profil-prestataire.html"
+          aria-label="Voir mon profil prestataire">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
       Voir le profil
     </a>
-  </div>
+      </div>
 
-  <div class="section-head">
-    <h2>Statistiques</h2>
-  </div>
-  <div class="metrics" id="metrics" style="display:none;">
-    <div class="metric">
-      <p class="metric-label">Créneaux<br>récupérés</p>
-      <p class="metric-val" id="m-slots">0</p>
-    </div>
-    <div class="metric">
-      <p class="metric-label">CA<br>récupéré</p>
-      <p class="metric-val success" id="m-revenue">0 €</p>
-    </div>
-  </div>
-  <div class="collab-stats" id="collab-stats"></div>
-  <div class="stats-locked" id="stats-locked">
-    <p>Les statistiques (créneaux récupérés, CA) sont réservées à la formule Salon, avec un détail par collaborateur. <a href="abonnement.html">Passer à Salon</a> pour les débloquer.</p>
-  </div>
-
-  <div class="section-head">
-    <h2>Signaler un créneau libre</h2>
-  </div>
-  <div class="cancel-box">
-    <p>Un créneau vient de se libérer sur votre agenda (Planity ou autre) ? Indiquez l'heure et la prestation concernée pour prévenir la liste d'attente.</p>
-    <div class="row2" style="margin-bottom:10px;">
-      <div>
-        <label for="slot-date">Jour du créneau</label>
-        <div class="date-field">
-          <input id="slot-date" type="date" class="date-native">
-          <div class="date-display" id="slot-date-display"></div>
+      <div class="section-head">
+        <h2>Statistiques</h2>
+      </div>
+      <div class="metrics hidden" id="metrics">
+        <div class="metric">
+          <p class="metric-label">Créneaux<br>récupérés</p>
+          <p class="metric-val" id="m-slots">0</p>
+        </div>
+        <div class="metric">
+          <p class="metric-label">CA<br>récupéré</p>
+          <p class="metric-val success" id="m-revenue">0 €</p>
         </div>
       </div>
-      <div>
-        <label for="slot-time">Heure du créneau</label>
-        <div class="date-field">
-          <input id="slot-time" type="time" class="date-native" value="14:00">
-          <div class="date-display" id="slot-time-display"></div>
+      <div class="collab-stats" id="collab-stats"></div>
+      <div class="stats-locked" id="stats-locked">
+        <p>Les statistiques globales sont incluses avec Pro. Business ajoute le détail par collaborateur. <a href="abonnement.html">Passer à Pro</a> pour les débloquer.</p>
+      </div>
+
+      <div class="section-head">
+        <h2>Signaler un créneau libre</h2>
+      </div>
+      <div class="cancel-box">
+        <p>Un créneau vient de se libérer sur votre agenda (Planity ou autre) ? Indiquez l'heure et la prestation concernée pour prévenir la liste d'attente.</p>
+        <div class="row2 row-space-10">
+          <div>
+            <label for="slot-date">Jour du créneau</label>
+            <div class="date-field">
+              <input id="slot-date" type="date" class="date-native">
+              <div class="date-display" id="slot-date-display"></div>
+            </div>
+          </div>
+          <div>
+            <label for="slot-time">Heure du créneau</label>
+            <div class="date-field">
+              <input id="slot-time" type="time" class="date-native"
+                value="14:00">
+              <div class="date-display" id="slot-time-display"></div>
+            </div>
+          </div>
         </div>
+        <div class="row2 row-space-10">
+          <div>
+            <label for="slot-presta">Prestation</label>
+            <select id="slot-presta"></select>
+          </div>
+          <div id="slot-collab-field" class="hidden">
+            <label for="slot-collab">Avec qui ?</label>
+            <select id="slot-collab"></select>
+          </div>
+        </div>
+        <button class="btn-primary" id="btn-signal"
+          type="button">Ce créneau est libre</button>
+        <p id="plan-limit-msg" class="hidden plan-message" aria-live="polite"></p>
       </div>
-    </div>
-    <div class="row2" style="margin-bottom:10px;">
-      <div>
-        <label for="slot-presta">Prestation</label>
-        <select id="slot-presta"></select>
-      </div>
-      <div id="slot-collab-field" style="display:none;">
-        <label for="slot-collab">Avec qui ?</label>
-        <select id="slot-collab"></select>
-      </div>
-    </div>
-    <button class="btn-primary" id="btn-signal">Ce créneau est libre</button>
-    <p id="plan-limit-msg" style="display:none;font-size:11.5px;margin:10px 0 0;line-height:1.5;"></p>
-  </div>
 
-  <div class="section-head" id="history-head" style="display:none;">
-    <h2>Créneaux signalés aujourd'hui</h2>
-  </div>
-  <div class="agenda-list" id="history-list"></div>
+      <div class="section-head hidden" id="history-head">
+        <h2>Créneaux signalés aujourd'hui</h2>
+      </div>
+      <div class="agenda-list" id="history-list"></div>
 
-  <div class="sms-preview" id="sms-preview">
-    <p class="label">
+      <div class="sms-preview" id="sms-preview">
+        <p class="label">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
       SMS envoyé aux clients compatibles
 
     </p>
-    <div class="sms-bubble" id="sms-bubble-text"></div>
-  </div>
+        <div class="sms-bubble" id="sms-bubble-text"></div>
+      </div>
 
-  <div style="height:1.75rem;"></div>
+      <div class="section-spacer"></div>
 
-  <div class="section-head">
-    <h2>Liste d'attente</h2>
-    <button class="btn-ghost" id="btn-toggle-add">
+      <div class="section-head">
+        <h2>Liste d'attente</h2>
+        <button class="btn-ghost" id="btn-toggle-add" type="button">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
       Ajouter
     </button>
-  </div>
+      </div>
 
-  <div class="add-form" id="add-form">
-    <div class="row2">
-      <div>
-        <label for="new-name">Nom du client</label>
-        <input id="new-name" type="text" placeholder="Marion D.">
+      <div class="add-form" id="add-form">
+        <div class="row2">
+          <div>
+            <label for="new-name">Nom du client</label>
+            <input id="new-name" type="text" placeholder="Marion D.">
+          </div>
+          <div>
+            <label for="new-phone">Téléphone</label>
+            <input id="new-phone" type="tel" inputmode="tel"
+              placeholder="06 00 00 00 00">
+          </div>
+        </div>
+        <div class="row2">
+          <div>
+            <label for="new-presta">Prestation</label>
+            <select id="new-presta">
+              <option>Coupe femme</option>
+              <option>Coupe + brushing</option>
+              <option>Coloration</option>
+              <option>Balayage</option>
+            </select>
+          </div>
+          <div>
+            <label for="new-date">Date souhaitée</label>
+            <div class="date-field">
+              <input id="new-date" type="date" class="date-native">
+              <div class="date-display" id="new-date-display"></div>
+            </div>
+          </div>
+        </div>
+        <div class="row2 hidden" id="new-collab-row">
+          <div>
+            <label for="new-collab">Avec qui</label>
+            <select id="new-collab"></select>
+          </div>
+        </div>
+        <div class="row2 row-space-small">
+          <button class="btn-small" type="button"
+            id="btn-add-date">Ajouter une date</button>
+          <button class="btn-small" type="button"
+            id="btn-every-day">Tous les jours</button>
+        </div>
+        <div class="date-list" id="selected-dates"></div>
+        <label class="consent-field">
+          <input id="new-consent-sms" type="checkbox">
+          J’atteste avoir obtenu le consentement de ce client pour recevoir les SMS Kreno. Il peut répondre STOP à tout moment.
+        </label>
+        <p class="hint usage-hint" id="wl-usage"></p>
+        <p class="error hidden form-error" id="add-error" role="alert"></p>
+        <button class="btn-small" id="btn-save"
+          type="button">Ajouter à la liste</button>
       </div>
-      <div>
-        <label for="new-phone">Téléphone</label>
-        <input id="new-phone" type="tel" inputmode="tel" placeholder="06 00 00 00 00">
+
+      <div class="wl-list" id="wl-list"></div>
+
+      <div class="section-spacer"></div>
+      <div class="section-head">
+        <h2>Votre retour sur Kreno</h2>
       </div>
-    </div>
-    <div class="row2">
-      <div>
-        <label for="new-presta">Prestation</label>
-        <select id="new-presta">
-          <option>Coupe femme</option>
-          <option>Coupe + brushing</option>
-          <option>Coloration</option>
-          <option>Balayage</option>
+      <div class="feedback-box">
+        <p class="hint usage-hint">Une idée, un blocage ou une amélioration ? Votre retour aide à préparer la bêta.</p>
+        <label for="feedback-category">Type de retour</label>
+        <select id="feedback-category">
+          <option value="idea">Idée d’amélioration</option>
+          <option value="issue">Problème rencontré</option>
+          <option value="other">Autre retour</option>
         </select>
-      </div>
-      <div>
-        <label for="new-date">Date souhaitée</label>
-        <div class="date-field">
-          <input id="new-date" type="date" class="date-native">
-          <div class="date-display" id="new-date-display"></div>
+        <label for="feedback-message">Votre message</label>
+        <textarea id="feedback-message" maxlength="2000" placeholder="Décrivez votre retour sans inclure de données personnelles de vos clients."></textarea>
+        <div class="feedback-actions">
+          <button class="btn-small" id="btn-submit-feedback" type="button">Envoyer mon retour</button>
+          <p class="feedback-status" id="feedback-status" aria-live="polite"></p>
         </div>
       </div>
     </div>
-    <div class="row2" id="new-collab-row" style="display:none;">
-      <div>
-        <label for="new-collab">Avec qui</label>
-        <select id="new-collab"></select>
-      </div>
-    </div>
-    <div class="row2" style="margin-bottom:0.5rem; gap:8px;">
-      <button class="btn-small" type="button" id="btn-add-date">Ajouter une date</button>
-      <button class="btn-small" type="button" id="btn-every-day">Tous les jours</button>
-    </div>
-    <div class="date-list" id="selected-dates"></div>
-    <p class="hint" id="wl-usage" style="margin:0 0 8px;"></p>
-    <p class="error" id="add-error" style="display:none;font-size:11.5px;color:#B3441E;margin:8px 0 0;"></p>
-    <button class="btn-small" id="btn-save">Ajouter à la liste</button>
-  </div>
 
-  <div class="wl-list" id="wl-list"></div>
-
-</div>
-
-<!-- Chargement direct (pas de document.write conditionnel) : sur connexion
-     mobile lente, les navigateurs (Safari/Chrome) ignorent silencieusement
-     les scripts externes injectés via document.write ("intervention"
-     anti-blocage de rendu) — le SDK Supabase ne se chargeait alors jamais,
-     bloquant toute la page sans erreur visible. Chaque page étant un
-     rechargement complet (pas une SPA), window.supabase n'existe de toute
-     façon jamais déjà : la vérification conditionnelle ne servait à rien. -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script>
-  // Sans ce garde, un retour arrière depuis le cache navigateur (bfcache)
-  // après déconnexion peut réafficher cette page (clients, téléphones,
-  // statistiques) telle qu'elle était avant la déconnexion, sans repasser
-  // par la vérification de session. Même correctif que profil-prestataire.html.
-  window.addEventListener('pageshow', function(event){
-    if(event.persisted) window.location.reload();
-  });
-</script>
-<script>
-(async function(){
-  // L'historique des créneaux signalés vit désormais dans la table
-  // slot_signals (Supabase), chargé plus bas via une requête ; plus rien en
-  // localStorage pour ces données.
-
-  const SUPABASE_URL = 'https://thxbpjumbntiqwexsqut.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoeGJwanVtYm50aXF3ZXhzcXV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ1NzgyNzksImV4cCI6MjEwMDE1NDI3OX0.tpxE9V5oksnZM16-3xuch3hMqXSJSbmQTuP7NVlj_bY';
-  window.__sb = window.__sb || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-    auth: { persistSession: true, autoRefreshToken: true, storageKey: 'espace-prestataire-auth' }
-  });
-  const sb = window.__sb;
-
-  const { data: { session } } = await sb.auth.getSession();
-  if(!session){
-    window.location.href = 'connexion-prestataire.html';
-    return;
-  }
-  const { data: { user: verifiedUser }, error: verifyError } = await sb.auth.getUser();
-  if(verifyError || !verifiedUser){
-    await sb.auth.signOut();
-    window.location.href = 'connexion-prestataire.html?expired=1';
-    return;
-  }
-  const currentUser = session.user;
-  const currentAccountId = currentUser.id; // alias : conserve tout le code existant qui utilisait cet id local
-
-  // Repasse en attente les offres dont le délai de réponse est dépassé
-  // avant même de charger la liste d'attente, pour que les badges affichés
-  // à l'ouverture de la page reflètent l'état réel (et pas un "SMS envoyé"
-  // qui traîne indéfiniment si personne n'a jamais confirmé ni resignalé).
-  await sb.rpc('expire_stale_offers').then(({ error }) => {
-    if(error) console.error('Échec de l\u2019expiration des offres en retard :', error.message);
-  });
-
-  const [{ data: profileRow }, { data: prestaRows }, { data: collabRows }, { data: subRow }, { data: waitlistRows }] = await Promise.all([
-    sb.from('profiles').select('*').eq('id', currentUser.id).single(),
-    sb.from('prestations').select('*').eq('account_id', currentUser.id).order('created_at'),
-    sb.from('collaborators').select('*').eq('account_id', currentUser.id).order('created_at'),
-    sb.from('subscriptions').select('plan').eq('account_id', currentUser.id).maybeSingle(),
-    sb.from('waitlist_clients').select('*').eq('account_id', currentUser.id).order('created_at')
-  ]);
-
-  if(!subRow){
-    // Compte créé (étape 1) mais jamais de formule choisie/payée : on ne
-    // laisse pas s'afficher un tableau de bord "gratuit" par défaut, on
-    // renvoie directement choisir un abonnement (essai 14 jours).
-    window.location.href = 'abonnement.html?onboarding=1';
-    return;
-  }
-
-  if(!prestaRows || !prestaRows.length){
-    // Abonnement payé mais inscription abandonnée avant l'étape 2 (aucune
-    // prestation enregistrée) : on ne laisse pas s'afficher un tableau de
-    // bord vide et inutilisable, on renvoie terminer la configuration.
-    window.location.href = 'inscription-prestataire.html?resume=prestations';
-    return;
-  }
-
-  const prestations = (prestaRows && prestaRows.length)
-    ? prestaRows.map(p => ({ id: p.id, name: p.name, dur: p.duration_minutes, price: p.price }))
-    : [];
-
-  const [ownerRow, ...restCollabRows] = collabRows || [];
-  const account = {
-    name: profileRow ? profileRow.name : '',
-    plan: subRow ? subRow.plan : 'solo',
-    smsTemplate: profileRow ? (profileRow.sms_template || '') : '',
-    ownerName: ownerRow ? ownerRow.name : '',
-    ownerId: ownerRow ? ownerRow.id : null,
-    collaborators: restCollabRows.map(c => ({ id: c.id, name: c.name, email: c.email || '' }))
-  };
-  const salonName = account && account.name ? account.name : 'Salon Léa';
-
-  // Limites réelles appliquées selon la formule active du compte.
-  const PLAN_LABELS = { solo: 'Solo', pro: 'Pro', business: 'Business' };
-  const PLAN_LIMITS = {
-    solo:     { smsIncluded: 20,       smsHardCap: false, waitlistPerMonth: Infinity },
-    pro:      { smsIncluded: 100,      smsHardCap: true,  waitlistPerMonth: Infinity },
-    business: { smsIncluded: Infinity, smsHardCap: false, waitlistPerMonth: Infinity }
-  };
-  const planId = PLAN_LIMITS[account.plan] ? account.plan : 'solo';
-  const planLimits = PLAN_LIMITS[planId];
-  const planName = PLAN_LABELS[planId];
-
-  // Le quota SMS est désormais compté et plafonné côté serveur (fonction
-  // increment_sms_usage, RLS sur sms_usage) : impossible à réinitialiser en
-  // vidant le cache ou en changeant d'appareil. currentMonthKey() reste
-  // utilisé pour l'affichage de l'historique/des stats, sans lien avec le
-  // quota lui-même.
-  function currentMonthKey(){ return new Date().toISOString().slice(0, 7); }
-
-  function countJoinedThisMonth(list){
-    const month = currentMonthKey();
-    return list.filter(c => c.joinedAt && c.joinedAt.slice(0, 7) === month).length;
-  }
-
-  function showPlanLimitMsg(text, tone){
-    const el = document.getElementById('plan-limit-msg');
-    el.textContent = text;
-    el.style.color = tone === 'error' ? '#B3441E' : 'var(--ink-soft)';
-    el.style.display = 'block';
-  }
-  function hidePlanLimitMsg(){
-    document.getElementById('plan-limit-msg').style.display = 'none';
-  }
-  const { data: signalRows, error: signalRowsError } = await sb
-    .from('slot_signals').select('*').eq('account_id', currentAccountId).order('created_at', { ascending: false });
-  if(signalRowsError) console.error('Échec du chargement de l\u2019historique des créneaux signalés :', signalRowsError.message);
-  let history = (signalRows || []).map(row => ({
-    id: row.id,
-    date: row.signal_date,
-    time: row.signal_time,
-    presta: row.presta,
-    collaborator: row.collaborator_id,
-    matchCount: row.match_count,
-    accepted: row.accepted,
-    cancelled: !!row.cancelled,
-    price: Number(row.price) || 0
-  }));
-  let slots = history.filter(entry => entry.accepted).length || 0;
-  document.getElementById('brand-name').textContent = salonName;
-  document.title = salonName + ' · Espace prestataire';
-
-  function escapeHtml(str){
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
-  }
-
-  function isValidPhone(v){
-    const cleaned = v.replace(/[\s.\-]/g, '');
-    return /^(0[1-9]\d{8}|\+33[1-9]\d{8})$/.test(cleaned);
-  }
-
-  function formatMoney(value){
-    return Number(value || 0).toFixed(2).replace(/\.00$/, '') + ' €';
-  }
-
-  // Les prestations viennent maintenant de Supabase (chargées une fois au
-  // démarrage de la page). Un changement fait depuis un autre onglet
-  // (profil-prestataire.html) n'est plus poussé en direct ici ; il suffit de
-  // recharger la page pour le voir. refreshPrestations() est gardée en
-  // no-op pour ne pas casser les appels existants.
-  function refreshPrestations(){}
-
-  function getPrestationPrice(prestaName){
-    const match = prestations.find(p => p.name === prestaName);
-    return match && typeof match.price === 'number' ? match.price : 0;
-  }
-
-  function computeStatsByCollaborator(){
-    const map = {};
-    history.forEach(entry => {
-      if(!entry.accepted) return;
-      const key = entry.collaborator || (team[0] ? team[0].id : 'Non renseigné');
-      if(!map[key]) map[key] = { slots: 0, revenue: 0 };
-      map[key].slots += 1;
-      map[key].revenue += Number(entry.price ?? getPrestationPrice(entry.presta) ?? 0);
+    <!-- Chargement direct (pas de document.write conditionnel) : sur connexion
+         mobile lente, les navigateurs (Safari/Chrome) ignorent silencieusement
+         les scripts externes injectés via document.write ("intervention"
+         anti-blocage de rendu) — le SDK Supabase ne se chargeait alors jamais,
+         bloquant toute la page sans erreur visible. Chaque page étant un
+         rechargement complet (pas une SPA), window.supabase n'existe de toute
+         façon jamais déjà : la vérification conditionnelle ne servait à rien. -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js" crossorigin="anonymous"></script>
+    <script>
+    // Sans ce garde, un retour arrière depuis le cache navigateur (bfcache)
+    // après déconnexion peut réafficher cette page (clients, téléphones,
+    // statistiques) telle qu'elle était avant la déconnexion, sans repasser
+    // par la vérification de session. Même correctif que profil-prestataire.html.
+    window.addEventListener("pageshow", function (event) {
+      if (event.persisted) window.location.reload();
     });
-    return map;
-  }
+    </script>
+    <script>
+    (async function () {
+      // L'historique des créneaux signalés vit désormais dans la table
+      // slot_signals (Supabase), chargé plus bas via une requête ; plus rien en
+      // localStorage pour ces données.
 
-  function renderCollabStats(){
-    const el = document.getElementById('collab-stats');
-    if(planId !== 'business' || teamNames.length <= 1){
-      el.style.display = 'none';
-      el.innerHTML = '';
-      return;
-    }
-    const stats = computeStatsByCollaborator();
-    const rows = team.map(t => {
-      const s = stats[t.id] || { slots: 0, revenue: 0 };
-      return (
-        '<div class="collab-stats-row">' +
-          '<p class="collab-stats-name">' + escapeHtml(t.label) + '</p>' +
-          '<p class="collab-stats-vals"><b>' + s.slots + '</b> créneau(x) · <b>' + formatMoney(s.revenue) + '</b></p>' +
-        '</div>'
-      );
-    }).join('');
-    el.innerHTML = rows;
-    el.style.display = 'flex';
-  }
+      const SUPABASE_URL = "https://thxbpjumbntiqwexsqut.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoeGJwanVtYm50aXF3ZXhzcXV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ1NzgyNzksImV4cCI6MjEwMDE1NDI3OX0.tpxE9V5oksnZM16-3xuch3hMqXSJSbmQTuP7NVlj_bY";
+      window.__sb = window.__sb ||
+        window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+          auth: {
+            persistSession: true,
+            autoRefreshToken: true,
+            storageKey: "espace-prestataire-auth",
+          },
+        });
+      const sb = window.__sb;
+      const SUPABASE_FUNCTIONS_URL = SUPABASE_URL + "/functions/v1";
 
-  function updateStatsVisibility(){
-    const showStats = planId === 'pro' || planId === 'business';
-    document.getElementById('metrics').style.display = showStats ? 'grid' : 'none';
-    document.getElementById('stats-locked').style.display = showStats ? 'none' : 'block';
-    if(!showStats) document.getElementById('collab-stats').style.display = 'none';
-  }
-
-  function updateMetrics(){
-    refreshPrestations();
-    const revenue = history.reduce((sum, entry) => {
-      if(!entry.accepted) return sum;
-      const price = Number(entry.price ?? getPrestationPrice(entry.presta) ?? 0);
-      return sum + price;
-    }, 0);
-    slots = history.filter(entry => entry.accepted).length;
-    document.getElementById('m-slots').textContent = slots;
-    document.getElementById('m-revenue').textContent = formatMoney(revenue);
-    updateStatsVisibility();
-    renderCollabStats();
-  }
-
-  function refreshPrestaSelects(){
-    const names = prestations.map(p => p.name);
-    const html = names.length
-      ? names.map(p => '<option>' + escapeHtml(p) + '</option>').join('')
-      : '<option disabled selected>Ajoutez une prestation dans Profil</option>';
-    document.getElementById('slot-presta').innerHTML = html;
-    document.getElementById('new-presta').innerHTML = html;
-  }
-
-  // Équipe du compte (titulaire + collaborateurs), utilisée pour indiquer
-  // avec qui un créneau vient de se libérer, filtrer les clients à prévenir,
-  // et détailler les statistiques par collaborateur (formule Salon).
-  // Équipe identifiée par id (et non par nom) : 2 collaborateurs homonymes
-  // doivent rester distincts pour les statistiques et le filtrage des créneaux.
-  const team = [
-    account.ownerName ? { id: account.ownerId, name: account.ownerName, email: '' } : null,
-    ...(Array.isArray(account.collaborators) ? account.collaborators.map((c, i) => ({ id: c.id || ('collab-' + i), name: c.name, email: c.email || '' })) : [])
-  ].filter(Boolean);
-  // Si 2 collaborateurs portent le même nom, un simple "Julie" / "Julie" dans
-  // les menus rend impossible de savoir lequel on sélectionne réellement,
-  // même si leurs id internes diffèrent. On ajoute un repère visuel (e-mail
-  // si connu, sinon un numéro) pour chaque nom en doublon.
-  const nameCounts = {};
-  team.forEach(t => {
-    const k = t.name.trim().toLowerCase();
-    nameCounts[k] = (nameCounts[k] || 0) + 1;
-  });
-  const seenCounts = {};
-  team.forEach(t => {
-    const k = t.name.trim().toLowerCase();
-    if(nameCounts[k] <= 1){ t.label = t.name; return; }
-    seenCounts[k] = (seenCounts[k] || 0) + 1;
-    t.label = t.name + (t.email ? ' (' + t.email + ')' : ' (' + seenCounts[k] + ')');
-  });
-  const teamNames = team.map(t => t.name);
-  function teamLabelById(id){
-    const t = team.find(t => t.id === id);
-    return t ? t.label : '';
-  }
-
-  refreshPrestaSelects();
-  updateMetrics();
-
-  const slotCollabField = document.getElementById('slot-collab-field');
-  const slotCollabSelect = document.getElementById('slot-collab');
-  const newCollabRow = document.getElementById('new-collab-row');
-  const newCollabSelect = document.getElementById('new-collab');
-  if(teamNames.length > 1){
-    slotCollabField.style.display = 'block';
-    slotCollabSelect.innerHTML = team.map(t => '<option value="' + escapeHtml(t.id) + '">' + escapeHtml(t.label) + '</option>').join('');
-
-    newCollabRow.style.display = 'block';
-    newCollabSelect.innerHTML =
-      '<option value="">Peu importe</option>' +
-      team.map(t => '<option value="' + escapeHtml(t.id) + '">' + escapeHtml(t.label) + '</option>').join('');
-  }
-
-  let clients = (waitlistRows || []).map(w => {
-    const prestaObj = prestations.find(p => p.id === w.service_id);
-    return {
-      id: w.id,
-      name: w.name,
-      phone: w.phone,
-      presta: prestaObj ? prestaObj.name : '',
-      collaborator: w.collaborator_id || null,
-      dates: (w.preferred_dates && w.preferred_dates.dates) ? w.preferred_dates.dates : undefined,
-      days: (w.preferred_dates && w.preferred_dates.days) ? w.preferred_dates.days : undefined,
-      status: w.status,
-      offerSignalId: w.offer_signal_id || null,
-      offerExpiresAt: w.offer_expires_at || null,
-      origine: w.origine || 'Ajouté',
-      joinedAt: w.created_at
-    };
-  });
-
-  const wlList = document.getElementById('wl-list');
-  const historyList = document.getElementById('history-list');
-  const historyHead = document.getElementById('history-head');
-  const slotPresta = document.getElementById('slot-presta');
-
-  const slotDateInput = document.getElementById('slot-date');
-  const newDateInput = document.getElementById('new-date');
-  const selectedDatesContainer = document.getElementById('selected-dates');
-  const todayISO = new Date().toISOString().slice(0, 10);
-  slotDateInput.value = todayISO;
-  slotDateInput.min = todayISO;
-  newDateInput.value = todayISO;
-  newDateInput.min = todayISO;
-  let selectedDates = [];
-
-  function shortDate(iso){
-    if(!iso) return '';
-    return new Date(iso + 'T00:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
-  }
-
-  function bindDateDisplay(input, displayId){
-    const displayEl = document.getElementById(displayId);
-    const sync = () => { displayEl.textContent = shortDate(input.value); };
-    input.addEventListener('input', sync);
-    input.addEventListener('change', sync);
-    sync();
-  }
-
-  bindDateDisplay(slotDateInput, 'slot-date-display');
-  bindDateDisplay(newDateInput, 'new-date-display');
-
-  const slotTimeInput = document.getElementById('slot-time');
-
-  function bindTimeDisplay(input, displayId){
-    const displayEl = document.getElementById(displayId);
-    const sync = () => { displayEl.textContent = input.value || '--:--'; };
-    input.addEventListener('input', sync);
-    input.addEventListener('change', sync);
-    sync();
-  }
-  bindTimeDisplay(slotTimeInput, 'slot-time-display');
-
-  function formatDate(iso){
-    const d = new Date(iso + 'T00:00:00');
-    const today = new Date(todayISO + 'T00:00:00');
-    const diffDays = Math.round((d - today) / 86400000);
-    if(diffDays === 0) return "aujourd'hui";
-    if(diffDays === 1) return 'demain';
-    return d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
-  }
-
-  function badgeHtml(status){
-    if(!status) return '<span class="badge">En liste</span>';
-    if(status === 'sent') return '<span class="badge sent">SMS envoyé</span>';
-    if(status === 'confirmed') return '<span class="badge confirmed">Confirmé</span>';
-    if(status === 'taken') return '<span class="badge taken">Manqué · toujours en attente</span>';
-    if(status === 'stop') return '<span class="badge stop">A refusé (STOP)</span>';
-  }
-
-  function persistWaitlist(){
-    // Remplacé par des appels Supabase ciblés à chaque mutation (ajout/suppression/statut).
-  }
-
-  function renderSelectedDates(){
-    if(!selectedDates.length){
-      selectedDatesContainer.innerHTML = '<p class="presta-empty" style="margin:0;">Aucune date sélectionnée.</p>';
-      return;
-    }
-    if(selectedDates.length === 1 && selectedDates[0] === 'everyday'){
-      selectedDatesContainer.innerHTML = '<span class="date-chip">Tous les jours</span>';
-      return;
-    }
-    selectedDatesContainer.innerHTML = selectedDates.map(date => '<span class="date-chip">' + formatDate(date) + '</span>').join('');
-  }
-
-  const PAGE_SIZE = 5;
-  let wlShowAll = false;
-  let historyShowAll = false;
-
-  function renderWaitlist(){
-    if(!clients.length){
-      wlList.innerHTML = '<p class="presta-empty">Aucun client en liste d\'attente pour le moment. Ajoutez un client ci-dessus.</p>';
-      return;
-    }
-
-    const cards = clients.map((c, i) => {
-      let dateLabel = '';
-      if(c.dates && c.dates.length){
-        dateLabel = ' · ' + (c.dates[0] === 'everyday' ? 'Tous les jours' : c.dates.map(formatDate).join(', '));
-      } else if(c.days && c.days.length){
-        dateLabel = ' · ' + c.days.join(', ');
+      const { data: { session } } = await sb.auth.getSession();
+      if (!session) {
+        window.location.href = "connexion-prestataire.html";
+        return;
       }
-      const collabLabel = c.collaborator ? ' · avec ' + escapeHtml(teamLabelById(c.collaborator)) : '';
-      // Bouton "Confirmer (test)" : tant qu'aucun vrai fournisseur SMS
-      // n'est branché, c'est le prestataire qui simule la réponse du
-      // client à sa place, mais l'opération passe par confirm_slot_offer
-      // (verrou serveur sur le signalement) — donc si deux onglets
-      // cliquent confirmer pour deux clients différents du même créneau
-      // quasi en même temps, un seul gagnera réellement, comme le ferait
-      // une vraie réponse SMS.
-      const canConfirm = c.status === 'sent' && c.offerSignalId;
-      const canStop = c.status !== 'confirmed' && c.status !== 'stop';
-      return (
-        '<div class="wl-card">' +
-          '<div class="wl-info">' +
-            '<p class="wl-name">' + escapeHtml(c.name) + '</p>' +
-            '<p class="wl-meta">' + escapeHtml(c.presta) + collabLabel + dateLabel + '</p>' +
-          '</div>' +
-          '<div class="wl-right">' +
+      const { data: { user: verifiedUser }, error: verifyError } = await sb.auth
+        .getUser();
+      if (verifyError || !verifiedUser) {
+        await sb.auth.signOut();
+        window.location.href = "connexion-prestataire.html?expired=1";
+        return;
+      }
+      const currentUser = session.user;
+      const currentAccountId = currentUser.id; // alias : conserve tout le code existant qui utilisait cet id local
+
+      // Repasse en attente les offres dont le délai de réponse est dépassé
+      // avant même de charger la liste d'attente, pour que les badges affichés
+      // à l'ouverture de la page reflètent l'état réel (et pas un "SMS envoyé"
+      // qui traîne indéfiniment si personne n'a jamais confirmé ni resignalé).
+      await sb.rpc("expire_stale_offers").then(({ error }) => {
+        if (error) {
+          console.error(
+            "Échec de l\u2019expiration des offres en retard :",
+            error.message,
+          );
+        }
+      });
+
+      const [
+        { data: profileRow },
+        { data: prestaRows },
+        { data: collabRows },
+        { data: subRow },
+        { data: waitlistRows },
+      ] = await Promise.all([
+        sb.from("profiles").select("*").eq("id", currentUser.id).single(),
+        sb.from("prestations").select("*").eq("account_id", currentUser.id).order(
+          "created_at",
+        ),
+        sb.from("collaborators").select("*").eq("account_id", currentUser.id).order(
+          "created_at",
+        ),
+        sb.from("subscriptions").select("plan").eq("account_id", currentUser.id)
+          .maybeSingle(),
+        sb.from("waitlist_clients").select("*").eq("account_id", currentUser.id)
+          .order("created_at"),
+      ]);
+
+      if (!subRow) {
+        // Compte créé (étape 1) mais jamais de formule choisie/payée : on ne
+        // laisse pas s'afficher un tableau de bord "gratuit" par défaut, on
+        // renvoie directement choisir un abonnement (essai 14 jours).
+        window.location.href = "abonnement.html?onboarding=1";
+        return;
+      }
+
+      if (!prestaRows || !prestaRows.length) {
+        // Abonnement payé mais inscription abandonnée avant l'étape 2 (aucune
+        // prestation enregistrée) : on ne laisse pas s'afficher un tableau de
+        // bord vide et inutilisable, on renvoie terminer la configuration.
+        window.location.href = "inscription-prestataire.html?resume=prestations";
+        return;
+      }
+
+      const prestations = (prestaRows && prestaRows.length)
+        ? prestaRows.map((p) => ({
+          id: p.id,
+          name: p.name,
+          dur: p.duration_minutes,
+          price: p.price,
+        }))
+        : [];
+
+      const [ownerRow, ...restCollabRows] = collabRows || [];
+      const account = {
+        name: profileRow ? profileRow.name : "",
+        plan: subRow ? subRow.plan : "solo",
+        smsTemplate: profileRow ? (profileRow.sms_template || "") : "",
+        ownerName: ownerRow ? ownerRow.name : "",
+        ownerId: ownerRow ? ownerRow.id : null,
+        collaborators: restCollabRows.map((c) => ({
+          id: c.id,
+          name: c.name,
+          email: c.email || "",
+        })),
+      };
+      const salonName = account && account.name ? account.name : "Salon Léa";
+
+      // Limites réelles appliquées selon la formule active du compte.
+      const PLAN_LABELS = { solo: "Solo", pro: "Pro", business: "Business" };
+      const PLAN_LIMITS = {
+        solo: { smsIncluded: 20, smsHardCap: false, waitlistPerMonth: Infinity },
+        pro: { smsIncluded: 100, smsHardCap: true, waitlistPerMonth: Infinity },
+        business: {
+          smsIncluded: Infinity,
+          smsHardCap: false,
+          waitlistPerMonth: Infinity,
+        },
+      };
+      const planId = PLAN_LIMITS[account.plan] ? account.plan : "solo";
+      const planLimits = PLAN_LIMITS[planId];
+      const planName = PLAN_LABELS[planId];
+
+      // Le quota SMS est désormais compté et plafonné côté serveur (fonction
+      // signal_slot, RLS sur sms_usage) : impossible à réinitialiser en
+      // vidant le cache ou en changeant d'appareil. currentMonthKey() reste
+      // utilisé pour l'affichage de l'historique/des stats, sans lien avec le
+      // quota lui-même.
+      function currentMonthKey() {
+        return new Date().toISOString().slice(0, 7);
+      }
+
+      function countJoinedThisMonth(list) {
+        const month = currentMonthKey();
+        return list.filter((c) => c.joinedAt && c.joinedAt.slice(0, 7) === month)
+          .length;
+      }
+
+      function showPlanLimitMsg(text, tone) {
+        const el = document.getElementById("plan-limit-msg");
+        el.textContent = text;
+        el.style.color = tone === "error" ? "#B3441E" : "var(--ink-soft)";
+        el.style.display = "block";
+      }
+      function hidePlanLimitMsg() {
+        document.getElementById("plan-limit-msg").style.display = "none";
+      }
+
+      // Un créneau est d'abord réservé en base, puis la fonction Edge crée les
+      // liens uniques et demande réellement l'envoi SMS. Si cette fonction est
+      // absente, signaler le créneau laisserait à tort des clients en état
+      // « offert » sans notification. On bloque donc l'action dès l'ouverture
+      // du tableau de bord tant que le point d'envoi n'est pas disponible.
+      let smsDispatchAvailable = false;
+      async function checkSmsDispatchAvailability() {
+        const signalButton = document.getElementById("btn-signal");
+        signalButton.disabled = true;
+        try {
+          const response = await fetch(
+            SUPABASE_FUNCTIONS_URL + "/send-slot-offers",
+            { method: "OPTIONS" },
+          );
+          smsDispatchAvailable = response.ok;
+        } catch (_) {
+          smsDispatchAvailable = false;
+        }
+        if (!smsDispatchAvailable) {
+          showPlanLimitMsg(
+            "L’envoi SMS n’est pas encore disponible. Aucun créneau ne peut être signalé pour éviter de notifier incomplètement votre liste d’attente.",
+            "error",
+          );
+          return;
+        }
+        signalButton.disabled = false;
+      }
+      await checkSmsDispatchAvailability();
+
+      const { data: signalRows, error: signalRowsError } = await sb
+        .from("slot_signals").select("*").eq("account_id", currentAccountId).order(
+          "created_at",
+          { ascending: false },
+        );
+      if (signalRowsError) {
+        console.error(
+          "Échec du chargement de l\u2019historique des créneaux signalés :",
+          signalRowsError.message,
+        );
+      }
+      let history = (signalRows || []).map((row) => ({
+        id: row.id,
+        date: row.signal_date,
+        time: row.signal_time,
+        presta:
+          (prestations.find((prestation) => prestation.id === row.service_id) || {})
+            .name || "Prestation",
+        collaborator: row.collaborator_id,
+        matchCount: row.match_count,
+        accepted: row.accepted,
+        cancelled: !!row.cancelled,
+        price: Number(row.price) || 0,
+      }));
+      let slots = history.filter((entry) => entry.accepted).length || 0;
+      document.getElementById("brand-name").textContent = salonName;
+      document.title = salonName + " · Espace prestataire";
+
+      function escapeHtml(str) {
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function isValidPhone(v) {
+        const cleaned = v.replace(/[\s.\-]/g, "");
+        return /^(0[1-9]\d{8}|\+33[1-9]\d{8})$/.test(cleaned);
+      }
+
+      function formatMoney(value) {
+        return Number(value || 0).toFixed(2).replace(/\.00$/, "") + " €";
+      }
+
+      // Les prestations viennent maintenant de Supabase (chargées une fois au
+      // démarrage de la page). Un changement fait depuis un autre onglet
+      // (profil-prestataire.html) n'est plus poussé en direct ici ; il suffit de
+      // recharger la page pour le voir. refreshPrestations() est gardée en
+      // no-op pour ne pas casser les appels existants.
+      function refreshPrestations() {}
+
+      function getPrestationPrice(prestaName) {
+        const match = prestations.find((p) => p.name === prestaName);
+        return match && typeof match.price === "number" ? match.price : 0;
+      }
+
+      function computeStatsByCollaborator() {
+        const map = {};
+        history.forEach((entry) => {
+          if (!entry.accepted) return;
+          const key = entry.collaborator ||
+            (team[0] ? team[0].id : "Non renseigné");
+          if (!map[key]) map[key] = { slots: 0, revenue: 0 };
+          map[key].slots += 1;
+          map[key].revenue += Number(
+            entry.price ?? getPrestationPrice(entry.presta) ?? 0,
+          );
+        });
+        return map;
+      }
+
+      function renderCollabStats() {
+        const el = document.getElementById("collab-stats");
+        if (planId !== "business" || teamNames.length <= 1) {
+          el.style.display = "none";
+          el.innerHTML = "";
+          return;
+        }
+        const stats = computeStatsByCollaborator();
+        const rows = team.map((t) => {
+          const s = stats[t.id] || { slots: 0, revenue: 0 };
+          return (
+            '<div class="collab-stats-row">' +
+            '<p class="collab-stats-name">' + escapeHtml(t.label) + "</p>" +
+            '<p class="collab-stats-vals"><b>' + s.slots + "</b> créneau(x) · <b>" +
+            formatMoney(s.revenue) + "</b></p>" +
+            "</div>"
+          );
+        }).join("");
+        el.innerHTML = rows;
+        el.style.display = "flex";
+      }
+
+      function updateStatsVisibility() {
+        const showStats = planId === "pro" || planId === "business";
+        document.getElementById("metrics").style.display = showStats
+          ? "grid"
+          : "none";
+        document.getElementById("stats-locked").style.display = showStats
+          ? "none"
+          : "block";
+        if (!showStats) {
+          document.getElementById("collab-stats").style.display = "none";
+        }
+      }
+
+      function updateMetrics() {
+        refreshPrestations();
+        const revenue = history.reduce((sum, entry) => {
+          if (!entry.accepted) return sum;
+          const price = Number(
+            entry.price ?? getPrestationPrice(entry.presta) ?? 0,
+          );
+          return sum + price;
+        }, 0);
+        slots = history.filter((entry) => entry.accepted).length;
+        document.getElementById("m-slots").textContent = slots;
+        document.getElementById("m-revenue").textContent = formatMoney(revenue);
+        updateStatsVisibility();
+        renderCollabStats();
+      }
+
+      function refreshPrestaSelects() {
+        const names = prestations.map((p) => p.name);
+        const html = names.length
+          ? names.map((p) => "<option>" + escapeHtml(p) + "</option>").join("")
+          : "<option disabled selected>Ajoutez une prestation dans Profil</option>";
+        document.getElementById("slot-presta").innerHTML = html;
+        document.getElementById("new-presta").innerHTML = html;
+      }
+
+      // Équipe du compte (titulaire + collaborateurs), utilisée pour indiquer
+      // avec qui un créneau vient de se libérer, filtrer les clients à prévenir,
+      // et détailler les statistiques par collaborateur (formule Business).
+      // Équipe identifiée par id (et non par nom) : 2 collaborateurs homonymes
+      // doivent rester distincts pour les statistiques et le filtrage des créneaux.
+      const team = [
+        account.ownerName
+          ? { id: account.ownerId, name: account.ownerName, email: "" }
+          : null,
+        ...(Array.isArray(account.collaborators)
+          ? account.collaborators.map((c, i) => ({
+            id: c.id || ("collab-" + i),
+            name: c.name,
+            email: c.email || "",
+          }))
+          : []),
+      ].filter(Boolean);
+      // Si 2 collaborateurs portent le même nom, un simple "Julie" / "Julie" dans
+      // les menus rend impossible de savoir lequel on sélectionne réellement,
+      // même si leurs id internes diffèrent. On ajoute un repère visuel (e-mail
+      // si connu, sinon un numéro) pour chaque nom en doublon.
+      const nameCounts = {};
+      team.forEach((t) => {
+        const k = t.name.trim().toLowerCase();
+        nameCounts[k] = (nameCounts[k] || 0) + 1;
+      });
+      const seenCounts = {};
+      team.forEach((t) => {
+        const k = t.name.trim().toLowerCase();
+        if (nameCounts[k] <= 1) {
+          t.label = t.name;
+          return;
+        }
+        seenCounts[k] = (seenCounts[k] || 0) + 1;
+        t.label = t.name +
+          (t.email ? " (" + t.email + ")" : " (" + seenCounts[k] + ")");
+      });
+      const teamNames = team.map((t) => t.name);
+      function teamLabelById(id) {
+        const t = team.find((t) => t.id === id);
+        return t ? t.label : "";
+      }
+
+      refreshPrestaSelects();
+      updateMetrics();
+
+      const slotCollabField = document.getElementById("slot-collab-field");
+      const slotCollabSelect = document.getElementById("slot-collab");
+      const newCollabRow = document.getElementById("new-collab-row");
+      const newCollabSelect = document.getElementById("new-collab");
+      if (teamNames.length > 1) {
+        slotCollabField.style.display = "block";
+        slotCollabSelect.innerHTML = team.map((t) =>
+          '<option value="' + escapeHtml(t.id) + '">' + escapeHtml(t.label) +
+          "</option>"
+        ).join("");
+
+        newCollabRow.style.display = "block";
+        newCollabSelect.innerHTML = '<option value="">Peu importe</option>' +
+          team.map((t) =>
+            '<option value="' + escapeHtml(t.id) + '">' + escapeHtml(t.label) +
+            "</option>"
+          ).join("");
+      }
+
+      let clients = (waitlistRows || []).map((w) => {
+        const prestaObj = prestations.find((p) => p.id === w.service_id);
+        return {
+          id: w.id,
+          name: w.name,
+          phone: w.phone,
+          presta: prestaObj ? prestaObj.name : "",
+          collaborator: w.collaborator_id || null,
+          dates: (w.preferred_dates && w.preferred_dates.dates)
+            ? w.preferred_dates.dates
+            : undefined,
+          days: (w.preferred_dates && w.preferred_dates.days)
+            ? w.preferred_dates.days
+            : undefined,
+          timeStart: w.preferred_dates ? w.preferred_dates.time_start : null,
+          timeEnd: w.preferred_dates ? w.preferred_dates.time_end : null,
+          // `offered` est le statut de stockage. L’interface l’affiche comme
+          // « SMS envoyé » sans changer son sens métier.
+          status: w.status === "offered" ? "sent" : w.status,
+          offerSignalId: w.offer_signal_id || null,
+          offerExpiresAt: w.offer_expires_at || null,
+          origine: w.origine || "Ajouté",
+          joinedAt: w.created_at,
+        };
+      });
+
+      const wlList = document.getElementById("wl-list");
+      const historyList = document.getElementById("history-list");
+      const historyHead = document.getElementById("history-head");
+      const slotPresta = document.getElementById("slot-presta");
+
+      const slotDateInput = document.getElementById("slot-date");
+      const newDateInput = document.getElementById("new-date");
+      const selectedDatesContainer = document.getElementById("selected-dates");
+      const todayISO = new Date().toISOString().slice(0, 10);
+      slotDateInput.value = todayISO;
+      slotDateInput.min = todayISO;
+      newDateInput.value = todayISO;
+      newDateInput.min = todayISO;
+      let selectedDates = [];
+
+      function shortDate(iso) {
+        if (!iso) return "";
+        return new Date(iso + "T00:00:00").toLocaleDateString("fr-FR", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        });
+      }
+
+      function bindDateDisplay(input, displayId) {
+        const displayEl = document.getElementById(displayId);
+        const sync = () => {
+          displayEl.textContent = shortDate(input.value);
+        };
+        input.addEventListener("input", sync);
+        input.addEventListener("change", sync);
+        sync();
+      }
+
+      bindDateDisplay(slotDateInput, "slot-date-display");
+      bindDateDisplay(newDateInput, "new-date-display");
+
+      const slotTimeInput = document.getElementById("slot-time");
+
+      function bindTimeDisplay(input, displayId) {
+        const displayEl = document.getElementById(displayId);
+        const sync = () => {
+          displayEl.textContent = input.value || "--:--";
+        };
+        input.addEventListener("input", sync);
+        input.addEventListener("change", sync);
+        sync();
+      }
+      bindTimeDisplay(slotTimeInput, "slot-time-display");
+
+      function formatDate(iso) {
+        const d = new Date(iso + "T00:00:00");
+        const today = new Date(todayISO + "T00:00:00");
+        const diffDays = Math.round((d - today) / 86400000);
+        if (diffDays === 0) return "aujourd'hui";
+        if (diffDays === 1) return "demain";
+        return d.toLocaleDateString("fr-FR", {
+          weekday: "long",
+          day: "numeric",
+          month: "long",
+        });
+      }
+
+      function badgeHtml(status) {
+        if (!status) return '<span class="badge">En liste</span>';
+        if (status === "sent") return '<span class="badge sent">SMS envoyé</span>';
+        if (status === "confirmed") {
+          return '<span class="badge confirmed">Confirmé</span>';
+        }
+        if (status === "taken") {
+          return '<span class="badge taken">Manqué · toujours en attente</span>';
+        }
+        if (status === "stop") {
+          return '<span class="badge stop">A refusé (STOP)</span>';
+        }
+      }
+
+      function persistWaitlist() {
+        // Remplacé par des appels Supabase ciblés à chaque mutation (ajout/suppression/statut).
+      }
+
+      function renderSelectedDates() {
+        if (!selectedDates.length) {
+          selectedDatesContainer.innerHTML =
+            '<p class="presta-empty" style="margin:0;">Aucune date sélectionnée.</p>';
+          return;
+        }
+        if (selectedDates.length === 1 && selectedDates[0] === "everyday") {
+          selectedDatesContainer.innerHTML =
+            '<span class="date-chip">Tous les jours</span>';
+          return;
+        }
+        selectedDatesContainer.innerHTML = selectedDates.map((date) =>
+          '<span class="date-chip">' + formatDate(date) + "</span>"
+        ).join("");
+      }
+
+      const PAGE_SIZE = 5;
+      let wlShowAll = false;
+      let historyShowAll = false;
+
+      function renderWaitlist() {
+        if (!clients.length) {
+          wlList.innerHTML =
+            '<p class="presta-empty">Aucun client en liste d\'attente pour le moment. Ajoutez un client ci-dessus.</p>';
+          return;
+        }
+
+        const cards = clients.map((c, i) => {
+          let dateLabel = "";
+          if (c.dates && c.dates.length) {
+            dateLabel = " · " +
+              (c.dates[0] === "everyday"
+                ? "Tous les jours"
+                : c.dates.map(formatDate).join(", "));
+          } else if (c.days && c.days.length) {
+            dateLabel = " · " + c.days.join(", ");
+          }
+          const timeLabel = c.timeStart && c.timeEnd
+            ? " · " + escapeHtml(c.timeStart) + "–" + escapeHtml(c.timeEnd)
+            : " · toute la journée";
+          const collabLabel = c.collaborator
+            ? " · avec " + escapeHtml(teamLabelById(c.collaborator))
+            : "";
+          const canStop = c.status !== "confirmed" && c.status !== "stop";
+          return (
+            '<div class="wl-card">' +
+            '<div class="wl-info">' +
+            '<p class="wl-name">' + escapeHtml(c.name) + "</p>" +
+            '<p class="wl-meta">' + escapeHtml(c.presta) + collabLabel + dateLabel + timeLabel +
+            "</p>" +
+            "</div>" +
+            '<div class="wl-right">' +
             '<div class="wl-actions">' +
-              badgeHtml(c.status) +
-              (canConfirm ? '<button class="btn-mini confirm-btn" data-i="' + i + '" title="Simulation en attendant un vrai fournisseur SMS">Confirmer</button>' : '') +
-              (canStop ? '<button class="btn-mini danger stop-btn" data-i="' + i + '" title="Le client a répondu STOP">STOP</button>' : '') +
-            '</div>' +
-            '<button class="rm-btn" data-i="' + i + '" aria-label="Retirer ' + escapeHtml(c.name) + ' de la liste">' +
-              '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"></path><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"></path></svg>' +
-            '</button>' +
-          '</div>' +
-        '</div>'
-      );
-    });
+            badgeHtml(c.status) +
+            (canStop
+              ? '<button class="btn-mini danger stop-btn" data-i="' + i +
+                '" title="Le client a répondu STOP">STOP</button>'
+              : "") +
+            "</div>" +
+            '<button class="rm-btn" data-i="' + i + '" aria-label="Retirer ' +
+            escapeHtml(c.name) + ' de la liste">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"></path><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"></path></svg>' +
+            "</button>" +
+            "</div>" +
+            "</div>"
+          );
+        });
 
-    const visibleCount = wlShowAll ? cards.length : Math.min(PAGE_SIZE, cards.length);
-    wlList.innerHTML = cards.slice(0, visibleCount).join('') +
-      (cards.length > PAGE_SIZE && !wlShowAll
-        ? '<button class="btn-show-more" id="wl-show-more" type="button">Voir plus (' + (cards.length - visibleCount) + ')</button>'
-        : '');
+        const visibleCount = wlShowAll
+          ? cards.length
+          : Math.min(PAGE_SIZE, cards.length);
+        wlList.innerHTML = cards.slice(0, visibleCount).join("") +
+          (cards.length > PAGE_SIZE && !wlShowAll
+            ? '<button class="btn-show-more" id="wl-show-more" type="button">Voir plus (' +
+              (cards.length - visibleCount) + ")</button>"
+            : "");
 
-    wlList.querySelectorAll('.confirm-btn').forEach(b => {
-      b.addEventListener('click', async () => {
-        const idx = Number(b.getAttribute('data-i'));
-        const client = clients[idx];
-        if(!client || !client.offerSignalId) return;
-        b.disabled = true;
-        b.textContent = '…';
-        const { data, error } = await sb.rpc('confirm_slot_offer', { p_signal_id: client.offerSignalId, p_client_id: client.id });
-        if(error){
-          console.error('Échec de la confirmation :', error.message);
-          b.disabled = false;
-          b.textContent = 'Confirmer';
-          return;
-        }
-        if(data === 'confirmed'){
-          const signalId = client.offerSignalId;
-          client.status = 'confirmed';
-          client.offerSignalId = null;
-          // Les autres clients ayant reçu la même offre repassent "manqué,
-          // toujours en attente" (perdus au profit du premier confirmé).
-          clients.forEach(c => {
-            if(c !== client && c.offerSignalId === signalId && c.status === 'sent'){
-              c.status = 'taken';
-              c.offerSignalId = null;
+        wlList.querySelectorAll(".stop-btn").forEach((b) => {
+          b.addEventListener("click", async () => {
+            const idx = Number(b.getAttribute("data-i"));
+            const client = clients[idx];
+            if (!client) return;
+            if (
+              !confirm(
+                client.name +
+                  " a demandé à ne plus recevoir de SMS (STOP) ? Il ne sera plus jamais proposé sur un créneau.",
+              )
+            ) return;
+            const previousStatus = client.status;
+            const previousOffer = client.offerSignalId;
+            client.status = "stop";
+            client.offerSignalId = null;
+            client.offerExpiresAt = null;
+            renderWaitlist();
+            if (client.id) {
+              const { error } = await sb.rpc("stop_waitlist_client", {
+                p_client_id: client.id,
+              });
+              if (error) {
+                console.error(
+                  "Échec de l\u2019enregistrement du STOP :",
+                  error.message,
+                );
+                client.status = previousStatus;
+                client.offerSignalId = previousOffer;
+                renderWaitlist();
+              }
             }
           });
-          const entry = history.find(h => h.id === signalId);
-          if(entry) entry.accepted = true;
-          updateMetrics();
-          renderHistory();
-        } else if(data === 'already_taken'){
-          showPlanLimitMsg('Ce créneau a déjà été confirmé par un autre client entre-temps.', 'error');
-          client.status = 'taken';
-          client.offerSignalId = null;
-        } else if(data === 'expired'){
-          showPlanLimitMsg('Le délai de réponse de ce client est dépassé, il est repassé en attente.', 'info');
-          client.status = null;
-          client.offerSignalId = null;
-        } else if(data === 'cancelled'){
-          client.status = null;
-          client.offerSignalId = null;
-        }
-        renderWaitlist();
-      });
-    });
+        });
 
-    wlList.querySelectorAll('.stop-btn').forEach(b => {
-      b.addEventListener('click', async () => {
-        const idx = Number(b.getAttribute('data-i'));
-        const client = clients[idx];
-        if(!client) return;
-        if(!confirm(client.name + ' a demandé à ne plus recevoir de SMS (STOP) ? Il ne sera plus jamais proposé sur un créneau.')) return;
-        const previousStatus = client.status;
-        const previousOffer = client.offerSignalId;
-        client.status = 'stop';
-        client.offerSignalId = null;
-        client.offerExpiresAt = null;
-        renderWaitlist();
-        if(client.id){
-          const { error } = await sb.from('waitlist_clients')
-            .update({ status: 'stop', offer_signal_id: null, offer_expires_at: null })
-            .eq('id', client.id);
-          if(error){
-            console.error('Échec de l\u2019enregistrement du STOP :', error.message);
-            client.status = previousStatus;
-            client.offerSignalId = previousOffer;
+        wlList.querySelectorAll(".rm-btn").forEach((b) => {
+          b.addEventListener("click", async () => {
+            const idx = Number(b.getAttribute("data-i"));
+            const removed = clients[idx];
+            clients.splice(idx, 1);
             renderWaitlist();
+            if (removed && removed.id) {
+              const { error } = await sb.from("waitlist_clients").delete().eq(
+                "id",
+                removed.id,
+              );
+              if (error) {
+                clients.splice(idx, 0, removed);
+                renderWaitlist();
+                console.error(
+                  "Échec de la suppression du client en base :",
+                  error.message,
+                );
+              }
+            }
+          });
+        });
+
+        const showMoreBtn = document.getElementById("wl-show-more");
+        if (showMoreBtn) {
+          showMoreBtn.addEventListener("click", () => {
+            wlShowAll = true;
+            renderWaitlist();
+          });
+        }
+      }
+      renderWaitlist();
+
+      function historyBadgeHtml(h) {
+        if (h.cancelled) return '<span class="badge taken">Annulé</span>';
+        if (h.accepted) return '<span class="badge confirmed">Créneau pris</span>';
+        if (h.matchCount === 0) {
+          return '<span class="badge">Aucun client compatible</span>';
+        }
+        return '<span class="badge sent">' + h.matchCount +
+          " client(s) prévenu(s)</span>";
+      }
+
+      function renderHistory() {
+        historyHead.style.display = history.length ? "flex" : "none";
+        const cards = history.map((h) => (
+          '<div class="agenda-card">' +
+          '<span class="agenda-time">' + h.time + "</span>" +
+          '<div class="agenda-info">' +
+          '<p class="agenda-presta">' + escapeHtml(h.presta) + "</p>" +
+          '<p class="agenda-date">' + formatDate(h.date) + "</p>" +
+          "</div>" +
+          historyBadgeHtml(h) +
+          (!h.accepted && !h.cancelled && h.matchCount > 0
+            ? '<button class="agenda-cancel" data-id="' + h.id +
+              '">Annuler ce créneau</button>'
+            : "") +
+          "</div>"
+        ));
+
+        const visibleCount = historyShowAll
+          ? cards.length
+          : Math.min(PAGE_SIZE, cards.length);
+        historyList.innerHTML = cards.slice(0, visibleCount).join("") +
+          (cards.length > PAGE_SIZE && !historyShowAll
+            ? '<button class="btn-show-more" id="history-show-more" type="button">Voir plus (' +
+              (cards.length - visibleCount) + ")</button>"
+            : "");
+
+        const showMoreBtn = document.getElementById("history-show-more");
+        if (showMoreBtn) {
+          showMoreBtn.addEventListener("click", () => {
+            historyShowAll = true;
+            renderHistory();
+          });
+        }
+
+        historyList.querySelectorAll(".agenda-cancel").forEach((b) => {
+          b.addEventListener("click", async () => {
+            const signalId = b.getAttribute("data-id");
+            if (
+              !confirm(
+                "Annuler ce créneau ? Les clients prévenus qui n\u2019ont pas encore confirmé repasseront en liste d\u2019attente.",
+              )
+            ) return;
+            b.disabled = true;
+            b.textContent = "…";
+            const { data, error } = await sb.rpc("cancel_slot_signal", {
+              p_signal_id: signalId,
+            });
+            if (error) {
+              console.error(
+                "Échec de l\u2019annulation du créneau :",
+                error.message,
+              );
+              b.disabled = false;
+              b.textContent = "Annuler ce créneau";
+              return;
+            }
+            if (data === "cancelled") {
+              const entry = history.find((h) => h.id === signalId);
+              if (entry) entry.cancelled = true;
+              clients.forEach((c) => {
+                if (c.offerSignalId === signalId && c.status === "sent") {
+                  c.status = null;
+                  c.offerSignalId = null;
+                  c.offerExpiresAt = null;
+                }
+              });
+              renderWaitlist();
+              renderHistory();
+            } else if (data === "already_confirmed") {
+              showPlanLimitMsg(
+                "Ce créneau a déjà été confirmé par un client, impossible de l\u2019annuler.",
+                "error",
+              );
+            }
+          });
+        });
+      }
+      renderHistory();
+
+      document.getElementById("btn-signal").addEventListener("click", () => {
+        if (!smsDispatchAvailable) {
+          showPlanLimitMsg(
+            "L’envoi SMS n’est pas disponible. Réessayez après le déploiement du service.",
+            "error",
+          );
+          return;
+        }
+        const date = slotDateInput.value || todayISO;
+        const time = document.getElementById("slot-time").value || "--:--";
+        const presta = slotPresta.value;
+        const collaborator = teamNames.length > 1 ? slotCollabSelect.value : "";
+        signalSlot(date, time, presta, collaborator);
+      });
+
+      const WEEKDAY_LABELS = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"];
+
+      function isClientAvailable(c, dateISO) {
+        // Clients ajoutés manuellement par le prestataire : dates précises ou "everyday".
+        if (Array.isArray(c.dates) && c.dates.length) {
+          if (c.dates[0] === "everyday") return true;
+          return c.dates.includes(dateISO);
+        }
+        // Clients inscrits en ligne : jours de la semaine récurrents (ex. "Mar", "Jeu").
+        if (Array.isArray(c.days) && c.days.length) {
+          const weekday = WEEKDAY_LABELS[new Date(dateISO + "T00:00:00").getDay()];
+          return c.days.includes(weekday);
+        }
+        return false;
+      }
+
+      async function signalSlot(date, time, presta, collaborator) {
+        hidePlanLimitMsg();
+
+        const prestaObj = prestations.find((p) => p.name === presta);
+        if (!prestaObj) {
+          showPlanLimitMsg("Sélectionnez une prestation valide.", "error");
+          return;
+        }
+        const priceForEntry = getPrestationPrice(presta);
+
+        // Le matching (clients éligibles selon prestation/dispo/collaborateur),
+        // le quota SMS et le passage en "offered" sont désormais faits de façon
+        // atomique côté serveur (fonction signal_slot), plutôt que calculés ici
+        // puis simulés avec des setTimeout : ça règle les cas limites (offre
+        // qui n'expire jamais, quota qui pourrait être contourné en rechargeant
+        // la page pendant l'envoi, etc.) une fois pour toutes en base.
+        const { data: rpcData, error: rpcError } = await sb.rpc("signal_slot", {
+          p_date: date,
+          p_time: time,
+          p_service_id: prestaObj.id,
+          p_collaborator_id: collaborator || null,
+          p_price: priceForEntry,
+        });
+        if (rpcError) {
+          showPlanLimitMsg(
+            "Impossible de signaler ce créneau : " + rpcError.message,
+            "error",
+          );
+          return;
+        }
+        const result = Array.isArray(rpcData) ? rpcData[0] : rpcData;
+        if (!result) {
+          showPlanLimitMsg("Impossible de signaler ce créneau.", "error");
+          return;
+        }
+
+        const quotaHardCap = result.quota_hard_cap;
+        const quotaIncluded = result.quota_included === null
+          ? Infinity
+          : result.quota_included;
+        const overIncluded = result.quota_over_included || 0;
+        const matchedCount = result.matched_count || 0;
+        const offeredIds = result.offered_client_ids || [];
+        const limitedByQuota = offeredIds.length < matchedCount;
+
+        // Les jetons individuels et leurs liens sont générés uniquement dans la
+        // fonction serveur. Si l'adaptateur SMS refuse l'envoi, celle-ci annule
+        // aussi le créneau et remet les clients en attente : aucun faux "SMS
+        // envoyé" ne reste affiché.
+        if (offeredIds.length) {
+          try {
+            const { data: { session: sendSession } } = await sb.auth.getSession();
+            const dispatchResponse = await fetch(
+              SUPABASE_FUNCTIONS_URL + "/send-slot-offers",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": "Bearer " +
+                    (sendSession ? sendSession.access_token : ""),
+                },
+                body: JSON.stringify({ signalId: result.signal_id }),
+              },
+            );
+            const dispatchData = await dispatchResponse.json().catch(() => ({}));
+            if (!dispatchResponse.ok) {
+              throw new Error(
+                dispatchData.error ||
+                  "Le service SMS n’a pas pu envoyer les notifications.",
+              );
+            }
+          } catch (dispatchError) {
+            showPlanLimitMsg(
+              "Créneau annulé : " + dispatchError.message +
+                " Les clients restent en liste d’attente.",
+              "error",
+            );
+            window.setTimeout(() => window.location.reload(), 1200);
+            return;
           }
         }
-      });
-    });
 
-    wlList.querySelectorAll('.rm-btn').forEach(b => {
-      b.addEventListener('click', async () => {
-        const idx = Number(b.getAttribute('data-i'));
-        const removed = clients[idx];
-        clients.splice(idx, 1);
-        renderWaitlist();
-        if(removed && removed.id){
-          const { error } = await sb.from('waitlist_clients').delete().eq('id', removed.id);
-          if(error){
-            clients.splice(idx, 0, removed);
-            renderWaitlist();
-            console.error('Échec de la suppression du client en base :', error.message);
-          }
-        }
-      });
-    });
-
-    const showMoreBtn = document.getElementById('wl-show-more');
-    if(showMoreBtn){
-      showMoreBtn.addEventListener('click', () => {
-        wlShowAll = true;
-        renderWaitlist();
-      });
-    }
-  }
-  renderWaitlist();
-
-  function historyBadgeHtml(h){
-    if(h.cancelled) return '<span class="badge taken">Annulé</span>';
-    if(h.accepted) return '<span class="badge confirmed">Créneau pris</span>';
-    if(h.matchCount === 0) return '<span class="badge">Aucun client compatible</span>';
-    return '<span class="badge sent">' + h.matchCount + ' client(s) prévenu(s)</span>';
-  }
-
-  function renderHistory(){
-    historyHead.style.display = history.length ? 'flex' : 'none';
-    const cards = history.map(h => (
-      '<div class="agenda-card">' +
-        '<span class="agenda-time">' + h.time + '</span>' +
-        '<div class="agenda-info">' +
-          '<p class="agenda-presta">' + escapeHtml(h.presta) + '</p>' +
-          '<p class="agenda-date">' + formatDate(h.date) + '</p>' +
-        '</div>' +
-        historyBadgeHtml(h) +
-        (!h.accepted && !h.cancelled && h.matchCount > 0
-          ? '<button class="agenda-cancel" data-id="' + h.id + '">Annuler ce créneau</button>'
-          : '') +
-      '</div>'
-    ));
-
-    const visibleCount = historyShowAll ? cards.length : Math.min(PAGE_SIZE, cards.length);
-    historyList.innerHTML = cards.slice(0, visibleCount).join('') +
-      (cards.length > PAGE_SIZE && !historyShowAll
-        ? '<button class="btn-show-more" id="history-show-more" type="button">Voir plus (' + (cards.length - visibleCount) + ')</button>'
-        : '');
-
-    const showMoreBtn = document.getElementById('history-show-more');
-    if(showMoreBtn){
-      showMoreBtn.addEventListener('click', () => {
-        historyShowAll = true;
+        history.unshift({
+          id: result.signal_id,
+          date,
+          time,
+          presta,
+          collaborator: collaborator || null,
+          matchCount: offeredIds.length,
+          accepted: false,
+          cancelled: false,
+          price: priceForEntry,
+        });
+        updateMetrics();
         renderHistory();
-      });
-    }
 
-    historyList.querySelectorAll('.agenda-cancel').forEach(b => {
-      b.addEventListener('click', async () => {
-        const signalId = b.getAttribute('data-id');
-        if(!confirm('Annuler ce créneau ? Les clients prévenus qui n\u2019ont pas encore confirmé repasseront en liste d\u2019attente.')) return;
-        b.disabled = true;
-        b.textContent = '…';
-        const { data, error } = await sb.rpc('cancel_slot_signal', { p_signal_id: signalId });
-        if(error){
-          console.error('Échec de l\u2019annulation du créneau :', error.message);
-          b.disabled = false;
-          b.textContent = 'Annuler ce créneau';
+        offeredIds.forEach((clientId) => {
+          const c = clients.find((cl) => cl.id === clientId);
+          if (c) {
+            c.status = "sent";
+            c.offerSignalId = result.signal_id;
+          }
+        });
+        renderWaitlist();
+
+        const collaboratorName = collaborator ? teamLabelById(collaborator) : "";
+        const withLabel = collaboratorName
+          ? " avec <b>" + escapeHtml(collaboratorName) + "</b>"
+          : "";
+        const customTemplate = planId === "business"
+          ? (account.smsTemplate || "").trim()
+          : "";
+        if (customTemplate) {
+          const rendered = customTemplate
+            .replace(/\{salon\}/g, salonName)
+            .replace(/\{date\}/g, formatDate(date))
+            .replace(/\{heure\}/g, time)
+            .replace(/\{prestation\}/g, presta)
+            .replace(
+              /\{collaborateur\}/g,
+              collaboratorName ? " avec " + collaboratorName : "",
+            )
+            .replace(/\{lien\}/g, "lien sécurisé envoyé par SMS");
+          document.getElementById("sms-bubble-text").textContent = rendered;
+        } else {
+          document.getElementById("sms-bubble-text").innerHTML =
+            escapeHtml(salonName) + " · Un créneau vient de se libérer <b>" +
+            formatDate(date) + " à " + time + "</b> pour <b>" + escapeHtml(presta) +
+            "</b>" + withLabel + ". " +
+            "Vous êtes sur liste d\u2019attente : un lien sécurisé vous est envoyé par SMS (1er arrivé, 1er servi)";
+        }
+        document.getElementById("sms-preview").style.display = offeredIds.length
+          ? "block"
+          : "none";
+
+        if (offeredIds.length === 0) {
+          if (limitedByQuota) {
+            showPlanLimitMsg(
+              "Quota SMS de la formule " + planName +
+                " atteint : aucun client n\u2019a pu être prévenu ce mois-ci. Changez de formule pour lever cette limite.",
+              "error",
+            );
+          }
           return;
         }
-        if(data === 'cancelled'){
-          const entry = history.find(h => h.id === signalId);
-          if(entry) entry.cancelled = true;
-          clients.forEach(c => {
-            if(c.offerSignalId === signalId && c.status === 'sent'){
-              c.status = null;
-              c.offerSignalId = null;
-              c.offerExpiresAt = null;
-            }
-          });
-          renderWaitlist();
-          renderHistory();
-        } else if(data === 'already_confirmed'){
-          showPlanLimitMsg('Ce créneau a déjà été confirmé par un client, impossible de l\u2019annuler.', 'error');
+
+        if (!quotaHardCap && overIncluded > 0) {
+          showPlanLimitMsg(
+            overIncluded + " SMS facturés en supplément ce mois-ci (au-delà des " +
+              quotaIncluded + " inclus dans la formule " + planName + ").",
+            "info",
+          );
+        } else if (limitedByQuota) {
+          showPlanLimitMsg(
+            "Quota SMS de la formule " + planName + " atteint : seuls " +
+              offeredIds.length +
+              " client(s) sur la liste ont pu être prévenus. Changez de formule pour lever cette limite.",
+            "error",
+          );
         }
+
+        // L’attribution est exclusivement déclenchée par le lien à jeton reçu
+        // par le client ; le tableau de bord ne peut pas confirmer à sa place.
+      }
+
+      function renderWaitlistUsage() {
+        const usageEl = document.getElementById("wl-usage");
+        if (planLimits.waitlistPerMonth === Infinity) {
+          usageEl.textContent = "";
+          return;
+        }
+        const joined = countJoinedThisMonth(clients);
+        usageEl.textContent = joined + " / " + planLimits.waitlistPerMonth +
+          " inscriptions ce mois-ci (formule " + planName + ")";
+      }
+
+      document.getElementById("btn-toggle-add").addEventListener("click", () => {
+        const f = document.getElementById("add-form");
+        f.style.display = f.style.display === "block" ? "none" : "block";
+        if (f.style.display === "block") renderWaitlistUsage();
       });
-    });
-  }
-  renderHistory();
 
-  document.getElementById('btn-signal').addEventListener('click', () => {
-    const date = slotDateInput.value || todayISO;
-    const time = document.getElementById('slot-time').value || '--:--';
-    const presta = slotPresta.value;
-    const collaborator = teamNames.length > 1 ? slotCollabSelect.value : '';
-    signalSlot(date, time, presta, collaborator);
-  });
+      document.getElementById("btn-add-date").addEventListener("click", () => {
+        const date = newDateInput.value;
+        if (!date) return;
+        selectedDates = selectedDates.filter((d) => d !== "everyday");
+        if (!selectedDates.includes(date)) {
+          selectedDates.push(date);
+        }
+        renderSelectedDates();
+      });
 
-  const WEEKDAY_LABELS = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+      document.getElementById("btn-every-day").addEventListener("click", () => {
+        selectedDates = ["everyday"];
+        renderSelectedDates();
+      });
 
-  function isClientAvailable(c, dateISO){
-    // Clients ajoutés manuellement par le prestataire : dates précises ou "everyday".
-    if(Array.isArray(c.dates) && c.dates.length){
-      if(c.dates[0] === 'everyday') return true;
-      return c.dates.includes(dateISO);
-    }
-    // Clients inscrits en ligne : jours de la semaine récurrents (ex. "Mar", "Jeu").
-    if(Array.isArray(c.days) && c.days.length){
-      const weekday = WEEKDAY_LABELS[new Date(dateISO + 'T00:00:00').getDay()];
-      return c.days.includes(weekday);
-    }
-    return false;
-  }
+      document.getElementById("btn-save").addEventListener("click", async () => {
+        const name = document.getElementById("new-name").value.trim();
+        const phone = document.getElementById("new-phone").value.trim();
+        const presta = document.getElementById("new-presta").value;
+        const collaborator = teamNames.length > 1 ? newCollabSelect.value : "";
+        const dates = [...selectedDates];
+        const smsConsent = document.getElementById("new-consent-sms").checked;
+        const errorEl = document.getElementById("add-error");
 
-  async function signalSlot(date, time, presta, collaborator){
-    hidePlanLimitMsg();
+        const phoneOk = phone && isValidPhone(phone);
 
-    const prestaObj = prestations.find(p => p.name === presta);
-    if(!prestaObj){
-      showPlanLimitMsg('Sélectionnez une prestation valide.', 'error');
-      return;
-    }
-    const priceForEntry = getPrestationPrice(presta);
+        if (!name || !phoneOk || dates.length === 0 || !smsConsent) {
+          errorEl.textContent = !name
+            ? "Merci de renseigner le nom du client."
+            : !phoneOk
+            ? "Merci d\u2019indiquer un numéro de téléphone français valide."
+            : !smsConsent
+            ? "Le consentement SMS est requis pour ajouter ce client."
+            : 'Merci d\u2019ajouter au moins une date, ou "Tous les jours".';
+          errorEl.style.display = "block";
+          return;
+        }
 
-    // Le matching (clients éligibles selon prestation/dispo/collaborateur),
-    // le quota SMS et le passage en "sent" sont désormais faits de façon
-    // atomique côté serveur (fonction signal_slot), plutôt que calculés ici
-    // puis simulés avec des setTimeout : ça règle les cas limites (offre
-    // qui n'expire jamais, quota qui pourrait être contourné en rechargeant
-    // la page pendant l'envoi, etc.) une fois pour toutes en base.
-    const { data: rpcData, error: rpcError } = await sb.rpc('signal_slot', {
-      p_date: date,
-      p_time: time,
-      p_service_id: prestaObj.id,
-      p_collaborator_id: collaborator || null,
-      p_price: priceForEntry
-    });
-    if(rpcError){
-      showPlanLimitMsg('Impossible de signaler ce créneau : ' + rpcError.message, 'error');
-      return;
-    }
-    const result = Array.isArray(rpcData) ? rpcData[0] : rpcData;
-    if(!result){
-      showPlanLimitMsg('Impossible de signaler ce créneau.', 'error');
-      return;
-    }
+        if (
+          planLimits.waitlistPerMonth !== Infinity &&
+          countJoinedThisMonth(clients) >= planLimits.waitlistPerMonth
+        ) {
+          errorEl.innerHTML = "Limite de " + planLimits.waitlistPerMonth +
+            " inscriptions par mois atteinte pour la formule " + planName +
+            '. <a href="abonnement.html">Changer de formule</a> pour en accepter plus.';
+          errorEl.style.display = "block";
+          return;
+        }
+        errorEl.style.display = "none";
 
-    const quotaHardCap = result.quota_hard_cap;
-    const quotaIncluded = result.quota_included === null ? Infinity : result.quota_included;
-    const overIncluded = result.quota_over_included || 0;
-    const matchedCount = result.matched_count || 0;
-    const offeredIds = result.offered_client_ids || [];
-    const limitedByQuota = offeredIds.length < matchedCount;
+        const prestaObj = prestations.find((p) => p.name === presta);
+        const { data: inserted, error: insertError } = await sb
+          .from("waitlist_clients")
+          .insert({
+            account_id: currentUser.id,
+            name,
+            phone,
+            service_id: prestaObj ? prestaObj.id : null,
+            collaborator_id: collaborator || null,
+            preferred_dates: { dates },
+            origine: "Ajouté",
+            status: "waiting",
+            consented_at: new Date().toISOString(),
+            consent_source: "provider_dashboard_attestation",
+          })
+          .select()
+          .single();
 
-    history.unshift({
-      id: result.signal_id, date, time, presta, collaborator: collaborator || null,
-      matchCount: offeredIds.length, accepted: false, cancelled: false, price: priceForEntry
-    });
-    updateMetrics();
-    renderHistory();
+        if (insertError) {
+          errorEl.textContent = "Erreur : " + insertError.message;
+          errorEl.style.display = "block";
+          return;
+        }
 
-    offeredIds.forEach(clientId => {
-      const c = clients.find(cl => cl.id === clientId);
-      if(c){
-        c.status = 'sent';
-        c.offerSignalId = result.signal_id;
-      }
-    });
-    renderWaitlist();
+        clients.push({
+          id: inserted.id,
+          name,
+          phone,
+          presta,
+          collaborator: collaborator || null,
+          dates,
+          origine: "Ajouté",
+          status: "waiting",
+          joinedAt: inserted.created_at,
+        });
+        renderWaitlist();
+        renderWaitlistUsage();
+        ["new-name", "new-phone"].forEach((id) =>
+          document.getElementById(id).value = ""
+        );
+        if (newCollabSelect) newCollabSelect.value = "";
+        document.getElementById("new-consent-sms").checked = false;
+        selectedDates = [];
+        renderSelectedDates();
+        newDateInput.value = todayISO;
+        document.getElementById("add-form").style.display = "none";
+      });
 
-    const collaboratorName = collaborator ? teamLabelById(collaborator) : '';
-    const withLabel = collaboratorName ? ' avec <b>' + escapeHtml(collaboratorName) + '</b>' : '';
-    const customTemplate = planId === 'business' ? (account.smsTemplate || '').trim() : '';
-    if(customTemplate){
-      const rendered = customTemplate
-        .replace(/\{salon\}/g, salonName)
-        .replace(/\{date\}/g, formatDate(date))
-        .replace(/\{heure\}/g, time)
-        .replace(/\{prestation\}/g, presta)
-        .replace(/\{collaborateur\}/g, collaboratorName ? ' avec ' + collaboratorName : '')
-        .replace(/\{lien\}/g, 'confirmer.salon-lea.fr/x92k');
-      document.getElementById('sms-bubble-text').textContent = rendered;
-    } else {
-      document.getElementById('sms-bubble-text').innerHTML =
-        escapeHtml(salonName) + ' · Un créneau vient de se libérer <b>' + formatDate(date) + ' à ' + time + '</b> pour <b>' + escapeHtml(presta) + '</b>' + withLabel + '. ' +
-        'Vous êtes sur liste d\u2019attente : confirmer.salon-lea.fr/x92k (1er arrivé, 1er servi)';
-    }
-    document.getElementById('sms-preview').style.display = offeredIds.length ? 'block' : 'none';
-
-    if(offeredIds.length === 0){
-      if(limitedByQuota){
-        showPlanLimitMsg('Quota SMS de la formule ' + planName + ' atteint : aucun client n\u2019a pu être prévenu ce mois-ci. Changez de formule pour lever cette limite.', 'error');
-      }
-      return;
-    }
-
-    if(!quotaHardCap && overIncluded > 0){
-      showPlanLimitMsg(overIncluded + ' SMS facturés en supplément ce mois-ci (au-delà des ' + quotaIncluded + ' inclus dans la formule ' + planName + ').', 'info');
-    } else if(limitedByQuota){
-      showPlanLimitMsg('Quota SMS de la formule ' + planName + ' atteint : seuls ' + offeredIds.length + ' client(s) sur la liste ont pu être prévenus. Changez de formule pour lever cette limite.', 'error');
-    }
-
-    // Plus de confirmation automatique simulée après un délai : tant
-    // qu'aucun vrai fournisseur SMS n'est branché pour recevoir de vraies
-    // réponses, c'est le prestataire qui clique "Confirmer (test)" sur le
-    // client concerné, dans la liste d'attente ci-dessous — l'appel passe
-    // par confirm_slot_offer, qui gère lui-même la concurrence.
-  }
-
-  function renderWaitlistUsage(){
-    const usageEl = document.getElementById('wl-usage');
-    if(planLimits.waitlistPerMonth === Infinity){
-      usageEl.textContent = '';
-      return;
-    }
-    const joined = countJoinedThisMonth(clients);
-    usageEl.textContent = joined + ' / ' + planLimits.waitlistPerMonth + ' inscriptions ce mois-ci (formule ' + planName + ')';
-  }
-
-  document.getElementById('btn-toggle-add').addEventListener('click', () => {
-    const f = document.getElementById('add-form');
-    f.style.display = f.style.display === 'block' ? 'none' : 'block';
-    if(f.style.display === 'block') renderWaitlistUsage();
-  });
-
-  document.getElementById('btn-add-date').addEventListener('click', () => {
-    const date = newDateInput.value;
-    if(!date) return;
-    selectedDates = selectedDates.filter(d => d !== 'everyday');
-    if(!selectedDates.includes(date)){
-      selectedDates.push(date);
-    }
-    renderSelectedDates();
-  });
-
-  document.getElementById('btn-every-day').addEventListener('click', () => {
-    selectedDates = ['everyday'];
-    renderSelectedDates();
-  });
-
-  document.getElementById('btn-save').addEventListener('click', async () => {
-    const name = document.getElementById('new-name').value.trim();
-    const phone = document.getElementById('new-phone').value.trim();
-    const presta = document.getElementById('new-presta').value;
-    const collaborator = teamNames.length > 1 ? newCollabSelect.value : '';
-    const dates = [...selectedDates];
-    const errorEl = document.getElementById('add-error');
-
-    const phoneOk = phone && isValidPhone(phone);
-
-    if(!name || !phoneOk || dates.length === 0){
-      errorEl.textContent = !name
-        ? 'Merci de renseigner le nom du client.'
-        : !phoneOk
-          ? 'Merci d\u2019indiquer un numéro de téléphone français valide.'
-          : 'Merci d\u2019ajouter au moins une date, ou "Tous les jours".';
-      errorEl.style.display = 'block';
-      return;
-    }
-
-    if(planLimits.waitlistPerMonth !== Infinity && countJoinedThisMonth(clients) >= planLimits.waitlistPerMonth){
-      errorEl.innerHTML = 'Limite de ' + planLimits.waitlistPerMonth + ' inscriptions par mois atteinte pour la formule ' + planName + '. <a href="abonnement.html">Changer de formule</a> pour en accepter plus.';
-      errorEl.style.display = 'block';
-      return;
-    }
-    errorEl.style.display = 'none';
-
-    const prestaObj = prestations.find(p => p.name === presta);
-    const { data: inserted, error: insertError } = await sb
-      .from('waitlist_clients')
-      .insert({
-        account_id: currentUser.id,
-        name, phone,
-        service_id: prestaObj ? prestaObj.id : null,
-        collaborator_id: collaborator || null,
-        preferred_dates: { dates },
-        origine: 'Ajouté',
-        status: null
-      })
-      .select()
-      .single();
-
-    if(insertError){
-      errorEl.textContent = 'Erreur : ' + insertError.message;
-      errorEl.style.display = 'block';
-      return;
-    }
-
-    clients.push({
-      id: inserted.id, name, phone, presta, collaborator: collaborator || null,
-      dates, origine: 'Ajouté', status: null, joinedAt: inserted.created_at
-    });
-    renderWaitlist();
-    renderWaitlistUsage();
-    ['new-name','new-phone'].forEach(id => document.getElementById(id).value = '');
-    if(newCollabSelect) newCollabSelect.value = '';
-    selectedDates = [];
-    renderSelectedDates();
-    newDateInput.value = todayISO;
-    document.getElementById('add-form').style.display = 'none';
-  });
-})();
-</script>
-
-</body>
+      document.getElementById("btn-submit-feedback").addEventListener(
+        "click",
+        async () => {
+          const messageEl = document.getElementById("feedback-message");
+          const statusEl = document.getElementById("feedback-status");
+          const submitButton = document.getElementById("btn-submit-feedback");
+          const message = messageEl.value.trim();
+          if (message.length < 10) {
+            statusEl.textContent = "Décrivez votre retour en au moins 10 caractères.";
+            return;
+          }
+          submitButton.disabled = true;
+          statusEl.textContent = "Envoi…";
+          const { error } = await sb.from("product_feedback").insert({
+            account_id: currentAccountId,
+            category: document.getElementById("feedback-category").value,
+            message,
+          });
+          submitButton.disabled = false;
+          if (error) {
+            statusEl.textContent = "Votre retour n’a pas pu être envoyé. Réessayez plus tard.";
+            console.error("Échec de l’envoi du retour pilote :", error.message);
+            return;
+          }
+          messageEl.value = "";
+          statusEl.textContent = "Merci, votre retour a bien été envoyé.";
+        },
+      );
+    })();
+    </script>
+  </body>
 </html>

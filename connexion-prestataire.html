@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://thxbpjumbntiqwexsqut.supabase.co https://cdn.jsdelivr.net; frame-src https://checkout.stripe.com; base-uri 'self'; form-action 'self' https://checkout.stripe.com;">
 <title>Se connecter · Espace prestataire</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -238,7 +240,7 @@
     <div class="perforation"></div>
 
     <div class="ticket-body">
-      <p class="form-error" id="form-error">E-mail ou mot de passe incorrect.</p>
+      <p class="form-error" id="form-error" role="alert">E-mail ou mot de passe incorrect.</p>
 
       <div class="field">
         <label for="login-email">Adresse e-mail</label>
@@ -253,9 +255,9 @@
         <button type="button" class="forgot-link" id="btn-forgot">Mot de passe oublié ?</button>
       </div>
 
-      <p class="form-success" id="form-success"></p>
+      <p class="form-success" id="form-success" role="status"></p>
 
-      <button class="btn-primary" id="btn-login">Se connecter</button>
+      <button class="btn-primary" id="btn-login" type="button">Se connecter</button>
 
       <p class="fine-print">Pas encore de compte ? <a href="inscription-prestataire.html">Créer votre compte</a></p>
     </div>
@@ -270,7 +272,7 @@
      bloquant toute la page sans erreur visible. Chaque page étant un
      rechargement complet (pas une SPA), window.supabase n'existe de toute
      façon jamais déjà : la vérification conditionnelle ne servait à rien. -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js" crossorigin="anonymous"></script>
 <script>
   const SUPABASE_URL = 'https://thxbpjumbntiqwexsqut.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoeGJwanVtYm50aXF3ZXhzcXV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ1NzgyNzksImV4cCI6MjEwMDE1NDI3OX0.tpxE9V5oksnZM16-3xuch3hMqXSJSbmQTuP7NVlj_bY';
@@ -285,19 +287,27 @@
     el.style.display = 'block';
   }
 
-  let forgotCooldownUntil = 0;
+  // Stocké en localStorage (et non seulement en mémoire) : un simple
+  // rechargement de page ne doit pas réinitialiser le compteur, sinon il
+  // suffit d'appuyer sur F5 pour renvoyer l'e-mail sans attendre (spam d'un
+  // tiers dont on a saisi l'adresse). Le rate-limit serveur de Supabase reste
+  // la protection réelle ; ce compteur n'est qu'un garde-fou côté UI.
+  const FORGOT_COOLDOWN_KEY = 'kreno-forgot-cooldown-until';
+  let forgotCooldownUntil = Number(localStorage.getItem(FORGOT_COOLDOWN_KEY)) || 0;
   let forgotCooldownTimer = null;
   const FORGOT_LABEL = 'Mot de passe oublié ?';
 
   function startForgotCooldown(seconds){
     const btn = document.getElementById('btn-forgot');
     forgotCooldownUntil = Date.now() + seconds * 1000;
+    localStorage.setItem(FORGOT_COOLDOWN_KEY, String(forgotCooldownUntil));
     btn.disabled = true;
     clearInterval(forgotCooldownTimer);
     const tick = () => {
       const remaining = Math.ceil((forgotCooldownUntil - Date.now()) / 1000);
       if(remaining <= 0){
         clearInterval(forgotCooldownTimer);
+        localStorage.removeItem(FORGOT_COOLDOWN_KEY);
         btn.disabled = false;
         btn.textContent = FORGOT_LABEL;
         return;
@@ -306,6 +316,11 @@
     };
     tick();
     forgotCooldownTimer = setInterval(tick, 1000);
+  }
+
+  // Reprend le compteur en cours si la page est rechargée avant la fin du délai.
+  if(forgotCooldownUntil > Date.now()){
+    startForgotCooldown(Math.ceil((forgotCooldownUntil - Date.now()) / 1000));
   }
 
   document.getElementById('btn-forgot').addEventListener('click', async () => {

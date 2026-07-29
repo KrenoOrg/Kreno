@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="fr">
   <head>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <meta charset="UTF-8">
     <meta name="viewport"
       content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://thxbpjumbntiqwexsqut.supabase.co https://cdn.jsdelivr.net; frame-src https://checkout.stripe.com; base-uri 'self'; form-action 'self' https://checkout.stripe.com;">
     <title>Créer mon compte prestataire</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -481,8 +483,7 @@
             <div class="field">
               <label for="salon-name">Nom de l'établissement</label>
               <input id="salon-name" type="text" placeholder="Salon Léa">
-              <p class="error"
-                id="err-name">Merci de renseigner le nom de l'établissement.</p>
+              <p class="error" id="err-name" role="alert">Merci de renseigner le nom de l'établissement.</p>
             </div>
             <div class="field">
               <label for="salon-type">Type d'activité</label>
@@ -499,30 +500,26 @@
               <label for="salon-address">Adresse</label>
               <input id="salon-address" type="text"
                 placeholder="12 rue des Lilas, Besançon">
-              <p class="error"
-                id="err-address">Merci de renseigner l'adresse.</p>
+              <p class="error" id="err-address" role="alert">Merci de renseigner l'adresse.</p>
             </div>
             <div class="field">
               <label for="salon-email">Adresse e-mail</label>
               <input id="salon-email" type="email"
                 placeholder="contact@salon-lea.fr">
-              <p class="error"
-                id="err-email">Merci d'indiquer une adresse e-mail valide.</p>
+              <p class="error" id="err-email" role="alert">Merci d'indiquer une adresse e-mail valide.</p>
             </div>
             <div class="field">
               <label for="salon-password">Mot de passe</label>
               <input id="salon-password" type="password"
                 autocomplete="new-password"
                 placeholder="8 caractères minimum">
-              <p class="error"
-                id="err-password">Le mot de passe doit contenir au moins 8 caractères.</p>
+              <p class="error" id="err-password" role="alert">Le mot de passe doit contenir au moins 8 caractères.</p>
             </div>
             <div class="field">
               <label for="salon-phone">Téléphone</label>
               <input id="salon-phone" type="tel" inputmode="tel"
                 autocomplete="tel" placeholder="06 00 00 00 00" required>
-              <p class="error"
-                id="err-phone">Merci d'indiquer un numéro de téléphone français valide.</p>
+              <p class="error" id="err-phone" role="alert">Merci d'indiquer un numéro de téléphone français valide.</p>
               <p class="hint"
                 id="hint-phone">Utilisé pour vous prévenir par SMS quand un créneau est pris.</p>
             </div>
@@ -547,7 +544,7 @@
           <div class="perforation"></div>
           <div class="ticket-body">
             <div class="presta-list" id="presta-list"></div>
-            <p class="error hidden" id="presta-limit-error"></p>
+            <p class="error hidden" id="presta-limit-error" role="alert"></p>
             <div class="presta-add-block" id="presta-add-block">
               <label>Ajouter une prestation</label>
               <div class="presta-add-row">
@@ -577,8 +574,8 @@
                 </button>
               </div>
             </div>
-            <p class="error hidden" id="err-presta-fields"></p>
-            <p class="error" id="err-prestations"
+            <p class="error hidden" id="err-presta-fields" role="alert"></p>
+            <p class="error" id="err-prestations" role="alert"
               style="display:none;">Ajoutez au moins une prestation avant de continuer.</p>
           </div>
 
@@ -592,12 +589,11 @@
             <div class="field">
               <label for="owner-name">Votre nom (titulaire du compte)</label>
               <input id="owner-name" type="text" placeholder="Ex. Léa">
-              <p class="error hidden"
-                id="err-owner-name">Merci d'indiquer votre nom.</p>
+              <p class="error hidden" id="err-owner-name" role="alert">Merci d'indiquer votre nom.</p>
             </div>
 
             <div class="presta-list" id="collab-list"></div>
-            <p class="error hidden" id="collab-limit-error"></p>
+            <p class="error hidden" id="collab-limit-error" role="alert"></p>
             <div class="presta-add-block" id="collab-add-block">
               <label>Ajouter un collaborateur</label>
               <div class="presta-add-row">
@@ -621,12 +617,12 @@
                   </svg>
                 </button>
               </div>
-              <p class="error hidden" id="err-collab-fields"></p>
+              <p class="error hidden" id="err-collab-fields" role="alert"></p>
             </div>
 
             <button class="btn-primary" id="btn-step2-next"
               type="button">Continuer</button>
-            <p class="error hidden" id="err-step2-save"></p>
+            <p class="error hidden" id="err-step2-save" role="alert"></p>
             <button class="btn-secondary" id="btn-step2-back"
               type="button">Retour</button>
           </div>
@@ -661,7 +657,7 @@
          rechargement complet (pas une SPA), window.supabase n'existe de toute
          façon jamais déjà : la vérification conditionnelle ne servait à rien. -->
     <script
-      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js" crossorigin="anonymous"></script>
     <script>
     (async function () {
       const SUPABASE_URL = "https://thxbpjumbntiqwexsqut.supabase.co";
@@ -1338,12 +1334,17 @@
               // Détection basée d'abord sur error.code (stable, propre à l'API
               // Supabase), avec le texte du message comme filet de secours si
               // jamais le code n'est pas renvoyé (anciennes versions du SDK).
+              // Le message affiché reste volontairement neutre (ni confirmé ni
+              // infirmé) pour ne pas permettre à un tiers de savoir si une
+              // adresse e-mail est déjà associée à un compte (énumération de
+              // comptes) : même formulation que la branche "identities vides"
+              // ci-dessous et que la réinitialisation de mot de passe.
               const isDuplicate = error.code === "user_already_exists" ||
                 error.status === 422 ||
                 /already registered|already exists/i.test(error.message || "");
               setStep1Error(
                 isDuplicate
-                  ? "Un compte existe déjà avec cette adresse e-mail."
+                  ? "Si cette adresse e-mail n\u2019est pas déjà associée à un compte, vérifiez qu\u2019elle est correcte et réessayez. Si vous avez déjà un compte, connectez-vous directement."
                   : "Erreur : " + error.message,
               );
               return;
@@ -1351,14 +1352,18 @@
 
             // Anti-énumération Supabase : si l'e-mail existe déjà et que la
             // confirmation par e-mail est activée, signUp() ne renvoie pas d'erreur
-            // mais data.user.identities est vide et aucune session n'est créée.
+            // mais data.user.identities est vide et aucune session n'est créée. Le
+            // message reste identique à celui envoyé pour une inscription réussie,
+            // pour ne rien révéler sur l'existence du compte.
             if (
               data.user && Array.isArray(data.user.identities) &&
               data.user.identities.length === 0
             ) {
               btn.disabled = false;
               btn.textContent = "Continuer vers l'abonnement";
-              setStep1Error("Un compte existe déjà avec cette adresse e-mail.");
+              setStep1Error(
+                "Si un compte n\u2019existe pas déjà avec cette adresse, un e-mail de confirmation vient de vous être envoyé. Cliquez sur le lien reçu, ou connectez-vous directement si vous avez déjà un compte.",
+              );
               return;
             }
 

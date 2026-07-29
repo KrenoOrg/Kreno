@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://thxbpjumbntiqwexsqut.supabase.co https://cdn.jsdelivr.net; frame-src https://checkout.stripe.com; base-uri 'self'; form-action 'self' https://checkout.stripe.com;">
 <title>Abonnement mensuel · Espace prestataire</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -254,7 +256,7 @@
      bloquant toute la page sans erreur visible. Chaque page étant un
      rechargement complet (pas une SPA), window.supabase n'existe de toute
      façon jamais déjà : la vérification conditionnelle ne servait à rien. -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js" crossorigin="anonymous"></script>
 <script>
 (async function(){
   const SUPABASE_URL = 'https://thxbpjumbntiqwexsqut.supabase.co';

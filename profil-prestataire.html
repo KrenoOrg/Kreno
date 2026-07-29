@@ -1,1358 +1,1807 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Mon profil · Espace prestataire</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --paper:#F3EFE6;
-    --paper-2:#EAE4D6;
-    --ink:#1B2A4A;
-    --ink-soft:#4A5670;
-    --mustard:#D9A441;
-    --mustard-dark:#9C731E;
-    --line:#D8D0BE;
-    --success-bg:#E4EDE2;
-    --success-text:#2E5233;
-    --radius:14px;
-  }
-  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-  html,body{margin:0;padding:0;}
-  body{
-    background:var(--paper);
-    color:var(--ink);
-    font-family:'Inter',sans-serif;
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-  }
-  .screen{
-    width:100%;
-    max-width:440px;
-    min-height:100vh;
-    padding:2rem 1.25rem 3rem;
-  }
-  .top-bar{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    margin-bottom:1.5rem;
-    gap:12px;
-  }
-  .back-link{
-    display:inline-flex;
-    align-items:center;
-    gap:6px;
-    font-size:13px;
-    font-weight:600;
-    color:var(--ink-soft);
-    text-decoration:none;
-  }
-  .back-link svg{width:16px;height:16px;stroke:var(--ink-soft);}
-  .back-link:hover{color:var(--ink);}
-  .page-title{
-    font-family:'Fraunces',serif;
-    font-size:20px;
-    font-weight:500;
-    margin:0;
-  }
-  .panel{
-    background:#fff;
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    padding:1.15rem 1.25rem;
-    margin-bottom:1.25rem;
-  }
-  .panel-head{margin-bottom:1rem;}
-  .eyebrow{
-    font-size:11px;
-    letter-spacing:.06em;
-    text-transform:uppercase;
-    color:var(--mustard-dark);
-    font-weight:600;
-    margin:0 0 4px;
-  }
-  h2{
-    font-family:'Fraunces',serif;
-    font-size:18px;
-    font-weight:500;
-    margin:0 0 4px;
-  }
-  .panel-desc{
-    font-size:13px;
-    color:var(--ink-soft);
-    line-height:1.5;
-    margin:0;
-  }
-  .plan-row{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
-    margin-top:.9rem;
-  }
-  .plan-current{
-    display:flex;
-    align-items:center;
-    gap:8px;
-  }
-  .plan-badge{
-    font-family:'Fraunces',serif;
-    font-size:16px;
-    font-weight:500;
-    margin:0;
-  }
-  .plan-price-tag{
-    font-size:12px;
-    color:var(--ink-soft);
-  }
-  .btn-secondary-link{
-    font-family:'Inter',sans-serif;
-    font-size:13px;
-    font-weight:600;
-    padding:10px 16px;
-    border-radius:9px;
-    border:1px solid var(--ink);
-    background:transparent;
-    color:var(--ink);
-    text-decoration:none;
-    white-space:nowrap;
-  }
-  .btn-danger-link{
-    font-family:'Inter',sans-serif;
-    font-size:12.5px;
-    font-weight:600;
-    padding:0;
-    border:none;
-    background:none;
-    color:#B3441E;
-    text-decoration:underline;
-    cursor:pointer;
-    margin-top:.85rem;
-  }
-  label{
-    display:block;
-    font-size:11.5px;
-    font-weight:600;
-    color:var(--ink-soft);
-    margin:0 0 5px;
-  }
-  .field{margin-bottom:1rem;}
-  .field:last-child{margin-bottom:0;}
-  .row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;}
-  input,select{
-    width:100%;
-    font-family:'Inter',sans-serif;
-    font-size:16px;
-    padding:10px 12px;
-    border-radius:8px;
-    border:1px solid var(--line);
-    background:var(--paper);
-    color:var(--ink);
-    appearance:none;
-    -webkit-appearance:none;
-  }
-  select{
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%234A5670' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-    background-repeat:no-repeat;
-    background-position:right 12px center;
-    padding-right:34px;
-  }
-  input:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible{
-    outline:2px solid var(--ink);
-    outline-offset:2px;
-  }
-  .hint{
-    font-size:11.5px;
-    color:var(--ink-soft);
-    margin:6px 0 0;
-  }
-  .presta-list{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
-  .presta-row{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    background:var(--paper);
-    border:1px solid var(--line);
-    border-radius:10px;
-    padding:9px 12px;
-  }
-  .presta-row-name{font-size:13.5px;font-weight:600;margin:0;}
-  .presta-dur{font-size:12.5px;color:var(--ink-soft);white-space:nowrap;}
-  .presta-row-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;}
-  .presta-edit-row{
-    display:flex;
-    flex-wrap:wrap;
-    gap:8px;
-    align-items:end;
-    width:100%;
-  }
-  .presta-edit-row .field{margin-bottom:0;}
-  .presta-edit-row .field:first-child{flex:1 1 100%;}
-  .presta-edit-row .field:not(:first-child){flex:1 1 90px;min-width:80px;}
-  .presta-edit-row .btn-icon{flex:0 0 44px;}
-  .presta-add-block{
-    background:var(--paper);
-    border:1px solid var(--line);
-    border-radius:10px;
-    padding:12px;
-  }
-  .presta-add-block > label{
-    font-size:11px;
-    letter-spacing:.04em;
-    text-transform:uppercase;
-    margin-bottom:8px;
-  }
-  .presta-add-row{
-    display:flex;
-    flex-wrap:wrap;
-    gap:8px;
-    align-items:end;
-  }
-  .presta-add-row .field{margin-bottom:0;}
-  .presta-add-row .field:first-child{flex:1 1 100%;}
-  .presta-add-row .field:not(:first-child){flex:1 1 90px;min-width:80px;}
-  .presta-add-row .btn-icon{flex:0 0 44px;}
-  .presta-add-row label{font-size:11px;margin-bottom:4px;}
-  .btn-icon{
-    width:44px;height:44px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    border-radius:8px;
-    border:1px solid var(--line);
-    background:#fff;
-    cursor:pointer;
-    padding:0;
-  }
-  .btn-icon svg{display:block;stroke:var(--ink);}
-  .icon-btn{background:none;border:none;padding:4px;cursor:pointer;line-height:0;border-radius:6px;}
-  .icon-btn svg{width:14px;height:14px;stroke:var(--ink-soft);}
-  .rm-btn{background:none;border:none;padding:4px;cursor:pointer;line-height:0;}
-  .rm-btn svg{width:14px;height:14px;stroke:var(--ink-soft);}
-  .presta-empty{
-    font-size:13px;
-    color:var(--ink-soft);
-    text-align:center;
-    padding:14px 10px;
-    border:1px dashed var(--line);
-    border-radius:10px;
-    margin-bottom:12px;
-  }
-  .btn-primary{
-    width:100%;
-    font-family:'Inter',sans-serif;
-    font-size:15px;
-    font-weight:600;
-    padding:14px;
-    border-radius:10px;
-    border:none;
-    background:var(--ink);
-    color:var(--paper);
-    cursor:pointer;
-    margin-top:.25rem;
-  }
-  .btn-primary:active{transform:scale(.98);}
-  .toast{
-    display:none;
-    background:var(--success-bg);
-    color:var(--success-text);
-    font-size:13px;
-    font-weight:600;
-    text-align:center;
-    padding:10px 12px;
-    border-radius:10px;
-    margin-bottom:1rem;
-  }
-  .toast.visible{display:block;}
-</style>
-<link href="apple-glass.css" rel="stylesheet">
-<link href="polish.css" rel="stylesheet">
-</head>
-<body>
-
-<div class="screen">
-
-  <div class="top-bar">
-    <a class="back-link" href="espace-prestataire.html">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <meta charset="UTF-8">
+    <meta name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://thxbpjumbntiqwexsqut.supabase.co https://cdn.jsdelivr.net; frame-src https://checkout.stripe.com; base-uri 'self'; form-action 'self' https://checkout.stripe.com;">
+    <title>Mon profil · Espace prestataire</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet">
+    <style>
+    :root {
+      --paper: #F3EFE6;
+      --paper-2: #EAE4D6;
+      --ink: #1B2A4A;
+      --ink-soft: #4A5670;
+      --mustard: #D9A441;
+      --mustard-dark: #9C731E;
+      --line: #D8D0BE;
+      --success-bg: #E4EDE2;
+      --success-text: #2E5233;
+      --radius: 14px;
+    }
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'Inter',sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+    }
+    .screen {
+      width: 100%;
+      max-width: 440px;
+      min-height: 100vh;
+      padding: 2rem 1.25rem 3rem;
+    }
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      gap: 12px;
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink-soft);
+      text-decoration: none;
+    }
+    .back-link svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--ink-soft);
+    }
+    .back-link:hover {
+      color: var(--ink);
+    }
+    .page-title {
+      font-family: 'Fraunces',serif;
+      font-size: 20px;
+      font-weight: 500;
+      margin: 0;
+    }
+    .panel {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1.15rem 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+    .panel-head {
+      margin-bottom: 1rem;
+    }
+    .eyebrow {
+      font-size: 11px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--mustard-dark);
+      font-weight: 600;
+      margin: 0 0 4px;
+    }
+    h2 {
+      font-family: 'Fraunces',serif;
+      font-size: 18px;
+      font-weight: 500;
+      margin: 0 0 4px;
+    }
+    .panel-desc {
+      font-size: 13px;
+      color: var(--ink-soft);
+      line-height: 1.5;
+      margin: 0;
+    }
+    .plan-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: .9rem;
+    }
+    .plan-current {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .plan-badge {
+      font-family: 'Fraunces',serif;
+      font-size: 16px;
+      font-weight: 500;
+      margin: 0;
+    }
+    .plan-price-tag {
+      font-size: 12px;
+      color: var(--ink-soft);
+    }
+    .btn-secondary-link {
+      font-family: 'Inter',sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 10px 16px;
+      border-radius: 9px;
+      border: 1px solid var(--ink);
+      background: transparent;
+      color: var(--ink);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .btn-danger-link {
+      font-family: 'Inter',sans-serif;
+      font-size: 12.5px;
+      font-weight: 600;
+      padding: 0;
+      border: none;
+      background: none;
+      color: #B3441E;
+      text-decoration: underline;
+      cursor: pointer;
+      margin-top: .85rem;
+    }
+    label {
+      display: block;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--ink-soft);
+      margin: 0 0 5px;
+    }
+    .field {
+      margin-bottom: 1rem;
+    }
+    .field:last-child {
+      margin-bottom: 0;
+    }
+    .row2 {
+      display: grid;
+      grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+      gap: 10px;
+    }
+    input,
+    select {
+      width: 100%;
+      font-family: 'Inter',sans-serif;
+      font-size: 16px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--paper);
+      color: var(--ink);
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%234A5670' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 34px;
+    }
+    input:focus-visible,
+    select:focus-visible,
+    button:focus-visible,
+    a:focus-visible {
+      outline: 2px solid var(--ink);
+      outline-offset: 2px;
+    }
+    .hint {
+      font-size: 11.5px;
+      color: var(--ink-soft);
+      margin: 6px 0 0;
+    }
+    .presta-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .presta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 9px 12px;
+    }
+    .presta-row-name {
+      font-size: 13.5px;
+      font-weight: 600;
+      margin: 0;
+    }
+    .presta-dur {
+      font-size: 12.5px;
+      color: var(--ink-soft);
+      white-space: nowrap;
+    }
+    .presta-row-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .presta-edit-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: end;
+      width: 100%;
+    }
+    .presta-edit-row .field {
+      margin-bottom: 0;
+    }
+    .presta-edit-row .field:first-child {
+      flex: 1 1 100%;
+    }
+    .presta-edit-row .field:not(:first-child) {
+      flex: 1 1 90px;
+      min-width: 80px;
+    }
+    .presta-edit-row .btn-icon {
+      flex: 0 0 44px;
+    }
+    .presta-add-block {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px;
+    }
+    .presta-add-block > label {
+      font-size: 11px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .presta-add-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: end;
+    }
+    .presta-add-row .field {
+      margin-bottom: 0;
+    }
+    .presta-add-row .field:first-child {
+      flex: 1 1 100%;
+    }
+    .presta-add-row .field:not(:first-child) {
+      flex: 1 1 90px;
+      min-width: 80px;
+    }
+    .presta-add-row .btn-icon {
+      flex: 0 0 44px;
+    }
+    .presta-add-row label {
+      font-size: 11px;
+      margin-bottom: 4px;
+    }
+    .btn-icon {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      cursor: pointer;
+      padding: 0;
+    }
+    .btn-icon svg {
+      display: block;
+      stroke: var(--ink);
+    }
+    .icon-btn {
+      background: none;
+      border: none;
+      padding: 4px;
+      cursor: pointer;
+      line-height: 0;
+      border-radius: 6px;
+    }
+    .icon-btn svg {
+      width: 14px;
+      height: 14px;
+      stroke: var(--ink-soft);
+    }
+    .rm-btn {
+      background: none;
+      border: none;
+      padding: 4px;
+      cursor: pointer;
+      line-height: 0;
+    }
+    .rm-btn svg {
+      width: 14px;
+      height: 14px;
+      stroke: var(--ink-soft);
+    }
+    .presta-empty {
+      font-size: 13px;
+      color: var(--ink-soft);
+      text-align: center;
+      padding: 14px 10px;
+      border: 1px dashed var(--line);
+      border-radius: 10px;
+      margin-bottom: 12px;
+    }
+    .btn-primary {
+      width: 100%;
+      font-family: 'Inter',sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 14px;
+      border-radius: 10px;
+      border: none;
+      background: var(--ink);
+      color: var(--paper);
+      cursor: pointer;
+      margin-top: .25rem;
+    }
+    .btn-primary:active {
+      transform: scale(.98);
+    }
+    .toast {
+      display: none;
+      background: var(--success-bg);
+      color: var(--success-text);
+      font-size: 13px;
+      font-weight: 600;
+      text-align: center;
+      padding: 10px 12px;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+    }
+    .toast.visible {
+      display: block;
+    }
+    .top-bar-spacer { width: 52px; }
+    .form-error { display: none; color: #B3441E; }
+    .form-error-spaced { margin-top: 6px; }
+    .usage-hint { margin-top: 8px; }
+    .limit-error { display: none; color: #B3441E; margin: 0 0 12px; }
+    .field-error-spaced { display: none; color: #B3441E; margin-top: 8px; }
+    .sms-template-input { width: 100%; font-family: 'Inter',sans-serif; font-size: 14px; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); resize: vertical; }
+    .template-hint { margin-top: 8px; }
+    .sms-usage { margin-top: 10px; }
+    .cancel-plan { display: none; }
+    .session-panel { margin-top: 1.75rem; }
+    .clickable-link { cursor: pointer; }
+    .danger-panel { border-color: #E3B9A8; margin-top: 1.25rem; }
+    .danger-eyebrow { color: #B3441E; }
+    .delete-modal { display: none; position: fixed; inset: 0; background: rgba(27,42,74,.45); z-index: 50; align-items: center; justify-content: center; padding: 1.25rem; }
+    .delete-dialog { background: #fff; border-radius: 14px; max-width: 380px; width: 100%; padding: 1.5rem; box-sizing: border-box; }
+    .delete-title { font-family: 'Fraunces',serif; font-size: 18px; font-weight: 500; margin: 0 0 8px; }
+    .delete-copy { font-size: 13.5px; color: var(--ink-soft); line-height: 1.5; margin: 0 0 1rem; }
+    .delete-input { width: 100%; box-sizing: border-box; font-family: 'Inter',sans-serif; font-size: 16px; padding: 11px 12px; border-radius: 8px; border: 1.5px solid #9fb0c2; background: #eef2f6; color: #1B2A4A; margin-bottom: 1rem; }
+    .delete-error { display: none; font-size: 12.5px; color: #B3441E; background: #FBEAE2; border-radius: 8px; padding: 10px 12px; margin: 0 0 1rem; }
+    .delete-actions { display: flex; gap: 10px; }
+    .delete-button { flex: 1; font-family: 'Inter',sans-serif; font-size: 14px; font-weight: 600; padding: 11px; border-radius: 9px; cursor: pointer; }
+    .delete-cancel { border: 1px solid var(--line); background: transparent; color: var(--ink); }
+    .delete-confirm { border: none; background: #B3441E; color: #fff; }
+    </style>
+    <link href="apple-glass.css" rel="stylesheet">
+    <link href="polish.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="screen">
+      <div class="top-bar">
+        <a class="back-link" href="espace-prestataire.html">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
       Retour à l’espace
     </a>
-    <p class="page-title">Mon profil</p>
-    <span style="width:52px;"></span>
-  </div>
-
-  <p class="toast" id="toast">Modifications enregistrées</p>
-
-  <div class="panel">
-    <div class="panel-head">
-      <p class="eyebrow">Établissement</p>
-      <h2>Informations générales</h2>
-      <p class="panel-desc">Ces informations apparaissent sur votre page de liste d'attente et dans les SMS envoyés à vos clients.</p>
-    </div>
-    <div class="field">
-      <label for="salon-name">Nom de l'établissement</label>
-      <input id="salon-name" type="text" placeholder="Salon Léa">
-      <p class="hint" id="err-salon-name" style="display:none;color:#B3441E;">Merci de renseigner le nom de l'établissement.</p>
-    </div>
-    <div class="field">
-      <label for="salon-type">Type d'activité</label>
-      <select id="salon-type">
-        <option>Coiffure</option>
-        <option>Institut de beauté</option>
-        <option>Ostéopathe</option>
-        <option>Kinésithérapeute</option>
-        <option>Coach sportif</option>
-        <option>Autre</option>
-      </select>
-    </div>
-    <div class="field">
-      <label for="salon-address">Adresse</label>
-      <input id="salon-address" type="text" placeholder="12 rue des Lilas, Besançon">
-      <p class="hint" id="err-salon-address" style="display:none;color:#B3441E;">Merci de renseigner l'adresse.</p>
-    </div>
-    <div class="field">
-      <label for="salon-email">Adresse e-mail</label>
-      <input id="salon-email" type="email" placeholder="contact@salon-lea.fr">
-      <p class="hint" id="err-salon-email" style="display:none;color:#B3441E;margin-top:6px;">Un compte existe déjà avec cette adresse e-mail.</p>
-    </div>
-    <div class="field">
-      <label for="salon-phone">Téléphone</label>
-      <input id="salon-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="06 00 00 00 00" required>
-      <p class="hint">Affiché sur votre page publique pour que les clients puissent vous joindre.</p>
-      <p class="hint" id="err-salon-phone" style="display:none;color:#B3441E;">Merci d'indiquer un numéro de téléphone français valide.</p>
-    </div>
-  </div>
-
-  <div class="panel">
-    <div class="panel-head">
-      <p class="eyebrow">Catalogue</p>
-      <h2>Vos prestations</h2>
-      <p class="panel-desc">Utilisées pour le signalement de créneaux libres et l'inscription en liste d'attente. La durée détermine quels clients sont compatibles.</p>
-      <p class="hint" id="presta-usage" style="margin-top:8px;"></p>
-    </div>
-    <div class="presta-list" id="presta-list"></div>
-    <p class="hint" id="presta-limit-error" style="display:none;color:#B3441E;margin:0 0 12px;"></p>
-    <div class="presta-add-block" id="presta-add-block">
-      <label>Ajouter une prestation</label>
-      <div class="presta-add-row">
-        <div class="field">
-          <label for="new-presta-name">Nom</label>
-          <input id="new-presta-name" type="text" placeholder="Ex. Balayage">
-        </div>
-        <div class="field">
-          <label for="new-presta-dur">Durée</label>
-          <input id="new-presta-dur" type="number" min="5" step="5" placeholder="45">
-        </div>
-        <div class="field">
-          <label for="new-presta-price">Prix (€)</label>
-          <input id="new-presta-price" type="number" min="0" step="0.01" placeholder="80">
-        </div>
-        <button class="btn-icon" id="btn-add-presta" type="button" aria-label="Ajouter la prestation">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-        </button>
+        <p class="page-title">Mon profil</p>
+        <span class="top-bar-spacer"></span>
       </div>
-      <p class="hint" id="err-presta-fields" style="display:none;color:#B3441E;margin-top:8px;"></p>
-    </div>
-  </div>
 
-  <div class="panel">
-    <div class="panel-head">
-      <p class="eyebrow">Équipe</p>
-      <h2>Collaborateurs</h2>
-      <p class="panel-desc">Les collaborateurs peuvent recevoir la même page de gestion pour signaler des créneaux libres. Vous (le titulaire du compte) comptez pour 1.</p>
-      <p class="hint" id="collab-usage" style="margin-top:8px;"></p>
-    </div>
-    <div class="field">
-      <label for="owner-name">Votre nom (titulaire du compte)</label>
-      <input id="owner-name" type="text" placeholder="Ex. Léa">
-    </div>
-    <div class="presta-list" id="collab-list"></div>
-    <p class="hint" id="collab-limit-error" style="display:none;color:#B3441E;margin:0 0 12px;"></p>
-    <div class="presta-add-block" id="collab-add-block">
-      <label>Ajouter un collaborateur</label>
-      <div class="presta-add-row">
-        <div class="field">
-          <label for="new-collab-name">Nom</label>
-          <input id="new-collab-name" type="text" placeholder="Ex. Julie">
+      <p class="toast" id="toast">Modifications enregistrées</p>
+
+      <div class="panel">
+        <div class="panel-head">
+          <p class="eyebrow">Établissement</p>
+          <h2>Informations générales</h2>
+          <p
+            class="panel-desc">Ces informations apparaissent sur votre page de liste d'attente et dans les SMS envoyés à vos clients.</p>
         </div>
         <div class="field">
-          <label for="new-collab-email">E-mail</label>
-          <input id="new-collab-email" type="email" placeholder="julie@exemple.fr">
+          <label for="salon-name">Nom de l'établissement</label>
+          <input id="salon-name" type="text" placeholder="Salon Léa">
+          <p class="hint form-error" id="err-salon-name" role="alert">Merci de renseigner le nom de l'établissement.</p>
         </div>
-        <button class="btn-icon" id="btn-add-collab" type="button" aria-label="Ajouter le collaborateur">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-        </button>
+        <div class="field">
+          <label for="salon-type">Type d'activité</label>
+          <select id="salon-type">
+            <option>Coiffure</option>
+            <option>Institut de beauté</option>
+            <option>Ostéopathe</option>
+            <option>Kinésithérapeute</option>
+            <option>Coach sportif</option>
+            <option>Autre</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="salon-address">Adresse</label>
+          <input id="salon-address" type="text"
+            placeholder="12 rue des Lilas, Besançon">
+          <p class="hint form-error" id="err-salon-address" role="alert">Merci de renseigner l'adresse.</p>
+        </div>
+        <div class="field">
+          <label for="salon-email">Adresse e-mail</label>
+          <input id="salon-email" type="email"
+            placeholder="contact@salon-lea.fr">
+          <p class="hint form-error form-error-spaced" id="err-salon-email" role="alert">Un compte existe déjà avec cette adresse e-mail.</p>
+        </div>
+        <div class="field">
+          <label for="salon-phone">Téléphone</label>
+          <input id="salon-phone" type="tel" inputmode="tel" autocomplete="tel"
+            placeholder="06 00 00 00 00" required>
+          <p
+            class="hint">Affiché sur votre page publique pour que les clients puissent vous joindre.</p>
+          <p class="hint form-error" id="err-salon-phone" role="alert">Merci d'indiquer un numéro de téléphone français valide.</p>
+        </div>
       </div>
-      <p class="hint" id="err-collab-fields" style="display:none;color:#B3441E;margin-top:8px;"></p>
-    </div>
-  </div>
 
-  <div class="panel">
-    <div class="panel-head">
-      <p class="eyebrow">Notifications</p>
-      <h2>Message SMS</h2>
-      <p class="panel-desc" id="sms-template-desc">Personnalisez le SMS envoyé à vos clients quand un créneau se libère. Réservé à la formule Salon.</p>
-    </div>
-    <div class="field">
-      <label for="sms-template">Modèle de message</label>
-      <textarea id="sms-template" rows="3" placeholder="{salon} · Un créneau vient de se libérer {date} à {heure} pour {prestation}{collaborateur}. Confirmez ici : {lien}" style="width:100%;font-family:'Inter',sans-serif;font-size:14px;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink);resize:vertical;"></textarea>
-      <p class="hint" style="margin-top:8px;">Variables disponibles : <code>{salon}</code>, <code>{date}</code>, <code>{heure}</code>, <code>{prestation}</code>, <code>{collaborateur}</code>, <code>{lien}</code>. Laissez vide pour utiliser le message par défaut.</p>
-    </div>
-  </div>
-
-  <div class="panel">
-    <div class="panel-head">
-      <p class="eyebrow">Facturation</p>
-      <h2>Abonnement</h2>
-      <p class="panel-desc">Votre formule détermine le nombre de SMS inclus, de collaborateurs et de prestations disponibles.</p>
-    </div>
-    <div class="plan-row">
-      <div class="plan-current">
-        <p class="plan-badge" id="current-plan-name">Solo</p>
-        <span class="plan-price-tag" id="current-plan-price">0 € /mois</span>
+      <div class="panel">
+        <div class="panel-head">
+          <p class="eyebrow">Catalogue</p>
+          <h2>Vos prestations</h2>
+          <p
+            class="panel-desc">Utilisées pour le signalement de créneaux libres et l'inscription en liste d'attente. La durée détermine quels clients sont compatibles.</p>
+          <p class="hint usage-hint" id="presta-usage"></p>
+        </div>
+        <div class="presta-list" id="presta-list"></div>
+        <p class="hint limit-error" id="presta-limit-error" role="alert"></p>
+        <div class="presta-add-block" id="presta-add-block">
+          <label>Ajouter une prestation</label>
+          <div class="presta-add-row">
+            <div class="field">
+              <label for="new-presta-name">Nom</label>
+              <input id="new-presta-name" type="text"
+                placeholder="Ex. Balayage">
+            </div>
+            <div class="field">
+              <label for="new-presta-dur">Durée</label>
+              <input id="new-presta-dur" type="number" min="5" step="5"
+                placeholder="45">
+            </div>
+            <div class="field">
+              <label for="new-presta-price">Prix (€)</label>
+              <input id="new-presta-price" type="number" min="0" step="0.01"
+                placeholder="80">
+            </div>
+            <button class="btn-icon" id="btn-add-presta" type="button"
+              aria-label="Ajouter la prestation">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" width="18"
+                height="18">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </button>
+          </div>
+          <p class="hint field-error-spaced" id="err-presta-fields" role="alert"></p>
+        </div>
       </div>
-      <a class="btn-secondary-link" href="abonnement.html">Gérer mon abonnement</a>
+
+      <div class="panel">
+        <div class="panel-head">
+          <p class="eyebrow">Équipe</p>
+          <h2>Collaborateurs</h2>
+          <p
+            class="panel-desc">Les collaborateurs peuvent recevoir la même page de gestion pour signaler des créneaux libres. Vous (le titulaire du compte) comptez pour 1.</p>
+          <p class="hint usage-hint" id="collab-usage"></p>
+        </div>
+        <div class="field">
+          <label for="owner-name">Votre nom (titulaire du compte)</label>
+          <input id="owner-name" type="text" placeholder="Ex. Léa">
+        </div>
+        <div class="presta-list" id="collab-list"></div>
+        <p class="hint limit-error" id="collab-limit-error" role="alert"></p>
+        <div class="presta-add-block" id="collab-add-block">
+          <label>Ajouter un collaborateur</label>
+          <div class="presta-add-row">
+            <div class="field">
+              <label for="new-collab-name">Nom</label>
+              <input id="new-collab-name" type="text" placeholder="Ex. Julie">
+            </div>
+            <div class="field">
+              <label for="new-collab-email">E-mail</label>
+              <input id="new-collab-email" type="email"
+                placeholder="julie@exemple.fr">
+            </div>
+            <button class="btn-icon" id="btn-add-collab" type="button"
+              aria-label="Ajouter le collaborateur">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" width="18"
+                height="18">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </button>
+          </div>
+          <p class="hint field-error-spaced" id="err-collab-fields" role="alert"></p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <p class="eyebrow">Notifications</p>
+          <h2>Message SMS</h2>
+          <p class="panel-desc"
+            id="sms-template-desc">Personnalisez le SMS envoyé à vos clients quand un créneau se libère. Réservé à la formule Business.</p>
+        </div>
+        <div class="field">
+          <label for="sms-template">Modèle de message</label>
+          <textarea class="sms-template-input" id="sms-template" rows="3"
+            placeholder="{salon} · Un créneau vient de se libérer {date} à {heure} pour {prestation}{collaborateur}. Confirmez ici : {lien}"></textarea>
+          <p class="hint template-hint">Variables disponibles : <code>{salon}</code>, <code>{date}</code>, <code>{heure}</code>, <code>{prestation}</code>, <code>{collaborateur}</code>, <code>{lien}</code>. Laissez vide pour utiliser le message par défaut.</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <p class="eyebrow">Facturation</p>
+          <h2>Abonnement</h2>
+          <p
+            class="panel-desc">Votre formule détermine le nombre de SMS inclus, de collaborateurs et de prestations disponibles.</p>
+        </div>
+        <div class="plan-row">
+          <div class="plan-current">
+            <p class="plan-badge" id="current-plan-name">Solo</p>
+            <span class="plan-price-tag"
+              id="current-plan-price">0 € /mois</span>
+          </div>
+          <a class="btn-secondary-link"
+            href="abonnement.html">Gérer mon abonnement</a>
+        </div>
+        <p class="hint sms-usage" id="sms-usage"></p>
+        <button class="btn-danger-link cancel-plan" id="btn-cancel-plan" type="button">Résilier mon abonnement et repasser à Free</button>
+      </div>
+
+      <button class="btn-primary" type="button"
+        id="btn-save">Enregistrer les modifications</button>
+
+      <div class="panel session-panel">
+        <div class="panel-head">
+          <p class="eyebrow">Vos données</p>
+          <h2>Télécharger mes données</h2>
+          <p class="panel-desc">Télécharge un fichier JSON de votre compte, vos prestations, votre équipe, votre liste d’attente et vos créneaux. Ne le partagez pas : il peut contenir des données clients.</p>
+        </div>
+        <button class="btn-secondary-link clickable-link" id="btn-export-data" type="button">Télécharger mes données</button>
+        <p class="hint" id="export-data-status" aria-live="polite"></p>
+      </div>
+
+      <div class="panel session-panel">
+        <div class="panel-head">
+          <p class="eyebrow">Session</p>
+          <h2>Se déconnecter</h2>
+          <p
+            class="panel-desc">Ferme votre session sur cet appareil. Votre compte et toutes vos données restent intacts.</p>
+        </div>
+        <button class="btn-secondary-link clickable-link" id="btn-logout" type="button">Se déconnecter</button>
+      </div>
+
+      <div class="panel danger-panel">
+        <div class="panel-head">
+          <p class="eyebrow danger-eyebrow">Zone dangereuse</p>
+          <h2>Supprimer mon compte</h2>
+          <p
+            class="panel-desc">Supprime définitivement votre compte, votre liste d'attente, vos prestations, vos collaborateurs et votre historique. Cette action est irréversible.</p>
+        </div>
+        <button class="btn-danger-link" id="btn-delete-account"
+          type="button">Supprimer définitivement mon compte</button>
+      </div>
     </div>
-    <p class="hint" id="sms-usage" style="margin-top:10px;"></p>
-    <button class="btn-danger-link" id="btn-cancel-plan" type="button" style="display:none;">Résilier mon abonnement et repasser à Free</button>
-  </div>
 
-  <button class="btn-primary" id="btn-save">Enregistrer les modifications</button>
-
-  <div class="panel" style="margin-top:1.75rem;">
-    <div class="panel-head">
-      <p class="eyebrow">Session</p>
-      <h2>Se déconnecter</h2>
-      <p class="panel-desc">Ferme votre session sur cet appareil. Votre compte et toutes vos données restent intacts.</p>
+    <div class="delete-modal" id="delete-modal">
+      <div class="delete-dialog">
+        <p class="delete-title">Confirmer la suppression</p>
+        <p class="delete-copy">Cette action supprime définitivement votre compte et toutes ses données. Confirmez votre mot de passe, puis tapez <b>SUPPRIMER</b>.</p>
+        <label for="delete-confirm-password" style="display:block;font-size:11.5px;font-weight:600;color:var(--ink-soft);margin:0 0 5px;">Mot de passe actuel</label>
+        <input class="delete-input" id="delete-confirm-password" type="password" autocomplete="current-password" placeholder="••••••••" style="margin-bottom:.6rem;">
+        <input class="delete-input" id="delete-confirm-input" type="text" autocomplete="off" placeholder="SUPPRIMER">
+        <p class="delete-error" id="delete-error" role="alert"></p>
+        <div class="delete-actions">
+          <button class="delete-button delete-cancel" id="delete-cancel" type="button">Annuler</button>
+          <button class="delete-button delete-confirm" id="delete-confirm" type="button">Supprimer</button>
+        </div>
+      </div>
     </div>
-    <button class="btn-secondary-link" id="btn-logout" type="button" style="cursor:pointer;">Se déconnecter</button>
-  </div>
 
-  <div class="panel" style="border-color:#E3B9A8;margin-top:1.25rem;">
-    <div class="panel-head">
-      <p class="eyebrow" style="color:#B3441E;">Zone dangereuse</p>
-      <h2>Supprimer mon compte</h2>
-      <p class="panel-desc">Supprime définitivement votre compte, votre liste d'attente, vos prestations, vos collaborateurs et votre historique. Cette action est irréversible.</p>
-    </div>
-    <button class="btn-danger-link" id="btn-delete-account" type="button">Supprimer définitivement mon compte</button>
-  </div>
-
-</div>
-
-<div id="delete-modal" style="display:none;position:fixed;inset:0;background:rgba(27,42,74,.45);z-index:50;align-items:center;justify-content:center;padding:1.25rem;">
-  <div style="background:#fff;border-radius:14px;max-width:380px;width:100%;padding:1.5rem;box-sizing:border-box;">
-    <p style="font-family:'Fraunces',serif;font-size:18px;font-weight:500;margin:0 0 8px;">Confirmer la suppression</p>
-    <p style="font-size:13.5px;color:var(--ink-soft);line-height:1.5;margin:0 0 1rem;">Cette action supprime définitivement votre compte et toutes ses données. Tapez <b>SUPPRIMER</b> pour confirmer.</p>
-    <input id="delete-confirm-input" type="text" autocomplete="off" placeholder="SUPPRIMER" style="width:100%;box-sizing:border-box;font-family:'Inter',sans-serif;font-size:16px;padding:11px 12px;border-radius:8px;border:1.5px solid #9fb0c2;background:#eef2f6;color:#1B2A4A;margin-bottom:1rem;">
-    <p id="delete-error" style="display:none;font-size:12.5px;color:#B3441E;background:#FBEAE2;border-radius:8px;padding:10px 12px;margin:0 0 1rem;"></p>
-    <div style="display:flex;gap:10px;">
-      <button id="delete-cancel" type="button" style="flex:1;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;padding:11px;border-radius:9px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;">Annuler</button>
-      <button id="delete-confirm" type="button" style="flex:1;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;padding:11px;border-radius:9px;border:none;background:#B3441E;color:#fff;cursor:pointer;">Supprimer</button>
-    </div>
-  </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script>
-  // Idem espace-prestataire.html : évite qu'un retour arrière depuis le
-  // cache navigateur réaffiche ce profil après une déconnexion.
-  window.addEventListener('pageshow', function(event){
-    if(event.persisted) window.location.reload();
-  });
-</script>
-<script>
-(async function(){
-  const HISTORY_PREFIX = 'creneau-history:';
-
-  const SUPABASE_URL = 'https://thxbpjumbntiqwexsqut.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoeGJwanVtYm50aXF3ZXhzcXV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ1NzgyNzksImV4cCI6MjEwMDE1NDI3OX0.tpxE9V5oksnZM16-3xuch3hMqXSJSbmQTuP7NVlj_bY';
-  window.__sb = window.__sb || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-    auth: { persistSession: true, autoRefreshToken: true, storageKey: 'espace-prestataire-auth' }
-  });
-  const sb = window.__sb;
-  const SUPABASE_FUNCTIONS_URL = SUPABASE_URL + '/functions/v1';
-
-  const { data: { session } } = await sb.auth.getSession();
-  if(!session){
-    window.location.href = 'connexion-prestataire.html';
-    return;
-  }
-  // getSession() ne vérifie le jeton que localement (expiration). Un jeton
-  // devenu invalide côté serveur (ex. signé avant une rotation des clés du
-  // projet) passerait ce test sans problème. On le valide donc aussi auprès
-  // du serveur avant de faire quoi que ce soit avec.
-  const { data: { user: verifiedUser }, error: verifyError } = await sb.auth.getUser();
-  if(verifyError || !verifiedUser){
-    await sb.auth.signOut();
-    window.location.href = 'connexion-prestataire.html?expired=1';
-    return;
-  }
-  const currentUser = session.user;
-  const currentAccountId = currentUser.id; // alias : conserve le code existant basé sur cet id
-
-  const [{ data: profileRow }, { data: prestaRows }, { data: collabRows }, { data: subRow }] = await Promise.all([
-    sb.from('profiles').select('*').eq('id', currentUser.id).single(),
-    sb.from('prestations').select('*').eq('account_id', currentUser.id).order('created_at'),
-    sb.from('collaborators').select('*').eq('account_id', currentUser.id).order('created_at'),
-    sb.from('subscriptions').select('plan, status, stripe_subscription_id, pending_plan, pending_effective_date').eq('account_id', currentUser.id).maybeSingle()
-  ]);
-
-  // Met à jour/insère/supprime chaque ligne individuellement plutôt que de
-  // tout supprimer puis tout réinsérer : waitlist_clients.service_id
-  // référence ces ID (voir espace-prestataire.html : prestations.find(p =>
-  // p.id === w.service_id)). Un delete+insert global créerait de nouveaux
-  // ID à chaque modification et casserait silencieusement le lien "quelle
-  // prestation" sur toutes les entrées de liste d'attente déjà enregistrées.
-  async function persistPrestations(){
-    const existing = prestations.filter(p => p.id);
-    for(const p of existing){
-      const { error } = await sb.from('prestations').update({ name: p.name, duration_minutes: p.dur, price: p.price || 0 }).eq('id', p.id);
-      if(error) return { error };
-    }
-
-    const toInsert = prestations.filter(p => !p.id);
-    if(toInsert.length){
-      const { data: inserted, error } = await sb.from('prestations')
-        .insert(toInsert.map(p => ({ account_id: currentUser.id, name: p.name, duration_minutes: p.dur, price: p.price || 0 })))
-        .select();
-      if(error) return { error };
-      toInsert.forEach((p, i) => { if(inserted && inserted[i]) p.id = inserted[i].id; });
-    }
-
-    const currentIds = new Set(existing.map(p => p.id));
-    const removedIds = (prestaRows || []).map(p => p.id).filter(id => !currentIds.has(id));
-    if(removedIds.length){
-      const { error } = await sb.from('prestations').delete().in('id', removedIds);
-      if(error) return { error };
-    }
-
-    return { error: null };
-  }
-
-  let prestations = (prestaRows && prestaRows.length)
-    ? prestaRows.map(p => ({ id: p.id, name: p.name, dur: p.duration_minutes, price: p.price }))
-    : [];
-  let editingIndex = null;
-
-  const [ownerRow, ...restCollabRows] = collabRows || [];
-  const ownerRowId = ownerRow ? ownerRow.id : null;
-  const account = {
-    name: profileRow ? profileRow.name : '',
-    type: profileRow ? profileRow.type : 'Coiffure',
-    address: profileRow ? profileRow.address : '',
-    phone: profileRow ? profileRow.phone : '',
-    email: currentUser.email || '',
-    plan: subRow ? subRow.plan : 'solo',
-    smsTemplate: profileRow ? (profileRow.sms_template || '') : '',
-    ownerName: ownerRow ? ownerRow.name : '',
-    collaborators: restCollabRows.map(c => ({ id: c.id, name: c.name, email: c.email || '' }))
-  };
-
-  document.getElementById('salon-name').value = account.name || '';
-  document.getElementById('salon-type').value = account.type || 'Coiffure';
-  document.getElementById('salon-address').value = account.address || '';
-  document.getElementById('salon-email').value = account.email || '';
-  document.getElementById('salon-phone').value = account.phone || '';
-  document.getElementById('owner-name').value = account.ownerName || '';
-
-  let collaborators = account.collaborators;
-  let editingCollabIndex = null;
-
-  const PLAN_LABELS = {
-    solo:     { name: 'Solo',     price: '19,90 € /mois' },
-    pro:      { name: 'Pro',      price: '39,90 € /mois' },
-    business: { name: 'Business', price: '79,90 € /mois' }
-  };
-  // Limites réelles appliquées selon la formule active.
-  // "collaborators" compte le titulaire du compte (+1 implicite).
-  const PLAN_LIMITS = {
-    solo:     { prestations: 3,        collaborators: 1 },
-    pro:      { prestations: Infinity, collaborators: 3 },
-    business: { prestations: Infinity, collaborators: Infinity }
-  };
-  const planId = PLAN_LIMITS[account.plan] ? account.plan : 'solo';
-  const currentPlan = PLAN_LABELS[planId];
-  document.getElementById('current-plan-name').textContent = currentPlan.name;
-  document.getElementById('current-plan-price').textContent = currentPlan.price;
-
-  if(subRow && subRow.pending_plan && subRow.pending_effective_date){
-    const d = new Date(subRow.pending_effective_date).toLocaleDateString('fr-FR');
-    const pendingEl = document.createElement('p');
-    pendingEl.className = 'hint';
-    pendingEl.style.marginTop = '8px';
-    pendingEl.textContent = 'Passera automatiquement à ' + (PLAN_LABELS[subRow.pending_plan]?.name || subRow.pending_plan) + ' le ' + d + '.';
-    document.getElementById('current-plan-price').insertAdjacentElement('afterend', pendingEl);
-  }
-
-  // Quota SMS de la formule (mêmes règles que espace-prestataire.html) :
-  // Solo facture au-delà de l'inclus, Pro est plafonné à 100/mois (bloqué
-  // au-delà), Business est illimité.
-  const SMS_LIMITS = {
-    solo:     { smsIncluded: 20,       smsHardCap: false },
-    pro:      { smsIncluded: 100,      smsHardCap: true },
-    business: { smsIncluded: Infinity, smsHardCap: false }
-  };
-  function currentMonthKey(){ return new Date().toISOString().slice(0, 7); }
-  // Le quota SMS est compté et plafonné côté serveur (table sms_usage,
-  // alimentée par la fonction increment_sms_usage appelée depuis
-  // espace-prestataire.html à chaque signalement de créneau). On lit cette
-  // même table ici pour afficher le vrai compteur du mois, au lieu d'un
-  // stockage local qui n'était jamais écrit nulle part.
-  async function readSmsUsage(id){
-    const { data, error } = await sb
-      .from('sms_usage')
-      .select('count')
-      .eq('account_id', id)
-      .eq('period', currentMonthKey())
-      .maybeSingle();
-    if(error) console.error('Échec de la lecture du quota SMS :', error.message);
-    return { count: (data && data.count) || 0 };
-  }
-
-  async function renderSmsUsage(){
-    const limits = SMS_LIMITS[planId];
-    const usage = await readSmsUsage(currentAccountId);
-    const el = document.getElementById('sms-usage');
-    if(limits.smsIncluded === Infinity){
-      el.textContent = usage.count + ' SMS envoyés ce mois-ci · illimité (formule ' + currentPlan.name + ')';
-    } else if(limits.smsHardCap){
-      const remaining = Math.max(0, limits.smsIncluded - usage.count);
-      el.textContent = usage.count + ' / ' + limits.smsIncluded + ' SMS utilisés ce mois-ci (formule ' + currentPlan.name + ')' +
-        (remaining === 0 ? ' · quota atteint' : '');
-      el.style.color = remaining === 0 ? '#B3441E' : '';
-    } else {
-      const extra = Math.max(0, usage.count - limits.smsIncluded);
-      el.textContent = usage.count + ' / ' + limits.smsIncluded + ' SMS inclus utilisés ce mois-ci (formule ' + currentPlan.name + ')' +
-        (extra > 0 ? ' · ' + extra + ' facturé(s) en supplément' : '');
-    }
-  }
-  renderSmsUsage();
-
-  // Résiliation : il n'existe plus de formule Free vers laquelle basculer,
-  // donc résilier arrête simplement l'abonnement Stripe en fin de période
-  // déjà payée (cancel_at_period_end), sans changer de plan derrière.
-  // IMPORTANT : l'edge function change-plan doit être adaptée côté serveur
-  // pour accepter newPlan: null comme "annulation simple" (elle ne fait
-  // actuellement que des changements vers un plan existant) — ce fichier
-  // n'a pas accès à son code.
-  const cancelBtn = document.getElementById('btn-cancel-plan');
-  cancelBtn.textContent = 'Résilier mon abonnement (effet en fin de période)';
-  if(subRow && subRow.stripe_subscription_id && subRow.status === 'active'){
-    cancelBtn.style.display = 'inline-block';
-    cancelBtn.addEventListener('click', async () => {
-      const ok = confirm('Résilier votre abonnement ? Vous conservez la formule ' + currentPlan.name + ' jusqu\u2019à la fin de la période déjà payée, puis votre accès prestataire sera coupé (plus de formule gratuite de repli).');
-      if(!ok) return;
-
-      cancelBtn.disabled = true;
-      cancelBtn.textContent = 'Résiliation…';
-      try{
-        const res = await fetch(SUPABASE_FUNCTIONS_URL + '/change-plan', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + session.access_token
-          },
-          body: JSON.stringify({ accountId: currentUser.id, newPlan: null })
-        });
-        const data = await res.json();
-        if(!res.ok) throw new Error(data.error || 'Erreur serveur.');
-        window.location.reload();
-      } catch(err){
-        alert('Erreur : ' + err.message);
-        cancelBtn.disabled = false;
-        cancelBtn.textContent = 'Résilier mon abonnement (effet en fin de période)';
-      }
+    <script
+      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js" crossorigin="anonymous"></script>
+    <script>
+    // Idem espace-prestataire.html : évite qu'un retour arrière depuis le
+    // cache navigateur réaffiche ce profil après une déconnexion.
+    window.addEventListener("pageshow", function (event) {
+      if (event.persisted) window.location.reload();
     });
-  }
+    </script>
+    <script>
+    (async function () {
+      const HISTORY_PREFIX = "creneau-history:";
 
-  const smsTemplateInput = document.getElementById('sms-template');
-  smsTemplateInput.value = account.smsTemplate || '';
-  if(planId !== 'business'){
-    smsTemplateInput.disabled = true;
-    smsTemplateInput.placeholder = 'Fonctionnalité réservée à la formule Business.';
-    document.getElementById('sms-template-desc').innerHTML =
-      'Personnalisez le SMS envoyé à vos clients quand un créneau se libère. <a href="abonnement.html">Passez à Business</a> pour l\u2019activer.';
-  }
+      const SUPABASE_URL = "https://thxbpjumbntiqwexsqut.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoeGJwanVtYm50aXF3ZXhzcXV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ1NzgyNzksImV4cCI6MjEwMDE1NDI3OX0.tpxE9V5oksnZM16-3xuch3hMqXSJSbmQTuP7NVlj_bY";
+      window.__sb = window.__sb ||
+        window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+          auth: {
+            persistSession: true,
+            autoRefreshToken: true,
+            storageKey: "espace-prestataire-auth",
+          },
+        });
+      const sb = window.__sb;
+      const SUPABASE_FUNCTIONS_URL = SUPABASE_URL + "/functions/v1";
 
-
-  function escapeHtml(str){
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
-  }
-
-  function isValidEmail(v){
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-  }
-
-  function isValidPhone(v){
-    const cleaned = v.replace(/[\s.\-]/g, '');
-    return /^(0[1-9]\d{8}|\+33[1-9]\d{8})$/.test(cleaned);
-  }
-
-  function formatPrice(value){
-    const price = Number(value || 0);
-    return price.toFixed(2).replace(/\.00$/, '') + ' €';
-  }
-
-  // Met à jour/insère/supprime chaque ligne individuellement plutôt que de
-  // tout supprimer puis tout réinsérer : ça préserve les ID existants en
-  // base, indispensable puisque waitlist_clients.collaborator_id référence
-  // ces ID. Un delete+insert global créerait de nouveaux ID à chaque
-  // modification et casserait silencieusement le lien "avec quel
-  // collaborateur" sur toutes les entrées déjà enregistrées.
-  async function persistCollaboratorsRows(){
-    const ownerName = document.getElementById('owner-name').value.trim();
-
-    // Titulaire : update si la ligne existe déjà, sinon insert (compte créé
-    // avant l'ajout de cette colonne, cas normalement rare).
-    if(ownerRowId){
-      const { error } = await sb.from('collaborators').update({ name: ownerName || 'Titulaire' }).eq('id', ownerRowId);
-      if(error) return { error };
-    } else {
-      const { error } = await sb.from('collaborators').insert([{ account_id: currentUser.id, name: ownerName || 'Titulaire' }]);
-      if(error) return { error };
-    }
-
-    // Collaborateurs déjà en base (ont un id) : update en place, sans
-    // toucher à leur id existant.
-    const existing = collaborators.filter(c => c.id);
-    for(const c of existing){
-      const { error } = await sb.from('collaborators').update({ name: c.name, email: c.email || null }).eq('id', c.id);
-      if(error) return { error };
-    }
-
-    // Nouveaux collaborateurs (pas encore d'id) : insert. On récupère les
-    // lignes créées pour attacher leur id côté client (utile si l'appelant
-    // resauvegarde juste après sans recharger la page).
-    const toInsert = collaborators.filter(c => !c.id);
-    if(toInsert.length){
-      const { data: inserted, error } = await sb.from('collaborators')
-        .insert(toInsert.map(c => ({ account_id: currentUser.id, name: c.name, email: c.email || null })))
-        .select();
-      if(error) return { error };
-      toInsert.forEach((c, i) => { if(inserted && inserted[i]) c.id = inserted[i].id; });
-    }
-
-    // Collaborateurs retirés localement (avaient un id au chargement, plus
-    // présents dans la liste courante) : delete uniquement ces lignes-là.
-    const currentIds = new Set(existing.map(c => c.id));
-    const removedIds = restCollabRows.map(c => c.id).filter(id => !currentIds.has(id));
-    if(removedIds.length){
-      const { error } = await sb.from('collaborators').delete().in('id', removedIds);
-      if(error) return { error };
-    }
-
-    return { error: null };
-  }
-
-  async function saveAll(showToast){
-    const email = document.getElementById('salon-email').value.trim();
-    const errEmailEl = document.getElementById('err-salon-email');
-    const errNameEl = document.getElementById('err-salon-name');
-    const errAddressEl = document.getElementById('err-salon-address');
-    const errPhoneEl = document.getElementById('err-salon-phone');
-    errEmailEl.style.display = 'none';
-
-    const name = document.getElementById('salon-name').value.trim();
-    const address = document.getElementById('salon-address').value.trim();
-    const phone = document.getElementById('salon-phone').value.trim();
-
-    const nameOk = Boolean(name);
-    const addressOk = Boolean(address);
-    const emailOk = isValidEmail(email);
-    const phoneOk = isValidPhone(phone);
-
-    errNameEl.style.display = nameOk ? 'none' : 'block';
-    errAddressEl.style.display = addressOk ? 'none' : 'block';
-    errPhoneEl.style.display = phoneOk ? 'none' : 'block';
-    if(!emailOk){
-      errEmailEl.textContent = "Merci d'indiquer une adresse e-mail valide.";
-      errEmailEl.style.display = 'block';
-    }
-
-    if(!nameOk || !addressOk || !emailOk || !phoneOk) return;
-
-    const profileFields = {
-      id: currentUser.id,
-      name,
-      type: document.getElementById('salon-type').value,
-      address,
-      phone: phone.replace(/[\s.\-]/g, '')
-    };
-    // Le message SMS personnalisé n'est modifiable (et donc écrit) que sur la
-    // formule Business : sur les autres formules, on ne touche pas cette
-    // colonne pour ne pas écraser une valeur existante avec le champ
-    // désactivé affiché à l'écran.
-    if(planId === 'business'){
-      profileFields.sms_template = smsTemplateInput.value.trim() || null;
-    }
-
-    const { error: profileError } = await sb.from('profiles').upsert(profileFields);
-    if(profileError){
-      errEmailEl.textContent = 'Erreur lors de l\u2019enregistrement du profil : ' + profileError.message + '. Réessayez.';
-      errEmailEl.style.display = 'block';
-      return;
-    }
-
-    if(email && email !== (currentUser.email || '')){
-      const { error: emailError } = await sb.auth.updateUser({ email });
-      if(emailError){
-        errEmailEl.textContent = 'Erreur e-mail : ' + emailError.message;
-        errEmailEl.style.display = 'block';
+      const { data: { session } } = await sb.auth.getSession();
+      if (!session) {
+        window.location.href = "connexion-prestataire.html";
+        return;
       }
-    }
+      // getSession() ne vérifie le jeton que localement (expiration). Un jeton
+      // devenu invalide côté serveur (ex. signé avant une rotation des clés du
+      // projet) passerait ce test sans problème. On le valide donc aussi auprès
+      // du serveur avant de faire quoi que ce soit avec.
+      const { data: { user: verifiedUser }, error: verifyError } = await sb.auth
+        .getUser();
+      if (verifyError || !verifiedUser) {
+        await sb.auth.signOut();
+        window.location.href = "connexion-prestataire.html?expired=1";
+        return;
+      }
+      const currentUser = session.user;
+      const currentAccountId = currentUser.id; // alias : conserve le code existant basé sur cet id
 
-    const { error: prestaError } = await persistPrestations();
-    if(prestaError){
-      const fieldsErrorEl = document.getElementById('err-presta-fields');
-      fieldsErrorEl.textContent = 'Vos informations générales (nom, adresse, téléphone, activité) ont bien été enregistrées. Erreur lors de l\u2019enregistrement des prestations : ' + prestaError.message + '. Réessayez.';
-      fieldsErrorEl.style.display = 'block';
-      return;
-    }
+      const [
+        { data: profileRow },
+        { data: prestaRows },
+        { data: collabRows },
+        { data: subRow },
+      ] = await Promise.all([
+        sb.from("profiles").select("*").eq("id", currentUser.id).single(),
+        sb.from("prestations").select("*").eq("account_id", currentUser.id).order(
+          "created_at",
+        ),
+        sb.from("collaborators").select("*").eq("account_id", currentUser.id).order(
+          "created_at",
+        ),
+        sb.from("subscriptions").select(
+          "plan, status, stripe_subscription_id, pending_plan, pending_effective_date",
+        ).eq("account_id", currentUser.id).maybeSingle(),
+      ]);
 
-    const { error: collabError } = await persistCollaboratorsRows();
-    if(collabError){
-      const errorEl = document.getElementById('err-collab-fields');
-      errorEl.textContent = 'Vos informations générales et vos prestations ont bien été enregistrées. Erreur lors de l\u2019enregistrement de l\u2019équipe : ' + collabError.message + '. Réessayez.';
-      errorEl.style.display = 'block';
-      return;
-    }
+      // Met à jour/insère/supprime chaque ligne individuellement plutôt que de
+      // tout supprimer puis tout réinsérer : waitlist_clients.service_id
+      // référence ces ID (voir espace-prestataire.html : prestations.find(p =>
+      // p.id === w.service_id)). Un delete+insert global créerait de nouveaux
+      // ID à chaque modification et casserait silencieusement le lien "quelle
+      // prestation" sur toutes les entrées de liste d'attente déjà enregistrées.
+      async function persistPrestations() {
+        const existing = prestations.filter((p) => p.id);
+        for (const p of existing) {
+          const { error } = await sb.from("prestations").update({
+            name: p.name,
+            duration_minutes: p.dur,
+            price: p.price || 0,
+          }).eq("id", p.id);
+          if (error) return { error };
+        }
 
-    document.title = (name || 'Mon profil') + ' · Espace prestataire';
-    if(showToast){
-      const toast = document.getElementById('toast');
-      toast.classList.add('visible');
-      setTimeout(() => toast.classList.remove('visible'), 2500);
-    }
-  }
+        const toInsert = prestations.filter((p) => !p.id);
+        if (toInsert.length) {
+          const { data: inserted, error } = await sb.from("prestations")
+            .insert(
+              toInsert.map((p) => ({
+                account_id: currentUser.id,
+                name: p.name,
+                duration_minutes: p.dur,
+                price: p.price || 0,
+              })),
+            )
+            .select();
+          if (error) return { error };
+          toInsert.forEach((p, i) => {
+            if (inserted && inserted[i]) p.id = inserted[i].id;
+          });
+        }
 
-  function renderPrestaLimit(){
-    const limit = PLAN_LIMITS[planId].prestations;
-    const usageEl = document.getElementById('presta-usage');
-    const addBlock = document.getElementById('presta-add-block');
-    const reached = limit !== Infinity && prestations.length >= limit;
+        const currentIds = new Set(existing.map((p) => p.id));
+        const removedIds = (prestaRows || []).map((p) => p.id).filter((id) =>
+          !currentIds.has(id)
+        );
+        if (removedIds.length) {
+          const { error } = await sb.from("prestations").delete().in(
+            "id",
+            removedIds,
+          );
+          if (error) return { error };
+        }
 
-    usageEl.textContent = limit === Infinity
-      ? prestations.length + ' prestation(s) · illimité (formule ' + currentPlan.name + ')'
-      : prestations.length + ' / ' + limit + ' prestations utilisées (formule ' + currentPlan.name + ')';
+        return { error: null };
+      }
 
-    const errorEl = document.getElementById('presta-limit-error');
-    if(reached){
-      errorEl.innerHTML = 'Limite de prestations atteinte pour la formule ' + currentPlan.name + '. <a href="abonnement.html">Changer de formule</a> pour en ajouter d\u2019autres.';
-      errorEl.style.display = 'block';
-      addBlock.style.opacity = '.5';
-      addBlock.style.pointerEvents = 'none';
-    } else {
-      errorEl.style.display = 'none';
-      addBlock.style.opacity = '1';
-      addBlock.style.pointerEvents = 'auto';
-    }
-  }
+      let prestations = (prestaRows && prestaRows.length)
+        ? prestaRows.map((p) => ({
+          id: p.id,
+          name: p.name,
+          dur: p.duration_minutes,
+          price: p.price,
+        }))
+        : [];
+      let editingIndex = null;
 
-  function renderPrestations(){
-    const list = document.getElementById('presta-list');
-    renderPrestaLimit();
+      const [ownerRow, ...restCollabRows] = collabRows || [];
+      const ownerRowId = ownerRow ? ownerRow.id : null;
+      const account = {
+        name: profileRow ? profileRow.name : "",
+        type: profileRow ? profileRow.type : "Coiffure",
+        address: profileRow ? profileRow.address : "",
+        phone: profileRow ? profileRow.phone : "",
+        email: currentUser.email || "",
+        plan: subRow ? subRow.plan : "solo",
+        smsTemplate: profileRow ? (profileRow.sms_template || "") : "",
+        ownerName: ownerRow ? ownerRow.name : "",
+        collaborators: restCollabRows.map((c) => ({
+          id: c.id,
+          name: c.name,
+          email: c.email || "",
+        })),
+      };
 
-    if(!prestations.length){
-      list.innerHTML = '<p class="presta-empty">Aucune prestation. Ajoutez-en une ci-dessous.</p>';
-      return;
-    }
+      document.getElementById("salon-name").value = account.name || "";
+      document.getElementById("salon-type").value = account.type || "Coiffure";
+      document.getElementById("salon-address").value = account.address || "";
+      document.getElementById("salon-email").value = account.email || "";
+      document.getElementById("salon-phone").value = account.phone || "";
+      document.getElementById("owner-name").value = account.ownerName || "";
 
-    list.innerHTML = prestations.map((p, i) => {
-      if(editingIndex === i){
-        return (
-          '<div class="presta-row">' +
-            '<div class="presta-edit-row">' +
-              '<div class="field">' +
-                '<label for="edit-presta-name-' + i + '">Nom</label>' +
-                '<input id="edit-presta-name-' + i + '" type="text" value="' + escapeHtml(p.name) + '">' +
-              '</div>' +
-              '<div class="field">' +
-                '<label for="edit-presta-dur-' + i + '">Durée</label>' +
-                '<input id="edit-presta-dur-' + i + '" type="number" min="5" step="5" value="' + p.dur + '">' +
-              '</div>' +
-              '<div class="field">' +
-                '<label for="edit-presta-price-' + i + '">Prix (€)</label>' +
-                '<input id="edit-presta-price-' + i + '" type="number" min="0" step="0.01" value="' + (p.price ?? 0) + '">' +
-              '</div>' +
-              '<button class="btn-icon edit-save-btn" data-i="' + i + '" type="button" aria-label="Enregistrer">' +
-                '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M20 6L9 17l-5-5"></path></svg>' +
-              '</button>' +
-            '</div>' +
-          '</div>'
+      let collaborators = account.collaborators;
+      let editingCollabIndex = null;
+
+      const PLAN_LABELS = {
+        solo: { name: "Solo", price: "19,90 € /mois" },
+        pro: { name: "Pro", price: "39,90 € /mois" },
+        business: { name: "Business", price: "79,90 € /mois" },
+      };
+      // Limites réelles appliquées selon la formule active.
+      // "collaborators" compte le titulaire du compte (+1 implicite).
+      const PLAN_LIMITS = {
+        solo: { prestations: 3, collaborators: 1 },
+        pro: { prestations: Infinity, collaborators: 3 },
+        business: { prestations: Infinity, collaborators: Infinity },
+      };
+      const planId = PLAN_LIMITS[account.plan] ? account.plan : "solo";
+      const currentPlan = PLAN_LABELS[planId];
+      document.getElementById("current-plan-name").textContent = currentPlan.name;
+      document.getElementById("current-plan-price").textContent = currentPlan.price;
+
+      if (subRow && subRow.pending_plan && subRow.pending_effective_date) {
+        const d = new Date(subRow.pending_effective_date).toLocaleDateString(
+          "fr-FR",
+        );
+        const pendingEl = document.createElement("p");
+        pendingEl.className = "hint";
+        pendingEl.style.marginTop = "8px";
+        pendingEl.textContent = "Passera automatiquement à " +
+          (PLAN_LABELS[subRow.pending_plan]?.name || subRow.pending_plan) + " le " +
+          d + ".";
+        document.getElementById("current-plan-price").insertAdjacentElement(
+          "afterend",
+          pendingEl,
         );
       }
 
-      return (
-        '<div class="presta-row">' +
-          '<div style="min-width:0;">' +
-            '<p class="presta-row-name">' + escapeHtml(p.name) + '</p>' +
-          '</div>' +
-          '<div class="presta-row-actions">' +
-            '<span class="presta-dur">' + p.dur + ' min · ' + formatPrice(p.price) + '</span>' +
-            '<button class="icon-btn edit-btn" data-i="' + i + '" type="button" aria-label="Modifier ' + escapeHtml(p.name) + '">' +
-              '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z"></path></svg>' +
-            '</button>' +
-            '<button class="rm-btn" data-i="' + i + '" type="button" aria-label="Retirer ' + escapeHtml(p.name) + '">' +
-              '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>' +
-            '</button>' +
-          '</div>' +
-        '</div>'
-      );
-    }).join('');
+      // Quota SMS de la formule (mêmes règles que espace-prestataire.html) :
+      // Solo facture au-delà de l'inclus, Pro est plafonné à 100/mois (bloqué
+      // au-delà), Business est illimité.
+      const SMS_LIMITS = {
+        solo: { smsIncluded: 20, smsHardCap: false },
+        pro: { smsIncluded: 100, smsHardCap: true },
+        business: { smsIncluded: Infinity, smsHardCap: false },
+      };
+      function currentMonthKey() {
+        return new Date().toISOString().slice(0, 7);
+      }
+      // Le quota SMS est compté côté serveur dans sms_usage par signal_slot. On
+      // lit le même compteur mensuel ici, plutôt qu’un stockage navigateur.
+      async function readSmsUsage(id) {
+        const monthStart = currentMonthKey() + "-01";
+        const { data, error } = await sb
+          .from("sms_usage")
+          .select("sent_count")
+          .eq("account_id", id)
+          .eq("month_start", monthStart)
+          .maybeSingle();
+        if (error) {
+          console.error("Échec de la lecture du quota SMS :", error.message);
+        }
+        return { count: (data && data.sent_count) || 0 };
+      }
 
-    list.querySelectorAll('.rm-btn').forEach(b => {
-      b.addEventListener('click', async () => {
-        const i = Number(b.getAttribute('data-i'));
-        const removed = prestations[i];
-        const fieldsErrorEl = document.getElementById('err-presta-fields');
+      async function renderSmsUsage() {
+        const limits = SMS_LIMITS[planId];
+        const usage = await readSmsUsage(currentAccountId);
+        const el = document.getElementById("sms-usage");
+        if (limits.smsIncluded === Infinity) {
+          el.textContent = usage.count +
+            " SMS envoyés ce mois-ci · illimité (formule " + currentPlan.name + ")";
+        } else if (limits.smsHardCap) {
+          const remaining = Math.max(0, limits.smsIncluded - usage.count);
+          el.textContent = usage.count + " / " + limits.smsIncluded +
+            " SMS utilisés ce mois-ci (formule " + currentPlan.name + ")" +
+            (remaining === 0 ? " · quota atteint" : "");
+          el.style.color = remaining === 0 ? "#B3441E" : "";
+        } else {
+          const extra = Math.max(0, usage.count - limits.smsIncluded);
+          el.textContent = usage.count + " / " + limits.smsIncluded +
+            " SMS inclus utilisés ce mois-ci (formule " + currentPlan.name + ")" +
+            (extra > 0 ? " · " + extra + " facturé(s) en supplément" : "");
+        }
+      }
+      renderSmsUsage();
 
-        // Même risque que pour les collaborateurs : waitlist_clients.service_id
-        // référence prestations.id. On vérifie avant de supprimer.
-        if(removed.id){
-          const { count, error: checkError } = await sb
-            .from('waitlist_clients')
-            .select('id', { count: 'exact', head: true })
-            .eq('account_id', currentUser.id)
-            .eq('service_id', removed.id);
-          if(checkError){
-            fieldsErrorEl.textContent = 'Erreur : impossible de vérifier si cette prestation est utilisée (' + checkError.message + '). Réessayez.';
-            fieldsErrorEl.style.display = 'block';
-            return;
+      // Résiliation : il n'existe plus de formule Free vers laquelle basculer,
+      // donc résilier arrête simplement l'abonnement Stripe en fin de période
+      // déjà payée (cancel_at_period_end), sans changer de plan derrière.
+      // IMPORTANT : l'edge function change-plan doit être adaptée côté serveur
+      // pour accepter newPlan: null comme "annulation simple" (elle ne fait
+      // actuellement que des changements vers un plan existant) — ce fichier
+      // n'a pas accès à son code.
+      const cancelBtn = document.getElementById("btn-cancel-plan");
+      cancelBtn.textContent = "Résilier mon abonnement (effet en fin de période)";
+      if (subRow && subRow.stripe_subscription_id && subRow.status === "active") {
+        cancelBtn.style.display = "inline-block";
+        cancelBtn.addEventListener("click", async () => {
+          const ok = confirm(
+            "Résilier votre abonnement ? Vous conservez la formule " +
+              currentPlan.name +
+              " jusqu\u2019à la fin de la période déjà payée, puis votre accès prestataire sera coupé (plus de formule gratuite de repli).",
+          );
+          if (!ok) return;
+
+          cancelBtn.disabled = true;
+          cancelBtn.textContent = "Résiliation…";
+          try {
+            const res = await fetch(SUPABASE_FUNCTIONS_URL + "/change-plan", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + session.access_token,
+              },
+              body: JSON.stringify({ accountId: currentUser.id, newPlan: null }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Erreur serveur.");
+            window.location.reload();
+          } catch (err) {
+            alert("Erreur : " + err.message);
+            cancelBtn.disabled = false;
+            cancelBtn.textContent =
+              "Résilier mon abonnement (effet en fin de période)";
           }
-          if(count > 0){
-            fieldsErrorEl.textContent = escapeHtml(removed.name) + ' est demandée par ' + count + ' client(s) en liste d\u2019attente. Retirez-les ou changez leur prestation avant de la supprimer.';
-            fieldsErrorEl.style.display = 'block';
-            return;
+        });
+      }
+
+      const smsTemplateInput = document.getElementById("sms-template");
+      smsTemplateInput.value = account.smsTemplate || "";
+      if (planId !== "business") {
+        smsTemplateInput.disabled = true;
+        smsTemplateInput.placeholder =
+          "Fonctionnalité réservée à la formule Business.";
+        document.getElementById("sms-template-desc").innerHTML =
+          'Personnalisez le SMS envoyé à vos clients quand un créneau se libère. <a href="abonnement.html">Passez à Business</a> pour l\u2019activer.';
+      }
+
+      function escapeHtml(str) {
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function isValidEmail(v) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+      }
+
+      function isValidPhone(v) {
+        const cleaned = v.replace(/[\s.\-]/g, "");
+        return /^(0[1-9]\d{8}|\+33[1-9]\d{8})$/.test(cleaned);
+      }
+
+      function formatPrice(value) {
+        const price = Number(value || 0);
+        return price.toFixed(2).replace(/\.00$/, "") + " €";
+      }
+
+      // Met à jour/insère/supprime chaque ligne individuellement plutôt que de
+      // tout supprimer puis tout réinsérer : ça préserve les ID existants en
+      // base, indispensable puisque waitlist_clients.collaborator_id référence
+      // ces ID. Un delete+insert global créerait de nouveaux ID à chaque
+      // modification et casserait silencieusement le lien "avec quel
+      // collaborateur" sur toutes les entrées déjà enregistrées.
+      async function persistCollaboratorsRows() {
+        const ownerName = document.getElementById("owner-name").value.trim();
+
+        // Titulaire : update si la ligne existe déjà, sinon insert (compte créé
+        // avant l'ajout de cette colonne, cas normalement rare).
+        if (ownerRowId) {
+          const { error } = await sb.from("collaborators").update({
+            name: ownerName || "Titulaire",
+          }).eq("id", ownerRowId);
+          if (error) return { error };
+        } else {
+          const { error } = await sb.from("collaborators").insert([{
+            account_id: currentUser.id,
+            name: ownerName || "Titulaire",
+          }]);
+          if (error) return { error };
+        }
+
+        // Collaborateurs déjà en base (ont un id) : update en place, sans
+        // toucher à leur id existant.
+        const existing = collaborators.filter((c) => c.id);
+        for (const c of existing) {
+          const { error } = await sb.from("collaborators").update({
+            name: c.name,
+            email: c.email || null,
+          }).eq("id", c.id);
+          if (error) return { error };
+        }
+
+        // Nouveaux collaborateurs (pas encore d'id) : insert. On récupère les
+        // lignes créées pour attacher leur id côté client (utile si l'appelant
+        // resauvegarde juste après sans recharger la page).
+        const toInsert = collaborators.filter((c) => !c.id);
+        if (toInsert.length) {
+          const { data: inserted, error } = await sb.from("collaborators")
+            .insert(
+              toInsert.map((c) => ({
+                account_id: currentUser.id,
+                name: c.name,
+                email: c.email || null,
+              })),
+            )
+            .select();
+          if (error) return { error };
+          toInsert.forEach((c, i) => {
+            if (inserted && inserted[i]) c.id = inserted[i].id;
+          });
+        }
+
+        // Collaborateurs retirés localement (avaient un id au chargement, plus
+        // présents dans la liste courante) : delete uniquement ces lignes-là.
+        const currentIds = new Set(existing.map((c) => c.id));
+        const removedIds = restCollabRows.map((c) => c.id).filter((id) =>
+          !currentIds.has(id)
+        );
+        if (removedIds.length) {
+          const { error } = await sb.from("collaborators").delete().in(
+            "id",
+            removedIds,
+          );
+          if (error) return { error };
+        }
+
+        return { error: null };
+      }
+
+      async function saveAll(showToast) {
+        const email = document.getElementById("salon-email").value.trim();
+        const errEmailEl = document.getElementById("err-salon-email");
+        const errNameEl = document.getElementById("err-salon-name");
+        const errAddressEl = document.getElementById("err-salon-address");
+        const errPhoneEl = document.getElementById("err-salon-phone");
+        errEmailEl.style.display = "none";
+
+        const name = document.getElementById("salon-name").value.trim();
+        const address = document.getElementById("salon-address").value.trim();
+        const phone = document.getElementById("salon-phone").value.trim();
+
+        const nameOk = Boolean(name);
+        const addressOk = Boolean(address);
+        const emailOk = isValidEmail(email);
+        const phoneOk = isValidPhone(phone);
+
+        errNameEl.style.display = nameOk ? "none" : "block";
+        errAddressEl.style.display = addressOk ? "none" : "block";
+        errPhoneEl.style.display = phoneOk ? "none" : "block";
+        if (!emailOk) {
+          errEmailEl.textContent = "Merci d'indiquer une adresse e-mail valide.";
+          errEmailEl.style.display = "block";
+        }
+
+        if (!nameOk || !addressOk || !emailOk || !phoneOk) return;
+
+        const profileFields = {
+          id: currentUser.id,
+          name,
+          type: document.getElementById("salon-type").value,
+          address,
+          phone: phone.replace(/[\s.\-]/g, ""),
+        };
+        // Le message SMS personnalisé n'est modifiable (et donc écrit) que sur la
+        // formule Business : sur les autres formules, on ne touche pas cette
+        // colonne pour ne pas écraser une valeur existante avec le champ
+        // désactivé affiché à l'écran.
+        if (planId === "business") {
+          profileFields.sms_template = smsTemplateInput.value.trim() || null;
+        }
+
+        const { error: profileError } = await sb.from("profiles").upsert(
+          profileFields,
+        );
+        if (profileError) {
+          errEmailEl.textContent =
+            "Erreur lors de l\u2019enregistrement du profil : " +
+            profileError.message + ". Réessayez.";
+          errEmailEl.style.display = "block";
+          return;
+        }
+
+        if (email && email !== (currentUser.email || "")) {
+          const { error: emailError } = await sb.auth.updateUser({ email });
+          if (emailError) {
+            errEmailEl.textContent = "Erreur e-mail : " + emailError.message;
+            errEmailEl.style.display = "block";
           }
         }
 
-        prestations.splice(i, 1);
+        const { error: prestaError } = await persistPrestations();
+        if (prestaError) {
+          const fieldsErrorEl = document.getElementById("err-presta-fields");
+          fieldsErrorEl.textContent =
+            "Vos informations générales (nom, adresse, téléphone, activité) ont bien été enregistrées. Erreur lors de l\u2019enregistrement des prestations : " +
+            prestaError.message + ". Réessayez.";
+          fieldsErrorEl.style.display = "block";
+          return;
+        }
+
+        const { error: collabError } = await persistCollaboratorsRows();
+        if (collabError) {
+          const errorEl = document.getElementById("err-collab-fields");
+          errorEl.textContent =
+            "Vos informations générales et vos prestations ont bien été enregistrées. Erreur lors de l\u2019enregistrement de l\u2019équipe : " +
+            collabError.message + ". Réessayez.";
+          errorEl.style.display = "block";
+          return;
+        }
+
+        document.title = (name || "Mon profil") + " · Espace prestataire";
+        if (showToast) {
+          const toast = document.getElementById("toast");
+          toast.classList.add("visible");
+          setTimeout(() => toast.classList.remove("visible"), 2500);
+        }
+      }
+
+      function renderPrestaLimit() {
+        const limit = PLAN_LIMITS[planId].prestations;
+        const usageEl = document.getElementById("presta-usage");
+        const addBlock = document.getElementById("presta-add-block");
+        const reached = limit !== Infinity && prestations.length >= limit;
+
+        usageEl.textContent = limit === Infinity
+          ? prestations.length + " prestation(s) · illimité (formule " +
+            currentPlan.name + ")"
+          : prestations.length + " / " + limit +
+            " prestations utilisées (formule " + currentPlan.name + ")";
+
+        const errorEl = document.getElementById("presta-limit-error");
+        if (reached) {
+          errorEl.innerHTML = "Limite de prestations atteinte pour la formule " +
+            currentPlan.name +
+            '. <a href="abonnement.html">Changer de formule</a> pour en ajouter d\u2019autres.';
+          errorEl.style.display = "block";
+          addBlock.style.opacity = ".5";
+          addBlock.style.pointerEvents = "none";
+        } else {
+          errorEl.style.display = "none";
+          addBlock.style.opacity = "1";
+          addBlock.style.pointerEvents = "auto";
+        }
+      }
+
+      function renderPrestations() {
+        const list = document.getElementById("presta-list");
+        renderPrestaLimit();
+
+        if (!prestations.length) {
+          list.innerHTML =
+            '<p class="presta-empty">Aucune prestation. Ajoutez-en une ci-dessous.</p>';
+          return;
+        }
+
+        list.innerHTML = prestations.map((p, i) => {
+          if (editingIndex === i) {
+            return (
+              '<div class="presta-row">' +
+              '<div class="presta-edit-row">' +
+              '<div class="field">' +
+              '<label for="edit-presta-name-' + i + '">Nom</label>' +
+              '<input id="edit-presta-name-' + i + '" type="text" value="' +
+              escapeHtml(p.name) + '">' +
+              "</div>" +
+              '<div class="field">' +
+              '<label for="edit-presta-dur-' + i + '">Durée</label>' +
+              '<input id="edit-presta-dur-' + i +
+              '" type="number" min="5" step="5" value="' + p.dur + '">' +
+              "</div>" +
+              '<div class="field">' +
+              '<label for="edit-presta-price-' + i + '">Prix (€)</label>' +
+              '<input id="edit-presta-price-' + i +
+              '" type="number" min="0" step="0.01" value="' + (p.price ?? 0) +
+              '">' +
+              "</div>" +
+              '<button class="btn-icon edit-save-btn" data-i="' + i +
+              '" type="button" aria-label="Enregistrer">' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M20 6L9 17l-5-5"></path></svg>' +
+              "</button>" +
+              "</div>" +
+              "</div>"
+            );
+          }
+
+          return (
+            '<div class="presta-row">' +
+            '<div style="min-width:0;">' +
+            '<p class="presta-row-name">' + escapeHtml(p.name) + "</p>" +
+            "</div>" +
+            '<div class="presta-row-actions">' +
+            '<span class="presta-dur">' + p.dur + " min · " + formatPrice(p.price) +
+            "</span>" +
+            '<button class="icon-btn edit-btn" data-i="' + i +
+            '" type="button" aria-label="Modifier ' + escapeHtml(p.name) + '">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z"></path></svg>' +
+            "</button>" +
+            '<button class="rm-btn" data-i="' + i +
+            '" type="button" aria-label="Retirer ' + escapeHtml(p.name) + '">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>' +
+            "</button>" +
+            "</div>" +
+            "</div>"
+          );
+        }).join("");
+
+        list.querySelectorAll(".rm-btn").forEach((b) => {
+          b.addEventListener("click", async () => {
+            const i = Number(b.getAttribute("data-i"));
+            const removed = prestations[i];
+            const fieldsErrorEl = document.getElementById("err-presta-fields");
+
+            // Même risque que pour les collaborateurs : waitlist_clients.service_id
+            // référence prestations.id. On vérifie avant de supprimer.
+            if (removed.id) {
+              const { count, error: checkError } = await sb
+                .from("waitlist_clients")
+                .select("id", { count: "exact", head: true })
+                .eq("account_id", currentUser.id)
+                .eq("service_id", removed.id);
+              if (checkError) {
+                fieldsErrorEl.textContent =
+                  "Erreur : impossible de vérifier si cette prestation est utilisée (" +
+                  checkError.message + "). Réessayez.";
+                fieldsErrorEl.style.display = "block";
+                return;
+              }
+              if (count > 0) {
+                fieldsErrorEl.textContent = escapeHtml(removed.name) +
+                  " est demandée par " + count +
+                  " client(s) en liste d\u2019attente. Retirez-les ou changez leur prestation avant de la supprimer.";
+                fieldsErrorEl.style.display = "block";
+                return;
+              }
+            }
+
+            prestations.splice(i, 1);
+            editingIndex = null;
+            renderPrestations();
+            const { error } = await persistPrestations();
+            if (error) {
+              prestations.splice(i, 0, removed);
+              renderPrestations();
+              fieldsErrorEl.textContent =
+                "Erreur : la suppression n\u2019a pas pu être enregistrée (" +
+                error.message + "). Réessayez.";
+              fieldsErrorEl.style.display = "block";
+            }
+          });
+        });
+
+        list.querySelectorAll(".edit-btn").forEach((b) => {
+          b.addEventListener("click", () => {
+            editingIndex = Number(b.getAttribute("data-i"));
+            renderPrestations();
+            const input = document.getElementById(
+              "edit-presta-name-" + editingIndex,
+            );
+            if (input) input.focus();
+          });
+        });
+
+        list.querySelectorAll(".edit-save-btn").forEach((b) => {
+          b.addEventListener(
+            "click",
+            () => saveEdit(Number(b.getAttribute("data-i"))),
+          );
+        });
+
+        list.querySelectorAll(
+          '[id^="edit-presta-name-"], [id^="edit-presta-dur-"], [id^="edit-presta-price-"]',
+        ).forEach((input) => {
+          input.addEventListener("change", () => {
+            saveEdit(Number(input.id.split("-").pop()));
+          });
+          input.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              saveEdit(Number(input.id.split("-").pop()));
+            }
+            if (e.key === "Escape") {
+              editingIndex = null;
+              renderPrestations();
+            }
+          });
+        });
+      }
+
+      function validatePrestaFields(
+        name,
+        dur,
+        durEl,
+        price,
+        priceEl,
+        excludeIndex,
+      ) {
+        if (!name) return "Merci d\u2019indiquer un nom de prestation.";
+        if (
+          prestations.some((p, j) =>
+            j !== excludeIndex && p.name.trim().toLowerCase() === name.toLowerCase()
+          )
+        ) return "Une prestation porte déjà ce nom.";
+        if (!durEl.value || !Number.isFinite(dur) || dur < 5) {
+          return "La durée doit être un nombre d\u2019au moins 5 minutes.";
+        }
+        if (priceEl.value && (!Number.isFinite(price) || price < 0)) {
+          return "Le prix ne peut pas être négatif.";
+        }
+        return "";
+      }
+
+      async function saveEdit(i) {
+        const nameEl = document.getElementById("edit-presta-name-" + i);
+        const durEl = document.getElementById("edit-presta-dur-" + i);
+        const priceEl = document.getElementById("edit-presta-price-" + i);
+        if (!nameEl || !durEl || !priceEl) return;
+        const fieldsErrorEl = document.getElementById("err-presta-fields");
+        const name = nameEl.value.trim();
+        const dur = Number(durEl.value);
+        const price = Number(priceEl.value || 0);
+        const fieldsError = validatePrestaFields(
+          name,
+          dur,
+          durEl,
+          price,
+          priceEl,
+          i,
+        );
+        if (fieldsError) {
+          fieldsErrorEl.textContent = fieldsError;
+          fieldsErrorEl.style.display = "block";
+          return;
+        }
+        fieldsErrorEl.style.display = "none";
+        const previous = prestations[i];
+        prestations[i] = { ...prestations[i], name, dur, price };
         editingIndex = null;
         renderPrestations();
         const { error } = await persistPrestations();
-        if(error){
-          prestations.splice(i, 0, removed);
+        if (error) {
+          prestations[i] = previous;
           renderPrestations();
-          fieldsErrorEl.textContent = 'Erreur : la suppression n\u2019a pas pu être enregistrée (' + error.message + '). Réessayez.';
-          fieldsErrorEl.style.display = 'block';
+          fieldsErrorEl.textContent = "Erreur d\u2019enregistrement : " +
+            error.message + ". Réessayez.";
+          fieldsErrorEl.style.display = "block";
         }
-      });
-    });
-
-    list.querySelectorAll('.edit-btn').forEach(b => {
-      b.addEventListener('click', () => {
-        editingIndex = Number(b.getAttribute('data-i'));
-        renderPrestations();
-        const input = document.getElementById('edit-presta-name-' + editingIndex);
-        if(input) input.focus();
-      });
-    });
-
-    list.querySelectorAll('.edit-save-btn').forEach(b => {
-      b.addEventListener('click', () => saveEdit(Number(b.getAttribute('data-i'))));
-    });
-
-    list.querySelectorAll('[id^="edit-presta-name-"], [id^="edit-presta-dur-"], [id^="edit-presta-price-"]').forEach(input => {
-      input.addEventListener('change', () => {
-        saveEdit(Number(input.id.split('-').pop()));
-      });
-      input.addEventListener('keydown', e => {
-        if(e.key === 'Enter'){
-          e.preventDefault();
-          saveEdit(Number(input.id.split('-').pop()));
-        }
-        if(e.key === 'Escape'){
-          editingIndex = null;
-          renderPrestations();
-        }
-      });
-    });
-  }
-
-  function validatePrestaFields(name, dur, durEl, price, priceEl, excludeIndex){
-    if(!name) return 'Merci d\u2019indiquer un nom de prestation.';
-    if(prestations.some((p, j) => j !== excludeIndex && p.name.trim().toLowerCase() === name.toLowerCase())) return 'Une prestation porte déjà ce nom.';
-    if(!durEl.value || !Number.isFinite(dur) || dur < 5) return 'La durée doit être un nombre d\u2019au moins 5 minutes.';
-    if(priceEl.value && (!Number.isFinite(price) || price < 0)) return 'Le prix ne peut pas être négatif.';
-    return '';
-  }
-
-  async function saveEdit(i){
-    const nameEl = document.getElementById('edit-presta-name-' + i);
-    const durEl = document.getElementById('edit-presta-dur-' + i);
-    const priceEl = document.getElementById('edit-presta-price-' + i);
-    if(!nameEl || !durEl || !priceEl) return;
-    const fieldsErrorEl = document.getElementById('err-presta-fields');
-    const name = nameEl.value.trim();
-    const dur = Number(durEl.value);
-    const price = Number(priceEl.value || 0);
-    const fieldsError = validatePrestaFields(name, dur, durEl, price, priceEl, i);
-    if(fieldsError){
-      fieldsErrorEl.textContent = fieldsError;
-      fieldsErrorEl.style.display = 'block';
-      return;
-    }
-    fieldsErrorEl.style.display = 'none';
-    const previous = prestations[i];
-    prestations[i] = { ...prestations[i], name, dur, price };
-    editingIndex = null;
-    renderPrestations();
-    const { error } = await persistPrestations();
-    if(error){
-      prestations[i] = previous;
-      renderPrestations();
-      fieldsErrorEl.textContent = 'Erreur d\u2019enregistrement : ' + error.message + '. Réessayez.';
-      fieldsErrorEl.style.display = 'block';
-    }
-  }
-
-  async function addPrestation(){
-    if(prestations.length >= PLAN_LIMITS[planId].prestations){
-      renderPrestaLimit();
-      return;
-    }
-    const nameEl = document.getElementById('new-presta-name');
-    const durEl = document.getElementById('new-presta-dur');
-    const priceEl = document.getElementById('new-presta-price');
-    const fieldsErrorEl = document.getElementById('err-presta-fields');
-    const name = nameEl.value.trim();
-    const dur = Number(durEl.value);
-    const price = Number(priceEl.value || 0);
-    const fieldsError = validatePrestaFields(name, dur, durEl, price, priceEl, -1);
-    if(fieldsError){
-      fieldsErrorEl.textContent = fieldsError;
-      fieldsErrorEl.style.display = 'block';
-      return;
-    }
-    fieldsErrorEl.style.display = 'none';
-    prestations.push({ name, dur, price });
-    nameEl.value = '';
-    durEl.value = '';
-    priceEl.value = '';
-    renderPrestations();
-    const { error } = await persistPrestations();
-    if(error){
-      prestations.pop();
-      renderPrestations();
-      fieldsErrorEl.textContent = 'Erreur d\u2019enregistrement : ' + error.message + '. Réessayez.';
-      fieldsErrorEl.style.display = 'block';
-      return;
-    }
-    nameEl.focus();
-  }
-
-
-  function persistCollaborators(){
-    return persistCollaboratorsRows();
-  }
-
-  async function saveCollabEdit(i){
-    const nameEl = document.getElementById('edit-collab-name-' + i);
-    const emailEl = document.getElementById('edit-collab-email-' + i);
-    if(!nameEl || !emailEl) return;
-    const errorEl = document.getElementById('err-collab-fields');
-    const name = nameEl.value.trim();
-    const email = emailEl.value.trim();
-
-    let fieldsError = '';
-    if(!name) fieldsError = 'Merci d\u2019indiquer le nom du collaborateur.';
-    else if(collaborators.some((c, j) => j !== i && c.name.trim().toLowerCase() === name.toLowerCase())) fieldsError = 'Un collaborateur porte déjà ce nom.';
-    else if(email && !isValidEmail(email)) fieldsError = 'Merci d\u2019indiquer un e-mail valide, ou de laisser le champ vide.';
-    else if(email && collaborators.some((c, j) => j !== i && c.email && c.email.toLowerCase() === email.toLowerCase())) fieldsError = 'Cet e-mail est déjà utilisé par un autre collaborateur.';
-
-    if(fieldsError){
-      errorEl.textContent = fieldsError;
-      errorEl.style.display = 'block';
-      return;
-    }
-    errorEl.style.display = 'none';
-
-    const previous = collaborators[i];
-    collaborators[i] = { ...previous, name, email };
-    editingCollabIndex = null;
-    renderCollaborators();
-    const { error } = await persistCollaborators();
-    if(error){
-      collaborators[i] = previous;
-      editingCollabIndex = i;
-      renderCollaborators();
-      errorEl.textContent = 'Erreur d\u2019enregistrement : ' + error.message + '. Réessayez.';
-      errorEl.style.display = 'block';
-    }
-  }
-
-  function renderCollaborators(){
-    const list = document.getElementById('collab-list');
-    const usageEl = document.getElementById('collab-usage');
-    const errorEl = document.getElementById('collab-limit-error');
-    const addBlock = document.getElementById('collab-add-block');
-    const limit = PLAN_LIMITS[planId].collaborators;
-    const total = 1 + collaborators.length; // +1 pour le titulaire du compte
-    const reached = total >= limit;
-
-    usageEl.textContent = total + ' / ' + limit + ' collaborateurs (formule ' + currentPlan.name + ', vous inclus)';
-
-    if(reached){
-      errorEl.innerHTML = collaborators.length === 0 && limit === 1
-        ? 'Votre formule ' + currentPlan.name + ' ne permet pas d\u2019ajouter de collaborateur. <a href="abonnement.html">Passer à Salon</a> pour en ajouter jusqu\u2019à 5.'
-        : 'Limite de collaborateurs atteinte pour la formule ' + currentPlan.name + '. <a href="abonnement.html">Changer de formule</a> pour en ajouter d\u2019autres.';
-      errorEl.style.display = 'block';
-      addBlock.style.opacity = '.5';
-      addBlock.style.pointerEvents = 'none';
-    } else {
-      errorEl.style.display = 'none';
-      addBlock.style.opacity = '1';
-      addBlock.style.pointerEvents = 'auto';
-    }
-
-    const ownerName = document.getElementById('owner-name').value.trim();
-    const ownerRow =
-      '<div class="presta-row">' +
-        '<div style="min-width:0;">' +
-          '<p class="presta-row-name">' + escapeHtml(ownerName || 'Vous') + '</p>' +
-        '</div>' +
-        '<div class="presta-row-actions">' +
-          '<span class="badge" style="background:var(--paper-2);color:var(--ink-soft);font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;">Vous</span>' +
-        '</div>' +
-      '</div>';
-
-    if(!collaborators.length){
-      list.innerHTML = ownerRow;
-      return;
-    }
-
-    list.innerHTML = ownerRow + collaborators.map((c, i) => {
-      if(editingCollabIndex === i){
-        return (
-          '<div class="presta-row">' +
-            '<div class="presta-edit-row">' +
-              '<div class="field">' +
-                '<label for="edit-collab-name-' + i + '">Nom</label>' +
-                '<input id="edit-collab-name-' + i + '" type="text" value="' + escapeHtml(c.name) + '">' +
-              '</div>' +
-              '<div class="field">' +
-                '<label for="edit-collab-email-' + i + '">E-mail</label>' +
-                '<input id="edit-collab-email-' + i + '" type="email" value="' + escapeHtml(c.email || '') + '">' +
-              '</div>' +
-              '<button class="btn-icon edit-collab-save-btn" data-i="' + i + '" type="button" aria-label="Enregistrer">' +
-                '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M20 6L9 17l-5-5"></path></svg>' +
-              '</button>' +
-            '</div>' +
-          '</div>'
-        );
       }
-      return (
-        '<div class="presta-row">' +
-          '<div style="min-width:0;">' +
-            '<p class="presta-row-name">' + escapeHtml(c.name) + '</p>' +
-          '</div>' +
-          '<div class="presta-row-actions">' +
-            (c.email ? '<span class="presta-dur">' + escapeHtml(c.email) + '</span>' : '') +
-            '<button class="icon-btn edit-collab-btn" data-i="' + i + '" type="button" aria-label="Modifier ' + escapeHtml(c.name) + '">' +
-              '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z"></path></svg>' +
-            '</button>' +
-            '<button class="rm-btn" data-i="' + i + '" type="button" aria-label="Retirer ' + escapeHtml(c.name) + '">' +
-              '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>' +
-            '</button>' +
-          '</div>' +
-        '</div>'
-      );
-    }).join('');
 
-    list.querySelectorAll('.edit-collab-btn').forEach(b => {
-      b.addEventListener('click', () => {
-        editingCollabIndex = Number(b.getAttribute('data-i'));
-        renderCollaborators();
-        const input = document.getElementById('edit-collab-name-' + editingCollabIndex);
-        if(input) input.focus();
-      });
-    });
-
-    list.querySelectorAll('.edit-collab-save-btn').forEach(b => {
-      b.addEventListener('click', () => saveCollabEdit(Number(b.getAttribute('data-i'))));
-    });
-
-    list.querySelectorAll('[id^="edit-collab-name-"], [id^="edit-collab-email-"]').forEach(input => {
-      input.addEventListener('keydown', e => {
-        if(e.key === 'Enter'){
-          e.preventDefault();
-          saveCollabEdit(Number(input.id.split('-').pop()));
+      async function addPrestation() {
+        if (prestations.length >= PLAN_LIMITS[planId].prestations) {
+          renderPrestaLimit();
+          return;
         }
-        if(e.key === 'Escape'){
-          editingCollabIndex = null;
-          renderCollaborators();
+        const nameEl = document.getElementById("new-presta-name");
+        const durEl = document.getElementById("new-presta-dur");
+        const priceEl = document.getElementById("new-presta-price");
+        const fieldsErrorEl = document.getElementById("err-presta-fields");
+        const name = nameEl.value.trim();
+        const dur = Number(durEl.value);
+        const price = Number(priceEl.value || 0);
+        const fieldsError = validatePrestaFields(
+          name,
+          dur,
+          durEl,
+          price,
+          priceEl,
+          -1,
+        );
+        if (fieldsError) {
+          fieldsErrorEl.textContent = fieldsError;
+          fieldsErrorEl.style.display = "block";
+          return;
         }
-      });
-    });
-
-    list.querySelectorAll('.rm-btn').forEach(b => {
-      b.addEventListener('click', async () => {
-        const i = Number(b.getAttribute('data-i'));
-        const removed = collaborators[i];
-        const errorEl = document.getElementById('err-collab-fields');
-
-        // Un collaborateur déjà en base peut être référencé par des clients
-        // en liste d'attente (waitlist_clients.collaborator_id). Le
-        // supprimer casserait ce lien silencieusement : on vérifie et on
-        // bloque plutôt que de laisser des entrées orphelines.
-        if(removed.id){
-          const { count, error: checkError } = await sb
-            .from('waitlist_clients')
-            .select('id', { count: 'exact', head: true })
-            .eq('account_id', currentUser.id)
-            .eq('collaborator_id', removed.id);
-          if(checkError){
-            errorEl.textContent = 'Erreur : impossible de vérifier si ce collaborateur est utilisé (' + checkError.message + '). Réessayez.';
-            errorEl.style.display = 'block';
-            return;
-          }
-          if(count > 0){
-            errorEl.textContent = escapeHtml(removed.name) + ' est associé·e à ' + count + ' client(s) en liste d\u2019attente. Retirez-les ou changez leur collaborateur avant de le/la supprimer.';
-            errorEl.style.display = 'block';
-            return;
-          }
+        fieldsErrorEl.style.display = "none";
+        prestations.push({ name, dur, price });
+        nameEl.value = "";
+        durEl.value = "";
+        priceEl.value = "";
+        renderPrestations();
+        const { error } = await persistPrestations();
+        if (error) {
+          prestations.pop();
+          renderPrestations();
+          fieldsErrorEl.textContent = "Erreur d\u2019enregistrement : " +
+            error.message + ". Réessayez.";
+          fieldsErrorEl.style.display = "block";
+          return;
         }
+        nameEl.focus();
+      }
 
-        collaborators.splice(i, 1);
+      function persistCollaborators() {
+        return persistCollaboratorsRows();
+      }
+
+      async function saveCollabEdit(i) {
+        const nameEl = document.getElementById("edit-collab-name-" + i);
+        const emailEl = document.getElementById("edit-collab-email-" + i);
+        if (!nameEl || !emailEl) return;
+        const errorEl = document.getElementById("err-collab-fields");
+        const name = nameEl.value.trim();
+        const email = emailEl.value.trim();
+
+        let fieldsError = "";
+        if (!name) fieldsError = "Merci d\u2019indiquer le nom du collaborateur.";
+        else if (
+          collaborators.some((c, j) =>
+            j !== i && c.name.trim().toLowerCase() === name.toLowerCase()
+          )
+        ) fieldsError = "Un collaborateur porte déjà ce nom.";
+        else if (email && !isValidEmail(email)) {
+          fieldsError =
+            "Merci d\u2019indiquer un e-mail valide, ou de laisser le champ vide.";
+        } else if (
+          email &&
+          collaborators.some((c, j) =>
+            j !== i && c.email && c.email.toLowerCase() === email.toLowerCase()
+          )
+        ) fieldsError = "Cet e-mail est déjà utilisé par un autre collaborateur.";
+
+        if (fieldsError) {
+          errorEl.textContent = fieldsError;
+          errorEl.style.display = "block";
+          return;
+        }
+        errorEl.style.display = "none";
+
+        const previous = collaborators[i];
+        collaborators[i] = { ...previous, name, email };
         editingCollabIndex = null;
         renderCollaborators();
         const { error } = await persistCollaborators();
-        if(error){
-          collaborators.splice(i, 0, removed);
+        if (error) {
+          collaborators[i] = previous;
+          editingCollabIndex = i;
           renderCollaborators();
-          errorEl.textContent = 'Erreur : la suppression n\u2019a pas pu être enregistrée (' + error.message + '). Réessayez.';
-          errorEl.style.display = 'block';
+          errorEl.textContent = "Erreur d\u2019enregistrement : " + error.message +
+            ". Réessayez.";
+          errorEl.style.display = "block";
         }
-      });
-    });
-  }
-
-  async function addCollaborator(){
-    const limit = PLAN_LIMITS[planId].collaborators;
-    if(1 + collaborators.length >= limit){
-      renderCollaborators();
-      return;
-    }
-    const nameEl = document.getElementById('new-collab-name');
-    const emailEl = document.getElementById('new-collab-email');
-    const fieldsErrorEl = document.getElementById('err-collab-fields');
-    const name = nameEl.value.trim();
-    const email = emailEl.value.trim();
-
-    let fieldsError = '';
-    if(!name) fieldsError = 'Merci d\u2019indiquer le nom du collaborateur.';
-    else if(collaborators.some(c => c.name.trim().toLowerCase() === name.toLowerCase())) fieldsError = 'Un collaborateur porte déjà ce nom.';
-    else if(email && !isValidEmail(email)) fieldsError = 'Merci d\u2019indiquer un e-mail valide, ou de laisser le champ vide.';
-    else if(email && collaborators.some(c => c.email && c.email.toLowerCase() === email.toLowerCase())) fieldsError = 'Cet e-mail est déjà utilisé par un autre collaborateur.';
-
-    if(fieldsError){
-      fieldsErrorEl.textContent = fieldsError;
-      fieldsErrorEl.style.display = 'block';
-      return;
-    }
-    fieldsErrorEl.style.display = 'none';
-
-    collaborators.push({ name, email });
-    nameEl.value = '';
-    emailEl.value = '';
-    renderCollaborators();
-    const { error } = await persistCollaborators();
-    if(error){
-      collaborators.pop();
-      renderCollaborators();
-      fieldsErrorEl.textContent = 'Erreur d\u2019enregistrement : ' + error.message + '. Réessayez.';
-      fieldsErrorEl.style.display = 'block';
-      return;
-    }
-    nameEl.focus();
-  }
-
-  document.getElementById('btn-add-collab').addEventListener('click', addCollaborator);
-  document.getElementById('owner-name').addEventListener('input', renderCollaborators);
-  ['new-collab-name', 'new-collab-email'].forEach(id => {
-    document.getElementById(id).addEventListener('keydown', e => {
-      if(e.key === 'Enter'){
-        e.preventDefault();
-        addCollaborator();
       }
-    });
-  });
 
-  document.getElementById('btn-add-presta').addEventListener('click', addPrestation);
-  ['new-presta-name', 'new-presta-dur', 'new-presta-price'].forEach(id => {
-    document.getElementById(id).addEventListener('keydown', e => {
-      if(e.key === 'Enter'){
-        e.preventDefault();
-        addPrestation();
-      }
-    });
-  });
+      function renderCollaborators() {
+        const list = document.getElementById("collab-list");
+        const usageEl = document.getElementById("collab-usage");
+        const errorEl = document.getElementById("collab-limit-error");
+        const addBlock = document.getElementById("collab-add-block");
+        const limit = PLAN_LIMITS[planId].collaborators;
+        const total = 1 + collaborators.length; // +1 pour le titulaire du compte
+        const reached = total >= limit;
 
-  document.getElementById('btn-save').addEventListener('click', () => saveAll(true));
+        usageEl.textContent = total + " / " + limit + " collaborateurs (formule " +
+          currentPlan.name + ", vous inclus)";
 
-  renderPrestations();
-  renderCollaborators();
-  if(account.name) document.title = account.name + ' · Mon profil';
-  document.getElementById('btn-logout').addEventListener('click', async () => {
-    await sb.auth.signOut();
-    window.location.href = 'connexion-prestataire.html';
-  });
-
-  document.getElementById('btn-delete-account').addEventListener('click', () => {
-    document.getElementById('delete-confirm-input').value = '';
-    document.getElementById('delete-error').style.display = 'none';
-    document.getElementById('delete-modal').style.display = 'flex';
-  });
-  document.getElementById('delete-cancel').addEventListener('click', () => {
-    document.getElementById('delete-modal').style.display = 'none';
-  });
-  document.getElementById('delete-confirm').addEventListener('click', async () => {
-    if(document.getElementById('delete-confirm-input').value.trim().toUpperCase() !== 'SUPPRIMER') return;
-
-    const btn = document.getElementById('delete-confirm');
-    const errorEl = document.getElementById('delete-error');
-    errorEl.style.display = 'none';
-    btn.disabled = true;
-    btn.textContent = 'Suppression…';
-
-    try{
-      // Supprime le vrai compte Supabase Auth. La ligne auth.users est
-      // supprimée côté serveur (clé service_role, jamais exposée ici) ;
-      // profiles/prestations/collaborators/waitlist_clients/subscriptions
-      // disparaissent en cascade grâce aux clés étrangères.
-      const res = await fetch(SUPABASE_FUNCTIONS_URL + '/delete-account', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + session.access_token
+        if (reached) {
+          errorEl.innerHTML = collaborators.length === 0 && limit === 1
+            ? "Votre formule " + currentPlan.name +
+              ' ne permet pas d\u2019ajouter de collaborateur. <a href="abonnement.html">Passer à Business</a> pour en ajouter sans limite.'
+            : "Limite de collaborateurs atteinte pour la formule " +
+              currentPlan.name +
+              '. <a href="abonnement.html">Changer de formule</a> pour en ajouter d\u2019autres.';
+          errorEl.style.display = "block";
+          addBlock.style.opacity = ".5";
+          addBlock.style.pointerEvents = "none";
+        } else {
+          errorEl.style.display = "none";
+          addBlock.style.opacity = "1";
+          addBlock.style.pointerEvents = "auto";
         }
-      });
-      const data = await res.json();
-      if(!res.ok || !data.success){
-        throw new Error(data.error || 'La suppression a échoué.');
+
+        const ownerName = document.getElementById("owner-name").value.trim();
+        const ownerRow = '<div class="presta-row">' +
+          '<div style="min-width:0;">' +
+          '<p class="presta-row-name">' + escapeHtml(ownerName || "Vous") + "</p>" +
+          "</div>" +
+          '<div class="presta-row-actions">' +
+          '<span class="badge" style="background:var(--paper-2);color:var(--ink-soft);font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;">Vous</span>' +
+          "</div>" +
+          "</div>";
+
+        if (!collaborators.length) {
+          list.innerHTML = ownerRow;
+          return;
+        }
+
+        list.innerHTML = ownerRow + collaborators.map((c, i) => {
+          if (editingCollabIndex === i) {
+            return (
+              '<div class="presta-row">' +
+              '<div class="presta-edit-row">' +
+              '<div class="field">' +
+              '<label for="edit-collab-name-' + i + '">Nom</label>' +
+              '<input id="edit-collab-name-' + i + '" type="text" value="' +
+              escapeHtml(c.name) + '">' +
+              "</div>" +
+              '<div class="field">' +
+              '<label for="edit-collab-email-' + i + '">E-mail</label>' +
+              '<input id="edit-collab-email-' + i + '" type="email" value="' +
+              escapeHtml(c.email || "") + '">' +
+              "</div>" +
+              '<button class="btn-icon edit-collab-save-btn" data-i="' + i +
+              '" type="button" aria-label="Enregistrer">' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M20 6L9 17l-5-5"></path></svg>' +
+              "</button>" +
+              "</div>" +
+              "</div>"
+            );
+          }
+          return (
+            '<div class="presta-row">' +
+            '<div style="min-width:0;">' +
+            '<p class="presta-row-name">' + escapeHtml(c.name) + "</p>" +
+            "</div>" +
+            '<div class="presta-row-actions">' +
+            (c.email
+              ? '<span class="presta-dur">' + escapeHtml(c.email) + "</span>"
+              : "") +
+            '<button class="icon-btn edit-collab-btn" data-i="' + i +
+            '" type="button" aria-label="Modifier ' + escapeHtml(c.name) + '">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z"></path></svg>' +
+            "</button>" +
+            '<button class="rm-btn" data-i="' + i +
+            '" type="button" aria-label="Retirer ' + escapeHtml(c.name) + '">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>' +
+            "</button>" +
+            "</div>" +
+            "</div>"
+          );
+        }).join("");
+
+        list.querySelectorAll(".edit-collab-btn").forEach((b) => {
+          b.addEventListener("click", () => {
+            editingCollabIndex = Number(b.getAttribute("data-i"));
+            renderCollaborators();
+            const input = document.getElementById(
+              "edit-collab-name-" + editingCollabIndex,
+            );
+            if (input) input.focus();
+          });
+        });
+
+        list.querySelectorAll(".edit-collab-save-btn").forEach((b) => {
+          b.addEventListener(
+            "click",
+            () => saveCollabEdit(Number(b.getAttribute("data-i"))),
+          );
+        });
+
+        list.querySelectorAll(
+          '[id^="edit-collab-name-"], [id^="edit-collab-email-"]',
+        ).forEach((input) => {
+          input.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              saveCollabEdit(Number(input.id.split("-").pop()));
+            }
+            if (e.key === "Escape") {
+              editingCollabIndex = null;
+              renderCollaborators();
+            }
+          });
+        });
+
+        list.querySelectorAll(".rm-btn").forEach((b) => {
+          b.addEventListener("click", async () => {
+            const i = Number(b.getAttribute("data-i"));
+            const removed = collaborators[i];
+            const errorEl = document.getElementById("err-collab-fields");
+
+            // Un collaborateur déjà en base peut être référencé par des clients
+            // en liste d'attente (waitlist_clients.collaborator_id). Le
+            // supprimer casserait ce lien silencieusement : on vérifie et on
+            // bloque plutôt que de laisser des entrées orphelines.
+            if (removed.id) {
+              const { count, error: checkError } = await sb
+                .from("waitlist_clients")
+                .select("id", { count: "exact", head: true })
+                .eq("account_id", currentUser.id)
+                .eq("collaborator_id", removed.id);
+              if (checkError) {
+                errorEl.textContent =
+                  "Erreur : impossible de vérifier si ce collaborateur est utilisé (" +
+                  checkError.message + "). Réessayez.";
+                errorEl.style.display = "block";
+                return;
+              }
+              if (count > 0) {
+                errorEl.textContent = escapeHtml(removed.name) +
+                  " est associé·e à " + count +
+                  " client(s) en liste d\u2019attente. Retirez-les ou changez leur collaborateur avant de le/la supprimer.";
+                errorEl.style.display = "block";
+                return;
+              }
+            }
+
+            collaborators.splice(i, 1);
+            editingCollabIndex = null;
+            renderCollaborators();
+            const { error } = await persistCollaborators();
+            if (error) {
+              collaborators.splice(i, 0, removed);
+              renderCollaborators();
+              errorEl.textContent =
+                "Erreur : la suppression n\u2019a pas pu être enregistrée (" +
+                error.message + "). Réessayez.";
+              errorEl.style.display = "block";
+            }
+          });
+        });
       }
 
-      await sb.auth.signOut();
-      window.location.href = 'index.html';
-    } catch(err){
-      errorEl.textContent = 'Erreur : ' + err.message;
-      errorEl.style.display = 'block';
-      btn.disabled = false;
-      btn.textContent = 'Supprimer';
-    }
-  });
-})();
-</script>
+      async function addCollaborator() {
+        const limit = PLAN_LIMITS[planId].collaborators;
+        if (1 + collaborators.length >= limit) {
+          renderCollaborators();
+          return;
+        }
+        const nameEl = document.getElementById("new-collab-name");
+        const emailEl = document.getElementById("new-collab-email");
+        const fieldsErrorEl = document.getElementById("err-collab-fields");
+        const name = nameEl.value.trim();
+        const email = emailEl.value.trim();
 
-</body>
+        let fieldsError = "";
+        if (!name) fieldsError = "Merci d\u2019indiquer le nom du collaborateur.";
+        else if (
+          collaborators.some((c) =>
+            c.name.trim().toLowerCase() === name.toLowerCase()
+          )
+        ) fieldsError = "Un collaborateur porte déjà ce nom.";
+        else if (email && !isValidEmail(email)) {
+          fieldsError =
+            "Merci d\u2019indiquer un e-mail valide, ou de laisser le champ vide.";
+        } else if (
+          email &&
+          collaborators.some((c) =>
+            c.email && c.email.toLowerCase() === email.toLowerCase()
+          )
+        ) fieldsError = "Cet e-mail est déjà utilisé par un autre collaborateur.";
+
+        if (fieldsError) {
+          fieldsErrorEl.textContent = fieldsError;
+          fieldsErrorEl.style.display = "block";
+          return;
+        }
+        fieldsErrorEl.style.display = "none";
+
+        collaborators.push({ name, email });
+        nameEl.value = "";
+        emailEl.value = "";
+        renderCollaborators();
+        const { error } = await persistCollaborators();
+        if (error) {
+          collaborators.pop();
+          renderCollaborators();
+          fieldsErrorEl.textContent = "Erreur d\u2019enregistrement : " +
+            error.message + ". Réessayez.";
+          fieldsErrorEl.style.display = "block";
+          return;
+        }
+        nameEl.focus();
+      }
+
+      document.getElementById("btn-add-collab").addEventListener(
+        "click",
+        addCollaborator,
+      );
+      document.getElementById("owner-name").addEventListener(
+        "input",
+        renderCollaborators,
+      );
+      ["new-collab-name", "new-collab-email"].forEach((id) => {
+        document.getElementById(id).addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            addCollaborator();
+          }
+        });
+      });
+
+      document.getElementById("btn-add-presta").addEventListener(
+        "click",
+        addPrestation,
+      );
+      ["new-presta-name", "new-presta-dur", "new-presta-price"].forEach((id) => {
+        document.getElementById(id).addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            addPrestation();
+          }
+        });
+      });
+
+      document.getElementById("btn-save").addEventListener(
+        "click",
+        () => saveAll(true),
+      );
+
+      renderPrestations();
+      renderCollaborators();
+      if (account.name) document.title = account.name + " · Mon profil";
+      document.getElementById("btn-logout").addEventListener("click", async () => {
+        await sb.auth.signOut();
+        window.location.href = "connexion-prestataire.html";
+      });
+
+      document.getElementById("btn-export-data").addEventListener(
+        "click",
+        async () => {
+          const button = document.getElementById("btn-export-data");
+          const status = document.getElementById("export-data-status");
+          button.disabled = true;
+          status.textContent = "Préparation de votre export…";
+          try {
+            const response = await fetch(
+              SUPABASE_FUNCTIONS_URL + "/export-account-data",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": "Bearer " + session.access_token,
+                },
+              },
+            );
+            const payload = await response.json();
+            if (!response.ok) {
+              throw new Error(payload.error || "EXPORT_FAILED");
+            }
+            const blob = new Blob([JSON.stringify(payload, null, 2)], {
+              type: "application/json",
+            });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "kreno-export-" + new Date().toISOString().slice(0, 10) + ".json";
+            link.click();
+            URL.revokeObjectURL(link.href);
+            status.textContent = "Votre export a été téléchargé.";
+          } catch (error) {
+            status.textContent = "Impossible de préparer l’export. Réessayez plus tard.";
+            console.error("Échec de l’export de données :", error);
+          } finally {
+            button.disabled = false;
+          }
+        },
+      );
+
+      document.getElementById("btn-delete-account").addEventListener(
+        "click",
+        () => {
+          document.getElementById("delete-confirm-password").value = "";
+          document.getElementById("delete-confirm-input").value = "";
+          document.getElementById("delete-error").style.display = "none";
+          document.getElementById("delete-modal").style.display = "flex";
+        },
+      );
+      document.getElementById("delete-cancel").addEventListener("click", () => {
+        document.getElementById("delete-modal").style.display = "none";
+      });
+      document.getElementById("delete-confirm").addEventListener(
+        "click",
+        async () => {
+          const errorEl = document.getElementById("delete-error");
+          const password = document.getElementById("delete-confirm-password").value;
+
+          if (
+            document.getElementById("delete-confirm-input").value.trim()
+              .toUpperCase() !== "SUPPRIMER"
+          ) return;
+
+          if (!password) {
+            errorEl.textContent = "Merci de confirmer votre mot de passe actuel.";
+            errorEl.style.display = "block";
+            return;
+          }
+
+          const btn = document.getElementById("delete-confirm");
+          errorEl.style.display = "none";
+          btn.disabled = true;
+          btn.textContent = "Vérification…";
+
+          // Ré-authentification explicite avant une action destructive et
+          // irréversible : un jeton de session dérobé (XSS, appareil laissé
+          // ouvert) ne suffit plus à lui seul à supprimer le compte, il faut
+          // aussi connaître le mot de passe actuel.
+          const { error: reauthError } = await sb.auth.signInWithPassword({
+            email: currentUser.email,
+            password,
+          });
+          if (reauthError) {
+            errorEl.textContent = "Mot de passe incorrect.";
+            errorEl.style.display = "block";
+            btn.disabled = false;
+            btn.textContent = "Supprimer";
+            return;
+          }
+
+          btn.textContent = "Suppression…";
+
+          try {
+            // Supprime le vrai compte Supabase Auth. La ligne auth.users est
+            // supprimée côté serveur (clé service_role, jamais exposée ici) ;
+            // profiles/prestations/collaborators/waitlist_clients/subscriptions
+            // disparaissent en cascade grâce aux clés étrangères.
+            const { data: { session: freshSession } } = await sb.auth.getSession();
+            const res = await fetch(SUPABASE_FUNCTIONS_URL + "/delete-account", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " +
+                  (freshSession ? freshSession.access_token : session.access_token),
+              },
+            });
+            const data = await res.json();
+            if (!res.ok || !data.success) {
+              throw new Error(data.error || "La suppression a échoué.");
+            }
+
+            await sb.auth.signOut();
+            window.location.href = "index.html";
+          } catch (err) {
+            errorEl.textContent = "Erreur : " + err.message;
+            errorEl.style.display = "block";
+            btn.disabled = false;
+            btn.textContent = "Supprimer";
+          }
+        },
+      );
+    })();
+    </script>
+  </body>
 </html>

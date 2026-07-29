@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://thxbpjumbntiqwexsqut.supabase.co https://cdn.jsdelivr.net; frame-src https://checkout.stripe.com; base-uri 'self'; form-action 'self' https://checkout.stripe.com;">
 <title>Réinitialiser le mot de passe · Espace prestataire</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -202,8 +204,8 @@
     <div class="perforation"></div>
 
     <div class="ticket-body">
-      <p class="form-error" id="form-error"></p>
-      <p class="form-success" id="form-success"></p>
+      <p class="form-error" id="form-error" role="alert"></p>
+      <p class="form-success" id="form-success" role="status"></p>
 
       <div class="field" id="field-password1">
         <label for="new-password1">Nouveau mot de passe</label>
@@ -217,7 +219,7 @@
         <p class="field-error" id="err-password2">Les deux mots de passe ne correspondent pas.</p>
       </div>
 
-      <button class="btn-primary" id="btn-reset">Valider le nouveau mot de passe</button>
+      <button class="btn-primary" id="btn-reset" type="button">Valider le nouveau mot de passe</button>
 
       <p class="fine-print"><a href="connexion-prestataire.html">Retour à la connexion</a></p>
     </div>
@@ -225,7 +227,7 @@
 
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js" crossorigin="anonymous"></script>
 <script>
 (async function(){
   const SUPABASE_URL = 'https://thxbpjumbntiqwexsqut.supabase.co';

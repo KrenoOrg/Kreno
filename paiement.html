@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="fr">
   <head>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <meta charset="UTF-8">
     <meta name="viewport"
       content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://thxbpjumbntiqwexsqut.supabase.co https://cdn.jsdelivr.net; frame-src https://checkout.stripe.com; base-uri 'self'; form-action 'self' https://checkout.stripe.com;">
     <title>Paiement · Espace prestataire</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -214,6 +216,15 @@
       line-height: 1.6;
       margin: 0 0 1.5rem;
     }
+      .confirm-profile-link {
+        display: inline-block;
+        width: auto;
+        text-decoration: none;
+        box-sizing: border-box;
+        font-size: 13.5px;
+        padding: 10px 20px;
+        margin: 0 auto;
+      }
     </style>
     <link href="apple-glass.css" rel="stylesheet">
     <link href="polish.css" rel="stylesheet">
@@ -243,9 +254,9 @@
           style="display:none;">L'offre Free ne nécessite aucun moyen de paiement. Confirmez pour l'activer sur votre compte.</p>
         <p class="free-note" id="stripe-note"
           style="display:none;">Vous allez être redirigé·e vers Stripe pour saisir votre carte, en paiement sécurisé.</p>
-        <p class="field-error" id="stripe-error"></p>
+        <p class="field-error" id="stripe-error" role="alert"></p>
 
-        <button class="btn-primary" id="btn-pay">Confirmer et payer</button>
+        <button class="btn-primary" id="btn-pay" type="button">Confirmer et payer</button>
         <p class="fine-print"
           id="fine-print">Vous pouvez changer de formule ou résilier à tout moment depuis votre profil.</p>
       </div>
@@ -273,8 +284,7 @@
         <p class="confirm-title">Abonnement activé</p>
         <p class="confirm-text"
           id="confirm-text">Votre formule est maintenant active sur votre compte.</p>
-        <a href="profil-prestataire.html" class="btn-primary" id="confirm-cta"
-          style="display:inline-block;width:auto;text-decoration:none;box-sizing:border-box;font-size:13.5px;padding:10px 20px;margin:0 auto;">Retour à mon profil</a>
+        <a href="profil-prestataire.html" class="btn-primary confirm-profile-link" id="confirm-cta">Retour à mon profil</a>
       </div>
     </div>
 
@@ -286,7 +296,7 @@
          rechargement complet (pas une SPA), window.supabase n'existe de toute
          façon jamais déjà : la vérification conditionnelle ne servait à rien. -->
     <script
-      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js" crossorigin="anonymous"></script>
     <script>
     window.addEventListener("pageshow", function (event) {
       if (event.persisted) window.location.reload();
@@ -390,7 +400,7 @@
       // Applique les limites de la nouvelle formule directement en base : si le
       // compte dépasse les nouvelles limites (ex. rétrogradation Solo -> Free),
       // le surplus de prestations/collaborateurs est supprimé (on garde les plus
-      // anciens), et le message SMS personnalisé (réservé à Salon) est vidé.
+      // anciens), et le message SMS personnalisé (réservé à Business) est vidé.
       async function applyPlanLimits(newPlanId) {
         const limits = PLAN_LIMITS[newPlanId];
         let trimmed = false;
@@ -523,7 +533,25 @@
               data.error || "Impossible de démarrer le paiement Stripe.",
             );
           }
-          window.location.href = data.url;
+          // Ne redirige que vers le domaine Stripe Checkout officiel. Sans ce
+          // contrôle, une fonction serveur compromise (ou une réponse
+          // altérée) pourrait rediriger vers un site de phishing imitant
+          // Stripe juste après un paiement réel.
+          let checkoutUrl;
+          try {
+            checkoutUrl = new URL(data.url);
+          } catch (_) {
+            throw new Error("URL de paiement invalide reçue du serveur.");
+          }
+          const stripeHost = checkoutUrl.hostname;
+          const isStripeHost = stripeHost === "checkout.stripe.com" ||
+            stripeHost.endsWith(".checkout.stripe.com");
+          if (checkoutUrl.protocol !== "https:" || !isStripeHost) {
+            throw new Error(
+              "Réponse de paiement inattendue (domaine non reconnu). Paiement annulé par sécurité.",
+            );
+          }
+          window.location.href = checkoutUrl.href;
         } catch (err) {
           errorEl.textContent = "Erreur : " + err.message +
             " Vérifiez la configuration Stripe (secrets Supabase) et réessayez.";
