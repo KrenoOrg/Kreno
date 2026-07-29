@@ -508,20 +508,24 @@
       gap: 16px;
       margin: 0 0 34px;
     }
-    .provider-entry {
+    .provider-cta {
       display: inline-flex;
-      min-height: 42px;
+      min-height: 52px;
       align-items: center;
       justify-content: center;
-      padding: 0 16px;
-      border: 1px solid #d5e8f0;
+      gap: 8px;
+      margin-top: 24px;
+      padding: 0 22px;
+      border: 1px solid #049dc8;
       border-radius: 999px;
-      background: rgba(255,255,255,.68);
-      color: #000;
-      font-size: 13px;
-      font-weight: 650;
+      background: #049dc8;
+      color: #fff;
+      box-shadow: 0 11px 25px rgba(58,155,184,.16);
+      font-size: 15px;
+      font-weight: 700;
       text-decoration: none;
     }
+    .provider-cta span { font-weight: 500; opacity: .9; }
     .client-guide {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -587,6 +591,7 @@
       }
       .client-guide { grid-template-columns: 1fr; }
       .directory-nav { align-items: flex-start; flex-direction: column; }
+      .provider-cta { width: 100%; }
     }
     </style>
     <link href="apple-glass.css" rel="stylesheet">
@@ -597,11 +602,11 @@
       <header>
         <div class="directory-nav">
           <a class="home-link" href="index.html"><img src="favicon.png" alt="">Kreno</a>
-          <a class="provider-entry" href="inscription-prestataire.html">Vous êtes prestataire ? Créer un compte</a>
         </div>
         <p class="eyebrow">Trouver un créneau</p>
         <h1>Un rendez-vous plus tôt, sans surveiller votre téléphone.</h1>
         <p class="subtitle">Choisissez un établissement, rejoignez sa liste d’attente et recevez un SMS lorsqu’une place adaptée à votre demande se libère.</p>
+        <a class="provider-cta" href="inscription-prestataire.html"><span>Vous êtes prestataire ?</span> Créer un compte</a>
       </header>
 
       <div class="search">
