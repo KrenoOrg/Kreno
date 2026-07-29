@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <link rel="icon" href="favicon.png" type="image/png">
+    <meta charset="UTF-8">
+    <meta name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://thxbpjumbntiqwexsqut.supabase.co https://cdn.jsdelivr.net; frame-src https://checkout.stripe.com; base-uri 'self'; form-action 'self' https://checkout.stripe.com;">
+    <title>Trouver un créneau plus tôt</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet">
+    <style>
+    :root {
+      --paper: #F3EFE6;
+      --paper-2: #EAE4D6;
+      --ink: #1B2A4A;
+      --ink-soft: #4A5670;
+      --mustard: #D9A441;
+      --mustard-dark: #9C731E;
+      --line: #D8D0BE;
+      --radius: 14px;
+    }
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'Inter',sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+    }
+    .screen {
+      width: 100%;
+      max-width: 420px;
+      min-height: 100vh;
+      padding: 2rem 1.25rem 3rem;
+    }
+    header {
+      background: var(--paper-2);
+      border-radius: var(--radius);
+      padding: 1.1rem 1.2rem;
+      margin-bottom: 1.1rem;
+    }
+    .eyebrow {
+      font-size: 11px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--mustard-dark);
+      font-weight: 600;
+      margin: 0 0 6px;
+    }
+    h1 {
+      font-family: 'Fraunces',serif;
+      font-size: 22px;
+      font-weight: 600;
+      line-height: 1.25;
+      margin: 0 0 6px;
+    }
+    .subtitle {
+      font-size: 13px;
+      color: var(--ink-soft);
+      line-height: 1.5;
+      margin: 0;
+    }
+    .search {
+      position: relative;
+      margin: 0 0 1.1rem;
+    }
+    .search svg {
+      position: absolute;
+      left: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      stroke: var(--ink-soft);
+    }
+    .search input {
+      width: 100%;
+      font-family: 'Inter',sans-serif;
+      font-size: 16px;
+      padding: 12px 14px 12px 38px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+    }
+    .search input:focus-visible {
+      outline: 2px solid var(--ink);
+      outline-offset: 2px;
+    }
+    button:focus-visible,
+    a:focus-visible {
+      outline: 2px solid var(--ink);
+      outline-offset: 2px;
+    }
+    .filters {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      margin-bottom: 1.1rem;
+    }
+    .filter {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12.5px;
+      font-weight: 500;
+      padding: 9px 14px;
+      min-height: 38px;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink-soft);
+      cursor: pointer;
+    }
+    .filter svg {
+      width: 15px;
+      height: 15px;
+      stroke: currentColor;
+      flex-shrink: 0;
+    }
+    .filter.on {
+      background: var(--ink);
+      border-color: var(--ink);
+      color: var(--paper);
+    }
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1.1rem 1.2rem;
+      display: flex;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .avatar svg {
+      width: 20px;
+      height: 20px;
+    }
+    .card-body {
+      flex: 1;
+      min-width: 0;
+    }
+    .card-name {
+      font-family: 'Fraunces',serif;
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0;
+    }
+    .card-type {
+      font-size: 12px;
+      color: var(--ink-soft);
+      margin: 2px 0 8px;
+    }
+    .badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 20px;
+      background: var(--paper-2);
+      color: var(--ink-soft);
+      white-space: nowrap;
+    }
+    .badge.wait {
+      background: #FBEFDA;
+      color: var(--mustard-dark);
+    }
+    .arrow {
+      align-self: center;
+      width: 16px;
+      height: 16px;
+      stroke: var(--ink-soft);
+      flex-shrink: 0;
+    }
+    .idle,
+    .empty {
+      background: #fff;
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+      padding: 2rem 1.25rem;
+      text-align: center;
+    }
+    .idle svg,
+    .empty svg {
+      width: 26px;
+      height: 26px;
+      stroke: var(--mustard-dark);
+    }
+    .idle p,
+    .empty p {
+      font-size: 13px;
+      color: var(--ink-soft);
+      line-height: 1.5;
+      margin: 10px 0 0;
+    }
+    .cta-card {
+      background: #fff;
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.1rem;
+      text-align: center;
+      margin-top: 1.1rem;
+    }
+    .cta-card svg {
+      width: 24px;
+      height: 24px;
+      stroke: var(--mustard-dark);
+    }
+    .cta-card p.title {
+      font-family: 'Fraunces',serif;
+      font-size: 14.5px;
+      font-weight: 600;
+      margin: 8px 0 4px;
+    }
+    .cta-card p.desc {
+      font-size: 12px;
+      color: var(--ink-soft);
+      line-height: 1.5;
+      margin: 0 0 12px;
+    }
+    .btn-dark {
+      display: inline-block;
+      font-family: 'Inter',sans-serif;
+      font-size: 12.5px;
+      font-weight: 600;
+      padding: 10px 18px;
+      border-radius: 9px;
+      border: none;
+      background: var(--ink);
+      color: var(--paper);
+      text-decoration: none;
+    }
+    .btn-outline {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      text-align: center;
+      font-family: 'Inter',sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 12px;
+      border-radius: 9px;
+      border: 1px solid var(--ink);
+      background: transparent;
+      color: var(--ink);
+      text-decoration: none;
+      margin-top: 1rem;
+    }
+    .provider-signup {
+      margin-top: 18px;
+    }
+
+    /* Composition fidèle à la référence fournie pour l'annuaire. */
+    :root {
+      --paper: #fff;
+      --paper-2: #fff;
+      --ink: #000;
+      --ink-soft: #707981;
+      --mustard: #55cbed;
+      --mustard-dark: #049dc8;
+      --line: #eef1f2;
+      --radius: 30px;
+    }
+    body {
+      background: #fff;
+      color: #000;
+    }
+    .screen {
+      max-width: 585px;
+      padding: 56px 0 54px;
+    }
+    header {
+      background: transparent;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+      padding: 0;
+      margin: 0 0 34px;
+    }
+    .eyebrow {
+      font-size: 11px;
+      letter-spacing: .17em;
+      color: #55cbed;
+      font-weight: 600;
+      margin: 0 0 13px;
+    }
+    h1 {
+      font-family: 'Inter',sans-serif;
+      font-size: 31px;
+      font-weight: 600;
+      letter-spacing: -.055em;
+      line-height: 1.08;
+      margin: 0 0 12px;
+      color: #000;
+    }
+    .subtitle {
+      max-width: 550px;
+      font-size: 18px;
+      line-height: 1.52;
+      color: #707981;
+      margin: 0;
+    }
+    .search {
+      margin: 0 0 16px;
+    }
+    .search svg {
+      display: none;
+    }
+    .search input {
+      height: 68px;
+      padding: 0 31px;
+      font-size: 18px;
+      border: 0;
+      border-radius: 999px;
+      background: #fff;
+      color: #000;
+      box-shadow: 0 15px 33px rgba(47,73,84,.09);
+    }
+    .search input::placeholder {
+      color: #707981;
+    }
+    .search input:focus-visible {
+      outline: 2px solid #55cbed;
+      outline-offset: 3px;
+    }
+    .filters {
+      gap: 9px;
+      overflow: visible;
+      padding: 0;
+      margin: 0 0 34px;
+    }
+    .filter {
+      min-height: 49px;
+      padding: 0 22px;
+      font-size: 15px;
+      border: 0;
+      border-radius: 999px;
+      background: #fff;
+      color: #000;
+      box-shadow: 0 9px 21px rgba(47,73,84,.07);
+    }
+    .filter.on {
+      background: #fff;
+      border: 0;
+      color: #000;
+    }
+    .filter:hover {
+      transform: translateY(-1px);
+    }
+    .idle,
+    .empty {
+      min-height: 224px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      border: 1px solid #f1f3f3;
+      border-radius: 30px;
+      padding: 36px 42px;
+      box-shadow: 0 15px 33px rgba(47,73,84,.07);
+    }
+    .idle svg,
+    .empty svg {
+      width: 30px;
+      height: 30px;
+      stroke: #049dc8;
+    }
+    .idle p,
+    .empty p {
+      max-width: 470px;
+      font-size: 17px;
+      line-height: 1.55;
+      color: #707981;
+      margin: 22px 0 0;
+    }
+    .list {
+      gap: 18px;
+    }
+    .card {
+      border: 1px solid #f1f3f3;
+      border-radius: 30px;
+      padding: 23px 25px;
+      background: #fff;
+      box-shadow: 0 15px 33px rgba(47,73,84,.07);
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 38px rgba(47,73,84,.11);
+    }
+    .cta-card {
+      min-height: 291px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      border: 1px solid #f1f3f3;
+      border-radius: 30px;
+      padding: 35px 25px;
+      margin-top: 34px;
+      box-shadow: 0 15px 33px rgba(47,73,84,.07);
+    }
+    .cta-card svg {
+      width: 29px;
+      height: 29px;
+      stroke: #049dc8;
+      margin-bottom: 21px;
+    }
+    .cta-card p.title {
+      font-family: 'Inter',sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -.03em;
+      color: #000;
+      margin: 0 0 10px;
+    }
+    .cta-card p.desc {
+      font-size: 16px;
+      line-height: 1.5;
+      color: #707981;
+      margin: 0 0 27px;
+    }
+    .btn-dark {
+      font-size: 16px;
+      font-weight: 600;
+      padding: 14px 29px;
+      border: 1px solid #fff;
+      border-radius: 999px;
+      background: linear-gradient(180deg,#f8fdff 0%,#dff7fd 100%);
+      color: #000;
+      box-shadow: 0 11px 25px rgba(58,155,184,.12);
+    }
+    .btn-outline {
+      height: 65px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 600;
+      padding: 0;
+      border: 1px solid #fff;
+      border-radius: 999px;
+      background: linear-gradient(180deg,#f8fdff 0%,#dff7fd 100%);
+      color: #000;
+      box-shadow: 0 11px 25px rgba(58,155,184,.12);
+      margin-top: 18px;
+    }
+    .btn-dark:hover,
+    .btn-outline:hover {
+      background: linear-gradient(180deg,#f2fcff 0%,#d3f4fc 100%);
+      color: #000;
+      transform: translateY(-2px);
+    }
+    .btn-dark:active,
+    .btn-outline:active {
+      transform: translateY(1px) scale(.985);
+    }
+    .home-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin: 0 0 34px;
+      color: #163d57;
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .home-link img {
+      width: 29px;
+      height: 29px;
+      border-radius: 8px;
+      object-fit: contain;
+    }
+    .client-guide {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 34px;
+    }
+    .client-guide article {
+      min-height: 132px;
+      padding: 19px;
+      border: 1px solid #f1f3f3;
+      border-radius: 22px;
+      background: rgba(255,255,255,.76);
+      box-shadow: 0 11px 25px rgba(47,73,84,.05);
+    }
+    .client-guide span {
+      color: #049dc8;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .client-guide h2 {
+      margin: 18px 0 7px;
+      color: #000;
+      font-size: 16px;
+      letter-spacing: -.03em;
+    }
+    .client-guide p {
+      margin: 0;
+      color: #707981;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .client-footer {
+      margin: 38px 0 0;
+      color: #708194;
+      font-size: 13px;
+      text-align: center;
+    }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    @media (max-width:620px) {
+      .screen {
+        padding: 48px 22px 38px;
+      }
+      h1 {
+        font-size: 29px;
+      }
+      .subtitle {
+        font-size: 17px;
+      }
+      .idle,
+      .empty {
+        min-height: 210px;
+        padding: 32px 25px;
+      }
+      .client-guide { grid-template-columns: 1fr; }
+    }
+    </style>
+    <link href="apple-glass.css" rel="stylesheet">
+    <link href="polish.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="screen">
+      <header>
+        <a class="home-link" href="index.html"><img src="favicon.png" alt="">Kreno</a>
+        <p class="eyebrow">Trouver un créneau</p>
+        <h1>Un rendez-vous plus tôt, sans surveiller votre téléphone.</h1>
+        <p class="subtitle">Choisissez un établissement, rejoignez sa liste d’attente et recevez un SMS lorsqu’une place adaptée à votre demande se libère.</p>
+      </header>
+
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <label class="sr-only" for="search-input">Rechercher un prestataire</label>
+        <input type="text" id="search-input" placeholder="Nom, quartier..."
+          autocomplete="off">
+      </div>
+
+      <div class="filters" id="filters"></div>
+
+      <div class="idle" id="idle">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <p>Tapez un nom ou un quartier, ou choisissez une catégorie pour voir les prestataires disponibles.</p>
+      </div>
+
+      <div class="list" id="list"></div>
+      <p class="empty" id="empty"
+        style="display:none;">Aucun prestataire ne correspond à votre recherche.</p>
+
+      <section class="client-guide" aria-label="Comment fonctionne la liste d’attente">
+        <article><span>01</span><h2>Choisissez</h2><p>Recherchez un établissement par son nom, son quartier ou son activité.</p></article>
+        <article><span>02</span><h2>Indiquez vos disponibilités</h2><p>Précisez la prestation et les dates qui vous conviennent vraiment.</p></article>
+        <article><span>03</span><h2>Répondez au SMS</h2><p>Dès qu’un créneau adapté se libère, vous pouvez l’accepter depuis votre téléphone.</p></article>
+      </section>
+      <p class="client-footer">Kreno vous aide à trouver un créneau qui vous convient.</p>
+    </div>
+
+    <!-- Chargement direct (pas de document.write conditionnel) : sur connexion
+         mobile lente, les navigateurs (Safari/Chrome) ignorent silencieusement
+         les scripts externes injectés via document.write ("intervention"
+         anti-blocage de rendu) — le SDK Supabase ne se chargeait alors jamais,
+         bloquant toute la page sans erreur visible. Chaque page étant un
+         rechargement complet (pas une SPA), window.supabase n'existe de toute
+         façon jamais déjà : la vérification conditionnelle ne servait à rien. -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js" crossorigin="anonymous" integrity="sha384-GFr3yTh5lJznCbZfpTtXnwboFsxqtTQoeTZCRHhE0579KrRmlCzen5AA8ohaB5ug"></script>
+    <script>
+    (async function () {
+      const SUPABASE_URL = "https://thxbpjumbntiqwexsqut.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoeGJwanVtYm50aXF3ZXhzcXV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ1NzgyNzksImV4cCI6MjEwMDE1NDI3OX0.tpxE9V5oksnZM16-3xuch3hMqXSJSbmQTuP7NVlj_bY";
+      window.__sb = window.__sb ||
+        window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+          auth: {
+            persistSession: true,
+            autoRefreshToken: true,
+            storageKey: "espace-prestataire-auth",
+          },
+        });
+      const sb = window.__sb;
+
+      const ICONS = {
+        scissors:
+          '<circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" y1="4" x2="8.12" y2="15.88"></line><line x1="14.47" y1="14.48" x2="20" y2="20"></line><line x1="8.12" y1="8.12" x2="12" y2="12"></line>',
+        sparkles:
+          '<path d="M12 3v4"></path><path d="M12 17v4"></path><path d="M3 12h4"></path><path d="M17 12h4"></path><path d="M5.6 5.6l2.8 2.8"></path><path d="M15.6 15.6l2.8 2.8"></path><path d="M18.4 5.6l-2.8 2.8"></path><path d="M8.4 15.6l-2.8 2.8"></path>',
+        heart:
+          '<path d="M19.5 12.6L12 20l-7.5-7.4a5 5 0 1 1 7.5-6.5 5 5 0 1 1 7.5 6.5z"></path>',
+        store:
+          '<path d="M3 9l1-5h16l1 5"></path><path d="M4 9v10a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9"></path><path d="M9 21V13h6v8"></path>',
+      };
+
+      function iconFor(type) {
+        const t = (type || "").toLowerCase();
+        if (t.includes("coiff") || t.includes("barb")) return ICONS.scissors;
+        if (
+          t.includes("esthé") || t.includes("esthe") || t.includes("ongle") ||
+          t.includes("beaut")
+        ) return ICONS.sparkles;
+        if (t.includes("bien") || t.includes("spa") || t.includes("massage")) {
+          return ICONS.heart;
+        }
+        return ICONS.store;
+      }
+
+      function colorsFor(type) {
+        return { bg: "#E3F8FD", fg: "#000000" };
+      }
+
+      function escapeHtml(str) {
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      async function loadProviders() {
+        const { data, error } = await sb
+          .from("provider_directory")
+          .select("*")
+          .order("name");
+        if (error || !data) return [];
+        return data.map((p) => ({
+          slug: p.id, // uuid Supabase, utilisé tel quel dans liste-attente.html?salon=
+          name: p.name,
+          type: p.type || "Autre",
+          zone: p.address || "",
+          wait: p.waiting_count,
+        }));
+      }
+
+      const providers = await loadProviders();
+      const categories = [...new Set(providers.map((p) => p.type))];
+      let activeFilter = "Tous";
+
+      const filtersEl = document.getElementById("filters");
+      function renderFilters() {
+        filtersEl.innerHTML = "";
+        ["Tous", ...categories].forEach((c) => {
+          const b = document.createElement("button");
+          b.className = "filter" + (c === activeFilter ? " on" : "");
+          b.innerHTML = (c !== "Tous"
+            ? '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+              iconFor(c) + "</svg>"
+            : "") + escapeHtml(c);
+          b.addEventListener("click", () => {
+            activeFilter = c;
+            renderFilters();
+            render();
+          });
+          filtersEl.appendChild(b);
+        });
+      }
+      renderFilters();
+
+      const listEl = document.getElementById("list");
+      const emptyEl = document.getElementById("empty");
+      const idleEl = document.getElementById("idle");
+      const searchInput = document.getElementById("search-input");
+
+      function card(p) {
+        const c = colorsFor(p.type);
+        return '<a class="card" href="liste-attente.html?salon=' +
+          encodeURIComponent(p.slug) + '">' +
+          '<div class="avatar" style="background:' + c.bg + ";color:" + c.fg +
+          ';"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+          iconFor(p.type) + "</svg></div>" +
+          '<div class="card-body">' +
+          '<p class="card-name">' + escapeHtml(p.name) + "</p>" +
+          '<p class="card-type">' + escapeHtml(p.type) +
+          (p.zone ? " · " + escapeHtml(p.zone) : "") + "</p>" +
+          (p.wait > 0
+            ? '<span class="badge wait">' + escapeHtml(p.wait) + " en liste</span>"
+            : '<span class="badge">Liste vide</span>') +
+          "</div>" +
+          '<svg class="arrow" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>' +
+          "</a>";
+      }
+
+      function render() {
+        const q = searchInput.value.trim().toLowerCase();
+        const searching = q !== "" || activeFilter !== "Tous";
+
+        if (!searching) {
+          idleEl.style.display = "block";
+          emptyEl.style.display = "none";
+          listEl.innerHTML = "";
+          return;
+        }
+        idleEl.style.display = "none";
+
+        const filtered = providers.filter((p) => {
+          const matchesCat = activeFilter === "Tous" || p.type === activeFilter;
+          const matchesQ = !q || p.name.toLowerCase().includes(q) ||
+            p.zone.toLowerCase().includes(q);
+          return matchesCat && matchesQ;
+        });
+
+        listEl.innerHTML = filtered.map(card).join("");
+        emptyEl.style.display = filtered.length ? "none" : "block";
+        emptyEl.textContent = providers.length
+          ? "Aucun prestataire ne correspond à votre recherche."
+          : "Aucun prestataire n'est encore inscrit. Revenez bientôt !";
+      }
+
+      searchInput.addEventListener("input", render);
+      render();
+    })();
+    </script>
+  </body>
+</html>
