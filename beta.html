@@ -489,7 +489,7 @@
       display: inline-flex;
       align-items: center;
       gap: 9px;
-      margin: 0 0 34px;
+      margin: 0;
       color: #163d57;
       font-size: 15px;
       font-weight: 700;
@@ -500,6 +500,27 @@
       height: 29px;
       border-radius: 8px;
       object-fit: contain;
+    }
+    .directory-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin: 0 0 34px;
+    }
+    .provider-entry {
+      display: inline-flex;
+      min-height: 42px;
+      align-items: center;
+      justify-content: center;
+      padding: 0 16px;
+      border: 1px solid #d5e8f0;
+      border-radius: 999px;
+      background: rgba(255,255,255,.68);
+      color: #000;
+      font-size: 13px;
+      font-weight: 650;
+      text-decoration: none;
     }
     .client-guide {
       display: grid;
@@ -565,6 +586,7 @@
         padding: 32px 25px;
       }
       .client-guide { grid-template-columns: 1fr; }
+      .directory-nav { align-items: flex-start; flex-direction: column; }
     }
     </style>
     <link href="apple-glass.css" rel="stylesheet">
@@ -573,7 +595,10 @@
   <body>
     <div class="screen">
       <header>
-        <a class="home-link" href="index.html"><img src="favicon.png" alt="">Kreno</a>
+        <div class="directory-nav">
+          <a class="home-link" href="index.html"><img src="favicon.png" alt="">Kreno</a>
+          <a class="provider-entry" href="inscription-prestataire.html">Vous êtes prestataire ? Créer un compte</a>
+        </div>
         <p class="eyebrow">Trouver un créneau</p>
         <h1>Un rendez-vous plus tôt, sans surveiller votre téléphone.</h1>
         <p class="subtitle">Choisissez un établissement, rejoignez sa liste d’attente et recevez un SMS lorsqu’une place adaptée à votre demande se libère.</p>
