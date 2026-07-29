@@ -485,59 +485,69 @@
     .btn-outline:active {
       transform: translateY(1px) scale(.985);
     }
-    .interest-form {
-      width: 100%;
-      max-width: 440px;
-      text-align: left;
-      margin-top: 4px;
+    .home-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin: 0 0 34px;
+      color: #163d57;
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none;
     }
-    .interest-form label {
-      display: block;
-      font-size: 13px;
-      font-weight: 600;
-      color: #000;
-      margin: 12px 0 6px;
+    .home-link img {
+      width: 29px;
+      height: 29px;
+      border-radius: 8px;
+      object-fit: contain;
     }
-    .interest-form input,
-    .interest-form select {
-      width: 100%;
-      height: 46px;
-      border: 1px solid #e7ecee;
-      border-radius: 12px;
-      padding: 0 13px;
-      font: inherit;
-      background: #fff;
-      color: #000;
+    .client-guide {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 34px;
     }
-    .interest-form .consent {
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
+    .client-guide article {
+      min-height: 132px;
+      padding: 19px;
+      border: 1px solid #f1f3f3;
+      border-radius: 22px;
+      background: rgba(255,255,255,.76);
+      box-shadow: 0 11px 25px rgba(47,73,84,.05);
+    }
+    .client-guide span {
+      color: #049dc8;
       font-size: 12px;
-      line-height: 1.45;
+      font-weight: 700;
+    }
+    .client-guide h2 {
+      margin: 18px 0 7px;
+      color: #000;
+      font-size: 16px;
+      letter-spacing: -.03em;
+    }
+    .client-guide p {
+      margin: 0;
       color: #707981;
-      margin: 13px 0;
-    }
-    .interest-form .consent input {
-      width: 16px;
-      height: 16px;
-      margin: 1px 0 0;
-      flex: none;
-    }
-    .interest-form .error {
-      display: none;
-      color: #a13722;
       font-size: 13px;
-      line-height: 1.4;
-      margin: 10px 0 0;
-    }
-    .interest-form .success {
-      display: none;
-      color: #1d6a43;
-      font-size: 14px;
       line-height: 1.45;
-      margin: 15px 0 0;
+    }
+    .client-footer {
+      margin: 38px 0 0;
+      color: #708194;
+      font-size: 13px;
       text-align: center;
+    }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
     }
     @media (max-width:620px) {
       .screen {
@@ -554,11 +564,8 @@
         min-height: 210px;
         padding: 32px 25px;
       }
-      .cta-card {
-        min-height: 275px;
-      }
+      .client-guide { grid-template-columns: 1fr; }
     }
-    .honeypot { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
     </style>
     <link href="apple-glass.css" rel="stylesheet">
     <link href="polish.css" rel="stylesheet">
@@ -566,12 +573,10 @@
   <body>
     <div class="screen">
       <header>
+        <a class="home-link" href="index.html"><img src="favicon.png" alt="">Kreno</a>
         <p class="eyebrow">Trouver un créneau</p>
-        <h1>Choisissez un prestataire</h1>
-        <p
-          class="subtitle">Rejoignez sa liste d'attente et soyez prévenu·e par SMS dès qu'une place se libère.</p>
-        <a class="btn-dark provider-signup" href="inscription-prestataire.html">Vous êtes prestataire ? Créer mon compte</a>
-        <a class="btn-outline provider-signup" href="index.html">Découvrir Kreno</a>
+        <h1>Un rendez-vous plus tôt, sans surveiller votre téléphone.</h1>
+        <p class="subtitle">Choisissez un établissement, rejoignez sa liste d’attente et recevez un SMS lorsqu’une place adaptée à votre demande se libère.</p>
       </header>
 
       <div class="search">
@@ -580,6 +585,7 @@
           <circle cx="11" cy="11" r="8"></circle>
           <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
+        <label class="sr-only" for="search-input">Rechercher un prestataire</label>
         <input type="text" id="search-input" placeholder="Nom, quartier..."
           autocomplete="off">
       </div>
@@ -599,50 +605,12 @@
       <p class="empty" id="empty"
         style="display:none;">Aucun prestataire ne correspond à votre recherche.</p>
 
-      <div class="cta-card">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"
-          stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 9l1-5h16l1 5"></path>
-          <path d="M4 9v10a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9"></path>
-          <path d="M9 21V13h6v8"></path>
-        </svg>
-        <p class="title">Vous êtes prestataire ?</p>
-        <p
-          class="desc">Créez votre compte pour rejoindre la bêta. Vous préférez simplement être tenu·e informé·e ? Laissez vos coordonnées ci-dessous, sans engagement.</p>
-        <a class="btn-dark" href="inscription-prestataire.html">Créer mon compte prestataire</a>
-        <div class="interest-form" id="interest-form">
-          <label for="interest-email">Votre e-mail professionnel</label>
-          <input id="interest-email" type="email" autocomplete="email"
-            placeholder="contact@mon-etablissement.fr">
-          <label
-            for="interest-business">Nom de votre établissement <span aria-hidden="true">(facultatif)</span></label>
-          <input id="interest-business" type="text" autocomplete="organization"
-            placeholder="Ex. Studio Camille">
-          <label
-            for="interest-activity">Votre activité <span aria-hidden="true">(facultatif)</span></label>
-          <select id="interest-activity">
-            <option value="">Choisir une activité</option>
-            <option>Coiffure</option>
-            <option>Beauté / ongles</option>
-            <option>Bien-être / thérapie</option>
-            <option>Sport / coaching</option>
-            <option>Autre</option>
-          </select>
-          <label
-            class="consent"><input id="interest-consent" type="checkbox">J’accepte que Kreno utilise mon e-mail pour me recontacter au sujet du lancement et de la bêta.</label>
-          <!-- Champ honeypot anti-bot, invisible pour un humain. -->
-          <input type="text" id="interest-website" name="website" autocomplete="off"
-            tabindex="-1" aria-hidden="true"
-            class="honeypot">
-          <button class="btn-dark" id="interest-submit"
-            type="button">Je suis intéressé·e</button>
-          <p class="error" id="interest-error" role="alert"></p>
-          <p class="success" id="interest-success"
-            role="status">Merci, votre intérêt est bien enregistré. Nous vous recontacterons avant le lancement.</p>
-        </div>
-      </div>
-
-      <a class="btn-outline" href="connexion-prestataire.html">Se connecter</a>
+      <section class="client-guide" aria-label="Comment fonctionne la liste d’attente">
+        <article><span>01</span><h2>Choisissez</h2><p>Recherchez un établissement par son nom, son quartier ou son activité.</p></article>
+        <article><span>02</span><h2>Indiquez vos disponibilités</h2><p>Précisez la prestation et les dates qui vous conviennent vraiment.</p></article>
+        <article><span>03</span><h2>Répondez au SMS</h2><p>Dès qu’un créneau adapté se libère, vous pouvez l’accepter depuis votre téléphone.</p></article>
+      </section>
+      <p class="client-footer">Kreno vous aide à trouver un créneau qui vous convient.</p>
     </div>
 
     <!-- Chargement direct (pas de document.write conditionnel) : sur connexion
@@ -668,66 +636,6 @@
           },
         });
       const sb = window.__sb;
-
-      const interestEmail = document.getElementById("interest-email");
-      const interestBusiness = document.getElementById("interest-business");
-      const interestActivity = document.getElementById("interest-activity");
-      const interestConsent = document.getElementById("interest-consent");
-      const interestButton = document.getElementById("interest-submit");
-      const interestError = document.getElementById("interest-error");
-      const interestSuccess = document.getElementById("interest-success");
-      const INTEREST_THROTTLE_KEY = "kreno-interest-last-submit";
-      const INTEREST_THROTTLE_MS = 15000;
-
-      interestButton.addEventListener("click", async () => {
-        // Honeypot rempli : bot très probable, on simule un succès sans
-        // écrire en base ni révéler la détection.
-        const honeypot = document.getElementById("interest-website").value;
-        if (honeypot) {
-          interestSuccess.style.display = "block";
-          interestButton.style.display = "none";
-          return;
-        }
-
-        const lastSubmit = Number(localStorage.getItem(INTEREST_THROTTLE_KEY)) || 0;
-        if (Date.now() - lastSubmit < INTEREST_THROTTLE_MS) {
-          interestError.textContent =
-            "Merci de patienter quelques secondes avant de renvoyer le formulaire.";
-          interestError.style.display = "block";
-          return;
-        }
-
-        const email = interestEmail.value.trim().toLowerCase();
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !interestConsent.checked) {
-          interestError.textContent = !interestConsent.checked
-            ? "Votre accord est nécessaire pour être recontacté."
-            : "Indiquez une adresse e-mail professionnelle valide.";
-          interestError.style.display = "block";
-          return;
-        }
-        interestButton.disabled = true;
-        interestButton.textContent = "Enregistrement…";
-        interestError.style.display = "none";
-        const { error } = await sb.rpc("register_professional_interest", {
-          p_email: email,
-          p_name: null,
-          p_business_name: interestBusiness.value.trim() || null,
-          p_activity: interestActivity.value || null,
-          p_city: null,
-          p_consent: true,
-        });
-        interestButton.disabled = false;
-        interestButton.textContent = "Je suis intéressé·e";
-        if (error) {
-          interestError.textContent =
-            "Impossible d’enregistrer votre demande. Réessayez dans quelques instants.";
-          interestError.style.display = "block";
-          return;
-        }
-        localStorage.setItem(INTEREST_THROTTLE_KEY, String(Date.now()));
-        interestSuccess.style.display = "block";
-        interestButton.style.display = "none";
-      });
 
       const ICONS = {
         scissors:
