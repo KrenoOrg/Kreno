@@ -390,7 +390,7 @@
   </head>
   <body>
     <div class="screen">
-      <a href="index.html" class="back-link">
+      <a href="trouver-un-prestataire.html" class="back-link">
     <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
     Tous les prestataires
   </a>
@@ -553,9 +553,15 @@
         });
       const sb = window.__sb;
 
-      function isValidPhone(v) {
-        const cleaned = v.replace(/[\s.\-]/g, "");
-        return /^(0[1-9]\d{8}|\+33[1-9]\d{8})$/.test(cleaned);
+      function normalizeFrenchPhone(v) {
+        let cleaned = String(v || "").replace(/[^\d+]/g, "");
+        if (cleaned.startsWith("00")) cleaned = "+" + cleaned.slice(2);
+        if (cleaned.startsWith("33")) cleaned = "+" + cleaned;
+        if (cleaned.startsWith("0")) cleaned = "+33" + cleaned.slice(1);
+        // « +33 (0)6… » est une écriture fréquente ; le 0 est seulement
+        // indicatif et ne fait pas partie du numéro international.
+        cleaned = cleaned.replace(/^\+330/, "+33");
+        return /^\+33[1-9]\d{8}$/.test(cleaned) ? cleaned : null;
       }
 
       function escapeHtml(str) {
@@ -602,7 +608,7 @@
         document.getElementById("form-screen").innerHTML =
           '<div class="ticket-body" style="text-align:center;">' +
           '<p style="font-size:14px;color:var(--ink-soft);margin:0 0 1rem;">Ce prestataire est introuvable ou n\u2019existe plus.</p>' +
-          '<a href="index.html" class="btn-primary" style="display:block;text-decoration:none;box-sizing:border-box;">Voir tous les prestataires</a>' +
+          '<a href="trouver-un-prestataire.html" class="btn-primary" style="display:block;text-decoration:none;box-sizing:border-box;">Voir tous les prestataires</a>' +
           "</div>";
       } else {
         document.getElementById("brand-name").textContent = account.name;
@@ -793,7 +799,8 @@
             return;
           }
 
-          const phoneOk = phone && isValidPhone(phone);
+          const normalizedPhone = normalizeFrenchPhone(phone);
+          const phoneOk = Boolean(normalizedPhone);
 
           if (!name || !phoneOk || availDates.length === 0 || !smsConsent ||
             (!availAnyTime.checked && (!timeStart || !timeEnd || timeStart >= timeEnd))) {
@@ -837,7 +844,7 @@
           const { error: insertError } = await sb.rpc("join_waitlist", {
             p_account_id: slug,
             p_name: name,
-            p_phone: phone,
+            p_phone: normalizedPhone,
             p_service_id: prestaObj ? prestaObj.id : null,
             p_collaborator_id: collaborator || null,
             p_preferred_dates: {
