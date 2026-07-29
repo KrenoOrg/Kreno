@@ -7,61 +7,63 @@
     <meta name="theme-color" content="#eef7fb">
     <title>Kreno — Ne laissez plus une annulation vide</title>
     <link rel="icon" href="favicon.png" type="image/png">
+    <link rel="stylesheet" href="apple-glass.css">
+    <link rel="stylesheet" href="polish.css">
     <style>
       :root { color-scheme: light; }
       * { box-sizing: border-box; }
-      html { background: #f4f1eb; }
-      body { margin: 0; color: #1c1d1a; background: #f4f1eb; font-family: Arial, Helvetica, sans-serif; }
+      html { background: #eaf5fb; }
+      body { margin: 0; color: #000; background: #eaf5fb; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
       a { color: inherit; }
       .shell { width: min(1160px, calc(100% - 44px)); margin: 0 auto; }
-      .nav { min-height: 82px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #d9d5cc; }
+      .nav { min-height: 82px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(4,157,200,.18); }
       .brand { display: inline-flex; align-items: center; gap: 9px; text-decoration: none; font-size: 19px; font-weight: 700; letter-spacing: -.04em; }
       .brand img { width: 28px; height: 28px; object-fit: contain; }
-      .nav-link { color: #595d56; font-size: 14px; text-decoration: none; }
-      .nav-link:hover { color: #1c1d1a; }
+      .nav-link { color: #527086; font-size: 14px; text-decoration: none; }
+      .nav-link:hover { color: #000; }
       .hero { padding: 88px 0 82px; display: grid; grid-template-columns: 1fr .92fr; align-items: center; gap: clamp(50px, 9vw, 132px); }
-      .eyebrow, .section-label { margin: 0 0 17px; color: #6c7867; font-size: 11px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; }
-      h1 { max-width: 600px; margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(45px, 5.2vw, 68px); font-weight: 400; line-height: 1.02; letter-spacing: -.052em; }
-      .lead { max-width: 530px; margin: 25px 0 0; color: #555a53; font-size: 19px; line-height: 1.5; }
+      .eyebrow, .section-label { margin: 0 0 17px; color: #049dc8; font-size: 11px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; }
+      h1 { max-width: 600px; margin: 0; font-size: clamp(45px, 5.2vw, 64px); font-weight: 650; line-height: 1.02; letter-spacing: -.06em; }
+      .lead { max-width: 530px; margin: 25px 0 0; color: #5b7386; font-size: 19px; line-height: 1.5; }
       .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 31px; }
-      .button { appearance: none; display: inline-flex; min-height: 47px; align-items: center; justify-content: center; border: 1px solid #1c1d1a; border-radius: 3px; padding: 0 18px; text-decoration: none; cursor: pointer; font: inherit; font-size: 14px; font-weight: 700; }
-      .button.primary { background: #1e3024; color: #fff; border-color: #1e3024; }
-      .button.secondary { background: transparent; color: #1c1d1a; }
+      .button { appearance: none; display: inline-flex; min-height: 48px; align-items: center; justify-content: center; border: 1px solid #d6eaf2; border-radius: 999px; padding: 0 20px; text-decoration: none; cursor: pointer; font: inherit; font-size: 14px; font-weight: 650; }
+      .button.primary { background: #049dc8; color: #fff; border-color: #049dc8; box-shadow: 0 12px 24px rgba(4,157,200,.18); }
+      .button.secondary { background: rgba(255,255,255,.62); color: #000; }
       .button:hover { transform: translateY(-1px); }
-      .note { margin: 15px 0 0; color: #74776f; font-size: 12px; }
-      .preview { padding-left: 26px; border-left: 1px solid #b9b9ad; }
-      .phone { min-height: 348px; padding: 25px; background: #e8e2d7; border: 1px solid #cec6b8; box-shadow: 12px 13px 0 #d6d0c6; }
-      .phone-top { display: flex; justify-content: space-between; padding-bottom: 19px; border-bottom: 1px solid #c9c1b3; color: #6e746b; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
-      .message { max-width: 95%; margin-top: 25px; padding: 17px 0; color: #292b27; font-size: 16px; line-height: 1.45; }
+      .note { margin: 15px 0 0; color: #6f8798; font-size: 12px; }
+      .preview { padding: 10px; }
+      .phone { min-height: 348px; padding: 27px; background: rgba(255,255,255,.67); border: 1px solid rgba(255,255,255,.82); border-radius: 30px; box-shadow: 0 20px 44px rgba(42,89,110,.13); }
+      .phone-top { display: flex; justify-content: space-between; padding-bottom: 19px; border-bottom: 1px solid #d6e8ef; color: #608095; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+      .message { max-width: 95%; margin-top: 25px; padding: 17px 0; color: #143b54; font-size: 16px; line-height: 1.45; }
       .message strong { display: block; margin-bottom: 5px; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; }
-      .claim { margin: 9px 0 0; padding: 13px 14px; width: 100%; color: #f7f5f0; background: #1e3024; font-size: 14px; font-weight: 700; text-align: center; }
-      .phone-foot { margin-top: 25px; padding-top: 17px; border-top: 1px solid #c9c1b3; color: #5e655c; font-size: 13px; line-height: 1.45; }
-      .steps { padding: 76px 0 84px; border-top: 1px solid #d9d5cc; }
-      h2 { max-width: 590px; margin: 0 0 40px; font-family: Georgia, "Times New Roman", serif; font-size: clamp(34px, 4vw, 50px); font-weight: 400; line-height: 1.08; letter-spacing: -.045em; }
-      .step-grid { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid #bdb9b0; }
-      .step { min-height: 185px; padding: 23px 24px 12px 0; border-right: 1px solid #bdb9b0; }
+      .claim { margin: 9px 0 0; padding: 13px 14px; width: 100%; color: #fff; background: #049dc8; border-radius: 13px; font-size: 14px; font-weight: 700; text-align: center; }
+      .phone-foot { margin-top: 25px; padding-top: 17px; border-top: 1px solid #d6e8ef; color: #5d7b8d; font-size: 13px; line-height: 1.45; }
+      .steps { padding: 76px 0 84px; border-top: 1px solid rgba(4,157,200,.18); }
+      h2 { max-width: 590px; margin: 0 0 40px; font-size: clamp(34px, 4vw, 50px); font-weight: 650; line-height: 1.08; letter-spacing: -.055em; }
+      .step-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+      .step { min-height: 185px; padding: 24px; border: 1px solid rgba(255,255,255,.8); border-radius: 24px; background: rgba(255,255,255,.58); }
       .step + .step { padding-left: 24px; }
-      .step:last-child { border-right: 0; }
-      .number { color: #6c7867; font-size: 12px; font-weight: 700; }
+      .step:last-child { border-right: 1px solid rgba(255,255,255,.8); }
+      .number { color: #049dc8; font-size: 12px; font-weight: 700; }
       .step h3 { margin: 33px 0 10px; font-size: 18px; letter-spacing: -.025em; }
-      .step p { margin: 0; color: #5e625c; font-size: 14px; line-height: 1.5; }
-      .signup { margin: 0 0 78px; padding: clamp(29px, 5vw, 58px); background: #253126; color: #f4f1eb; }
+      .step p { margin: 0; color: #5d798a; font-size: 14px; line-height: 1.5; }
+      .signup { margin: 0 0 78px; padding: clamp(29px, 5vw, 58px); border-radius: 30px; background: #0a2540; color: #fff; box-shadow: 0 20px 45px rgba(10,37,64,.18); }
       .signup-grid { display: grid; grid-template-columns: .84fr 1.16fr; gap: clamp(40px, 7vw, 94px); align-items: start; }
-      .signup .section-label { color: #b5c0ad; }
+      .signup .section-label { color: #74d3eb; }
       .signup h2 { margin-bottom: 0; }
-      .signup .copy { max-width: 390px; margin: 18px 0 0; color: #d3d8cf; line-height: 1.55; }
+      .signup .copy { max-width: 390px; margin: 18px 0 0; color: #c0d4df; line-height: 1.55; }
       form { display: grid; gap: 12px; }
       label { font-size: 13px; font-weight: 700; }
-      input, select { width: 100%; min-height: 48px; border: 1px solid #c5c9bf; border-radius: 2px; padding: 0 12px; color: #1c1d1a; background: #f8f7f3; font: inherit; }
+      input, select { width: 100%; min-height: 48px; border: 1px solid #c9e0e9; border-radius: 12px; padding: 0 12px; color: #000; background: #fff; font: inherit; }
       .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-      .consent { display: flex; align-items: flex-start; gap: 9px; margin-top: 4px; color: #d3d8cf; font-size: 12px; font-weight: 400; line-height: 1.4; }
-      .consent input { width: 16px; min-height: 16px; margin: 0; flex: none; accent-color: #d5decf; }
-      .submit { background: #d9e1d1; color: #1e3024; border-color: #d9e1d1; }
+      .consent { display: flex; align-items: flex-start; gap: 9px; margin-top: 4px; color: #c3d5df; font-size: 12px; font-weight: 400; line-height: 1.4; }
+      .consent input { width: 16px; min-height: 16px; margin: 0; flex: none; accent-color: #55cbed; }
+      .submit { background: #55cbed; color: #002c3a; border-color: #55cbed; }
       .error, .success { display: none; margin: 2px 0 0; font-size: 13px; line-height: 1.4; }
       .error { color: #ffd4ca; } .success { color: #c9efcf; }
       .honeypot { position: absolute !important; left: -10000px !important; width: 1px !important; height: 1px !important; opacity: 0 !important; }
-      footer { padding: 0 0 30px; color: #74776f; font-size: 12px; text-align: center; }
-      @media (max-width: 760px) { .shell { width: min(100% - 30px, 560px); } .hero, .signup-grid { grid-template-columns: 1fr; } .hero { padding: 57px 0 64px; gap: 45px; } .preview { max-width: 430px; padding-left: 16px; } .phone { min-height: auto; } .step-grid { grid-template-columns: 1fr; } .step, .step + .step { min-height: auto; padding: 22px 0; border-right: 0; border-bottom: 1px solid #bdb9b0; } .step:last-child { border-bottom: 0; } .steps { padding: 60px 0; } .fields { grid-template-columns: 1fr; } }
+      footer { padding: 0 0 30px; color: #6f8798; font-size: 12px; text-align: center; }
+      @media (max-width: 760px) { .shell { width: min(100% - 30px, 560px); } .hero, .signup-grid { grid-template-columns: 1fr; } .hero { padding: 57px 0 64px; gap: 45px; } .preview { max-width: 430px; padding-left: 0; } .phone { min-height: auto; } .step-grid { grid-template-columns: 1fr; } .step, .step + .step { min-height: auto; padding: 22px; border: 1px solid rgba(255,255,255,.8); } .step:last-child { border-bottom: 1px solid rgba(255,255,255,.8); } .steps { padding: 60px 0; } .fields { grid-template-columns: 1fr; } }
       @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; } }
     </style>
   </head>
