@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="favicon.png" type="image/png">
     <meta charset="UTF-8">
     <meta name="viewport"
       content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -389,6 +389,8 @@
     .delete-title { font-family: 'Fraunces',serif; font-size: 18px; font-weight: 500; margin: 0 0 8px; }
     .delete-copy { font-size: 13.5px; color: var(--ink-soft); line-height: 1.5; margin: 0 0 1rem; }
     .delete-input { width: 100%; box-sizing: border-box; font-family: 'Inter',sans-serif; font-size: 16px; padding: 11px 12px; border-radius: 8px; border: 1.5px solid #9fb0c2; background: #eef2f6; color: #1B2A4A; margin-bottom: 1rem; }
+    .delete-password-label { display: block; font-size: 11.5px; font-weight: 600; color: var(--ink-soft); margin: 0 0 5px; }
+    .delete-password-input { margin-bottom: .6rem; }
     .delete-error { display: none; font-size: 12.5px; color: #B3441E; background: #FBEAE2; border-radius: 8px; padding: 10px 12px; margin: 0 0 1rem; }
     .delete-actions { display: flex; gap: 10px; }
     .delete-button { flex: 1; font-family: 'Inter',sans-serif; font-size: 14px; font-weight: 600; padding: 11px; border-radius: 9px; cursor: pointer; }
@@ -612,8 +614,8 @@
       <div class="delete-dialog">
         <p class="delete-title">Confirmer la suppression</p>
         <p class="delete-copy">Cette action supprime définitivement votre compte et toutes ses données. Confirmez votre mot de passe, puis tapez <b>SUPPRIMER</b>.</p>
-        <label for="delete-confirm-password" style="display:block;font-size:11.5px;font-weight:600;color:var(--ink-soft);margin:0 0 5px;">Mot de passe actuel</label>
-        <input class="delete-input" id="delete-confirm-password" type="password" autocomplete="current-password" placeholder="••••••••" style="margin-bottom:.6rem;">
+        <label class="delete-password-label" for="delete-confirm-password">Mot de passe actuel</label>
+        <input class="delete-input delete-password-input" id="delete-confirm-password" type="password" autocomplete="current-password" placeholder="••••••••">
         <input class="delete-input" id="delete-confirm-input" type="text" autocomplete="off" placeholder="SUPPRIMER">
         <p class="delete-error" id="delete-error" role="alert"></p>
         <div class="delete-actions">

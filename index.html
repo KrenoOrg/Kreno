@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
   <head>
-    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="favicon.png" type="image/png">
     <meta charset="UTF-8">
     <meta name="viewport"
       content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -555,6 +555,7 @@
         min-height: 275px;
       }
     }
+    .honeypot { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
     </style>
     <link href="apple-glass.css" rel="stylesheet">
     <link href="polish.css" rel="stylesheet">
@@ -626,7 +627,7 @@
           <!-- Champ honeypot anti-bot, invisible pour un humain. -->
           <input type="text" id="interest-website" name="website" autocomplete="off"
             tabindex="-1" aria-hidden="true"
-            style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;">
+            class="honeypot">
           <button class="btn-dark" id="interest-submit"
             type="button">Je suis intéressé·e</button>
           <p class="error" id="interest-error" role="alert"></p>
