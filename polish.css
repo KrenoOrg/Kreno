@@ -101,7 +101,9 @@ h1, h2, h3 { text-wrap: balance; }
 .search input::placeholder { color: #94a1ac; }
 .search input:hover { border-color: #e2ecef !important; }
 .search input:focus-visible {
-  box-shadow: var(--pl-shadow-sm), var(--pl-shadow-glow) !important;
+  /* Keep the focus treatment inside the rounded field so the halo cannot be
+     clipped by the page container on narrow screens. */
+  box-shadow: inset 0 0 0 2px var(--pl-accent), var(--pl-shadow-sm) !important;
   border-color: var(--pl-accent) !important;
 }
 

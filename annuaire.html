@@ -597,6 +597,14 @@
     </style>
     <link href="apple-glass.css" rel="stylesheet">
     <link href="polish.css" rel="stylesheet">
+    <style>
+      /* The search focus ring stays fully inside the rounded field. */
+      #search-input:focus-visible {
+        outline: none !important;
+        border-color: #55cbed !important;
+        box-shadow: inset 0 0 0 2px #55cbed !important;
+      }
+    </style>
   </head>
   <body>
     <div class="screen">
